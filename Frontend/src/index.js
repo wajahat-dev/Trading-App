@@ -6,6 +6,8 @@ import { Provider } from 'react-redux';
 import configureStore from './store/configureStore';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import green from '@material-ui/core/colors/green';
+import purple from '@material-ui/core/colors/purple';
+import blue from '@material-ui/core/colors/blue';
 import red from '@material-ui/core/colors/red';
 
 
@@ -13,8 +15,10 @@ const store = configureStore();
 
 const theme = createMuiTheme({
   palette: {
-    primary: green,
-    secondary: red,
+    // primary: green,
+    // secondary: red,
+    primary: blue,
+    secondary: purple,
   },
 });
 

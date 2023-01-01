@@ -13,7 +13,7 @@
     justify-content: center;
     margin: 0px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    background: url('https://i.imgur.com/Rh4xhch.jpg');
+    /* background: url('https://i.imgur.com/R2YZsUR.jpg'); */
   background-repeat: no-repeat;
   background-size: cover;
     
@@ -26,7 +26,7 @@ body.background__home {
 }
 
 .header{
-    background-color: #31e89f;
+    background-color: blue;
     width: 100%;
     text-align: center;
     height: 170px;

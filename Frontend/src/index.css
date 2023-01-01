@@ -16,7 +16,7 @@ button {
 }
 
 button:hover {
-  background-color: green;
+  background-color: blue;
   color: black;
 }
 
@@ -50,7 +50,7 @@ input {
 }
 
 input:focus {
-  border-bottom-color: green;
+  border-bottom-color: blue;
 }
 
 nav {
@@ -116,7 +116,7 @@ td.centered {
 
 .fab {
   align-items: center;
-  background-color: green;
+  background-color: rgb(52, 52, 146);
   border-radius: 50px;
   top: 50px;
   box-shadow: 0 4px 6px rgb(0, 0, 0, 0.2);
@@ -254,8 +254,8 @@ td.centered {
 }
 
 .active .nav-entry {
-  border-right-color:lightgreen;
-  background-color: lightgreen;
+  border-right-color:lightblue;
+  background-color: lightblue;
 }
 
 .secondary-text {
@@ -320,7 +320,7 @@ td.centered {
 }
 
 .indices{
-  border: 2px solid green;
+  border: 2px solid blue;
   height: 100px;
   width: 100px;
   box-sizing: content-box;
@@ -380,7 +380,7 @@ td.centered {
 }
 
 .newsLink{
-  color: green;
+  color: blue;
 }
 
 .randomizer {
@@ -458,8 +458,8 @@ td.centered {
   padding-bottom: 25px;
 }
 
-.green {
-  color: green;
+.blue {
+  color: blue;
   margin: 20px;
   font-weight: bold;
 }
@@ -625,7 +625,7 @@ box-shadow:         4px 4px 5px 0px rgba(50, 50, 50, 0.75);
 }
 
 .navlinks {
-  color: green;
+  color: blue;
 }
 
 .navlinks-red {

@@ -9,7 +9,7 @@ import { createWatchedStock } from "../store/actions/watched-stocks";
 import { hideForm } from "../store/actions/ui";
 import Alert from '@material-ui/lab/Alert';
 import { NavLink } from 'react-router-dom';
-import leaf from "../leaf-clipart-12-transparent.png";
+import leaf from "../tradingImg.png";
 
 
 

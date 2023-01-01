@@ -5,9 +5,7 @@ import Typography from '@material-ui/core/Typography';
 // import Link from '@material-ui/core/Link';
 import github from './github.png'
 import linkedin from './linkedin.png'
-import {Link} from 'react-router-dom'; 
-import detail from './stock_detail.png'
-import dashboard from './user_dashboard.png'
+import { Link } from 'react-router-dom';
 
 
 
@@ -16,59 +14,39 @@ const HomePage = ({ authenticated, setAuthenticated }) => {
     if (authenticated) {
         return <Redirect to="/" />;
     }
-    return(
+    return (
         <div id='body'>
-            
-            <Header/>
-            <Card 
-                className='section bg-grey'
-                img={dashboard}
-                title='Trading'
-                description='Trading'
-            />
 
-            <Card 
-                className='section'
-                img={detail}
-                title='Trading' 
-                description='Trading'
-            />
-            
-            
-
-            {/* <Card 
-                className='section'
-                img='./Capture1.PNG' 
-                title='Our Mission' 
-                description='Our mission is to reduce food waste.'
-            /> */}
-            <ContactContainer/>
+            <Header />
+           
+           
+            <ContactContainer />
         </div>
     );
 }
 
-const Header = () =>{
-    return(
+const Header = () => {
+    return (
         <>
-        <div className="logout-button-holder">
-    <Link to="/login">
-          <button type="button">
-          Log In
-          </button>
-        </Link>
-        <Link to="/signup">
-          <button type="button">
-          Sign Up
-          </button>
-        </Link>
-    </div>
-        <div className='header'>
-            <span className='header-title'>
-            Trading
-            </span>
-            <br/>
-       
-        </div>
+            <div className="logout-button-holder">
+                <Link to="/login">
+                    <button type="button">
+                        Log In
+                    </button>
+                </Link>
+                <Link to="/signup">
+                    <button type="button">
+                        Sign Up
+                    </button>
+                </Link>
+            </div>
+            <div className='header'>
+                <span className='header-title'>
+                    Forex Marketing
+                </span>
+                <br />
+
+            </div>
         </>
     );
 }
@@ -79,23 +57,23 @@ const Header = () =>{
 
 
 
-const Card = (props) =>{
-    return(
+const Card = (props) => {
+    return (
         <div className={props.className} >
             <div className="small-div">
                 <i className={props.className}></i>
-                
+
             </div>
 
             <div className="big-div">
                 <span className='div-title'>
                     {props.title}
                 </span>
-                <br/>
+                <br />
                 <span>
                     {props.description}
                 </span>
-                <img className='homepage-img' src={props.img} alt=''/>
+                <img className='homepage-img' src={props.img} alt='' />
             </div>
         </div>
     )
@@ -104,48 +82,48 @@ const Card = (props) =>{
 
 
 const ContactContainer = () => {
-    return(
+    return (
         <div className='contact-container bg-grey'>
             <span className="div-title">Contact</span>
             <div className='contact-form'>
                 <div id='sect1'>
-                <>
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <a color="inherit" href="https://www.linkedin.com/in/john-hiestand-3bb22a17/">
-      John Hiestand 
-      </a>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-      
-    </Typography>
-    
-    <div className='miniInfo1'>
-    <div>
-    <a href="https://github.com/johnegus/" target="_blank" rel="noopener noreferrer"> 
-      
-        <img className='icons' height='25px' width='25px' src={github} alt='github' />
-        </a>
-    </div>
-    <div>
-    <a href="https://www.linkedin.com/in/john-hiestand-3bb22a17/" target="_blank" rel="noopener noreferrer"> 
-        
-        <img className='icons' height='25px' width='25px' src={linkedin} alt='linkedin' />
-        </a>
-    </div>
-    </div>
-    <Typography variant="body2" color="textSecondary" align="center">
-     Email: jgh2102@gmail.com
-    </Typography>
-    </>
+                    <>
+                        <Typography variant="body2" color="textSecondary" align="center">
+                            {'Copyright © '}
+                            <a color="inherit" href="">
+                            Trading
+                            </a>{' '}
+                            {new Date().getFullYear()}
+                            {'.'}
+
+                        </Typography>
+
+                        <div className='miniInfo1'>
+                            <div>
+                                <a href="" target="_blank" rel="noopener noreferrer">
+
+                                    <img className='icons' height='25px' width='25px' src={github} alt='github' />
+                                </a>
+                            </div>
+                            <div>
+                                <a href="" target="_blank" rel="noopener noreferrer">
+
+                                    <img className='icons' height='25px' width='25px' src={linkedin} alt='linkedin' />
+                                </a>
+                            </div>
+                        </div>
+                        <Typography variant="body2" color="textSecondary" align="center">
+                            Email: Trading
+                        </Typography>
+                    </>
                 </div>
-                    
+
                 <div id='sect2'>
                     <span>
                         Contact
                     </span>
 
-                    <input type="text" placeholder="email address" className="input-field"/>
+                    <input type="text" placeholder="email address" className="input-field" />
                     <textarea name="" id="" cols="30" rows="10" placeholder="comment"></textarea>
                     <button className="contact-btn">Send</button>
                 </div>

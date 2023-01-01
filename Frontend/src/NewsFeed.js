@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Alert from '@material-ui/lab/Alert';
-import leaf from "./leaf-clipart-12-transparent.png";
+import leaf from "./tradingImg.png";
 import { NavLink } from "react-router-dom";
 
 
