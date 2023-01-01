@@ -338,9 +338,8 @@ const WatchListDetail = ({ watchedStocks, getOneWatchedStock, createPosition }) 
         {loading}
 
         <div>
-          {stories.length === 0 ? <Alert severity="error">You have exceeded the amount of free news fetches, try again later.</Alert> :
-            stories.map(story => {
-              return (
+          {stories && stories.length === 0 ? <Alert severity="error">You have exceeded the amount of free news fetches, try again later.</Alert> :
+            stories && stories.length > 0 && stories.map(story => {              return (
                 <div className='newsContainer' key={story.timestamp}>
                   <div className='newsTitle'>
 

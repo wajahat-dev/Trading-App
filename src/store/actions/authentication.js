@@ -16,24 +16,24 @@ export const loadToken = () => async (dispatch) => {
 
 export const login = (email, password) => async (dispatch) => {
   
-  const response = await fetch(`${baseUrl}/session`, {
-    method: "put",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
+  // const response = await fetch(`${baseUrl}/session`, {
+  //   method: "put",
+  //   headers: { "Content-Type": "application/json" },
+  //   body: JSON.stringify({ email, password }),
+  // });
 
-  if (response.ok) {
-    const { token, user: {id}} = await response.json();
+  // if (response.ok) {
+  //   const { token, user: {id}} = await response.json();
     
-    window.localStorage.setItem(TOKEN_KEY, token);
-    dispatch(setToken(token));
-    dispatch(setCurrentUser(id));
-    window.location.replace('/')
-  }
+  //   window.localStorage.setItem(TOKEN_KEY, token);
+  //   dispatch(setToken(token));
+  //   dispatch(setCurrentUser(id));
+  //   window.location.replace('/')
+  // }
   
 
-  // dispatch(setToken('xxxxxxxxxxxxxxxxxxxxxx'));
-  // window.location.replace('/')
+  dispatch(setToken('xxxxxxxxxxxxxxxxxxxxxx'));
+  window.location.replace('/')
 
 };
 
