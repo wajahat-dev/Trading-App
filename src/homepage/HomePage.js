@@ -23,17 +23,15 @@ const HomePage = ({ authenticated, setAuthenticated }) => {
             <Card 
                 className='section bg-grey'
                 img={dashboard}
-                title='Algo, a Robinhood like stock trading application'
-                description='Algo is a stock trading application similiar to Robinhood that I built using React and Express. Users can securely create accounts, 
-                log in and paper trade stocks using real time data.'
+                title='Trading'
+                description='Trading'
             />
 
             <Card 
                 className='section'
                 img={detail}
-                title='About Algo' 
-                description='Algo includes secure user accounts with an informative stock dashboard that features portfolio health charts and graphs, transaction ledger
-                top movers. Stock details include historical graphs, news, and company information updated in real time.'
+                title='Trading' 
+                description='Trading'
             />
             
             
@@ -66,7 +64,7 @@ const Header = () =>{
     </div>
         <div className='header'>
             <span className='header-title'>
-                Algo
+            Trading
             </span>
             <br/>
        

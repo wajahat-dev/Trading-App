@@ -140,7 +140,7 @@ return (
     <div
       className={`position-detail-image-background`}>
       <div>
-      <h1 className="bigger">Welcome to Algo</h1>
+      <h1 className="bigger">Welcome to Trading</h1>
       </div>
       
     </div>
