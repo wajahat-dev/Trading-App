@@ -12,7 +12,7 @@ const { History } = db;
 
 router.get(
   "/",
-  authenticated,
+  // authenticated,
   asyncHandler(async (req, res) => {
     const history = await History.findAll({
       where: {
@@ -25,7 +25,7 @@ router.get(
 
 router.post(
     "/",
-    authenticated,
+    // authenticated,
     asyncHandler(async (req, res) => {
       const { deposit, stockSymbol, stockName, boughtPrice, soldPrice, shares} = req.body;
       const transaction = await History.create({ deposit, stockSymbol, stockName, boughtPrice, soldPrice, shares, userId: req.user.id });
@@ -35,14 +35,16 @@ router.post(
 
 router.get(
   "/:id",
-  authenticated,
+  // authenticated,
   asyncHandler(async function (req, res) {
-    const stock = await Watchlist.findOne({
-      where: {
-        id: req.params.id,
-      },
-    });
-    res.json(stock);
+    // const stock = await Watchlist.findOne({
+    //   where: {
+    //     id: req.params.id,
+    //   },
+    // });
+    // res.json(stock);
+    
+    res.json('hello');
   })
 );
 

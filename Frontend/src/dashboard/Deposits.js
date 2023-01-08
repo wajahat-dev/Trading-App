@@ -44,7 +44,7 @@ export function Deposits({getHistoricalData, ledger}) {
   }, [ledger]);
 
   const handleClick = async (e) => {
-    const deposit = 10000;
+    const deposit = 1000;
     
     const payload ={
     deposit
@@ -53,7 +53,7 @@ export function Deposits({getHistoricalData, ledger}) {
   }
 
   const takeOut = async (e) => {
-    const deposit = -10000;
+    const deposit = -5;
     
     const payload ={
     deposit
@@ -75,8 +75,8 @@ export function Deposits({getHistoricalData, ledger}) {
         on {month + '/' + date + '/' + year}
       </Typography>
       <div>
-        <button onClick={handleClick} >Deposit $10000</button>
-        <button onClick={takeOut} >Withdrawal $10000</button>
+        <button onClick={handleClick} >Deposit $1000</button>
+        <button onClick={takeOut} >Maximum Withdrawal $5</button>
       </div>
       </div>
     </React.Fragment>

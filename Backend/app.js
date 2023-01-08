@@ -6,7 +6,7 @@ const path = require('path');
 const logger = require('morgan');
 
 const routes = require('./routes');
-
+const client = require('./config/connection.js')
 const app = express();
 
 app.use(cors({ origin: true }));
@@ -15,7 +15,8 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
-
+const bodyParser = require("body-parser");
+app.use(bodyParser.json());
 app.use(routes);
 
 app.use(function(_req, _res, next) {
@@ -32,5 +33,7 @@ app.use(function(err, _req, res, _next) {
     error: JSON.parse(JSON.stringify(err)),
   });
 });
+
+client.connect();
 
 module.exports = app;

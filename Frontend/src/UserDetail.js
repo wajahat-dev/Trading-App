@@ -137,13 +137,13 @@ const UserDetail = ({getHistoricalData, ledger, positions, getPositions}) => {
 
 return (
   <div className="position-detail">
-    <div
+    {/* <div
       className={`position-detail-image-background`}>
       <div>
       <h1 className="bigger">Welcome to Trading</h1>
       </div>
       
-    </div>
+    </div> */}
     
     <div>
     <Deposits />
@@ -168,8 +168,6 @@ return (
       <TopLosers />
       </div>
     
-      
-      
     </div>
   </div>
 );

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from "react-redux";
 import { logout } from "./store/actions/authentication";
-import {Link} from 'react-router-dom'; 
+import { Link } from 'react-router-dom';
 
 
 const LogoutButton = () => {
@@ -13,17 +13,17 @@ const LogoutButton = () => {
 
   return (
     <>
-    
-    <div className="logout-button-holder2">
-    <Link to="/">
+
+      <div className="logout-button-holder2">
+        <Link to="/">
           <button type="button">
-          Dashboard
+            Dashboard
           </button>
         </Link>
-      <button type="button" onClick={handleClick}>Logout</button>
-    </div>
+        <button type="button" onClick={handleClick}>Logout</button>
+      </div>
     </>
-    
+
   );
 };
 

@@ -197,7 +197,7 @@ td.centered {
 }
 
 .position-detail-image-background {
-  background: linear-gradient(315deg, #16d416, rgb(15, 15, 15));
+  background: linear-gradient(315deg, #14235e, rgb(15, 15, 15));
   background-size: cover;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   padding: 30px;

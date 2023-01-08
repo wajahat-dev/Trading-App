@@ -16,6 +16,9 @@ import { exitWatchedStock } from './store/actions/watched-stocks'
 
 import SearchContainer from "./search/SearchContainer";
 import HeaderMUI from "./header";
+import { Box, Container } from "@material-ui/core";
+import { createTheme } from "@mui/material";
+import { purple } from "@material-ui/core/colors";
 
 const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePositionAndGet, updateWatchedStockAndGet }) => {
   const dispatch = useDispatch();
@@ -123,40 +126,58 @@ const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePosition
   if (!watchedStocks) {
     return null;
   }
+
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: purple[500],
+      },
+      secondary: {
+        main: '#f44336',
+      },
+    },
+  });
+
   return (
-    <main>
+    // <main>
+    <Container maxWidth="lg">
+      {/* <LogoutButton /> */}
+
       <HeaderMUI />
-      <LogoutButton />
 
 
-     
+      <Switch>
+        
+
+        {/* <Box sx={{ flexGrow: 1 }}> */}
+
+          <Route
+
+            path="/position/:id"
+            render={(props) => <PositionDetail {...props} />}
+          />
+          <Route
+
+            path="/stock/:stockSymbol"
+            render={(props) => <StockDetail {...props} />}
+          />
+
+          <Route exact={true} path="/" component={UserDetail} />
+          <Route component={PositionSidebar} />
+          {/* <Route component={NotFound} /> */}
+        {/* </Box> */}
+
+      </Switch>
+      {/* <nav> */}
+
 
       <Switch>
 
+        <SearchContainer />
 
-        <Route
-
-          path="/position/:id"
-          render={(props) => <PositionDetail {...props} />}
-        />
-        <Route
-
-          path="/stock/:stockSymbol"
-          render={(props) => <StockDetail {...props} />}
-        />
-
-        <Route exact={true} path="/" component={UserDetail} />
-        {/* <Route component={PositionSidebar} />
-           <Route component={NotFound} /> */}
       </Switch>
-      <nav>
-        <Switch>
-          <SearchContainer />
 
-
-        </Switch>
-
-        <div className='sidebar-label'>Stocks</div>
+      {/* <div className='sidebar-label'>Stocks</div>
         {positions.slice(0).reverse().map((position) => {
           return (
             <NavLink key={position.id} to={`/position/${position.id}`}>
@@ -208,9 +229,10 @@ const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePosition
               </div>
             </NavLink>
           );
-        })}
-      </nav>
-    </main>
+        })} */}
+      {/* </nav> */}
+    </Container>
+    // </main>
   );
 };
 

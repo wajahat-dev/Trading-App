@@ -51,7 +51,7 @@ const TopLosers = () => {
         <div className='losersandwinners'>
         <h2 style={{color: 'red'}}>Top Losers</h2>
         {loading()}
-        {stories.slice(0, 5).map(story => {
+        {stories && stories.slice(0, 5).map(story => {
             return (
               <div className='moversContainer' key={story.ticker}>
                   <div className='newsTitle'>
