@@ -6,14 +6,14 @@ html, body, input, textarea, button, select, a  {
   
 }
 
-button {
+/* button {
   border: 0;
   background: none;
   font-weight: 700;
   padding: .5em 1em;
   text-transform: uppercase;
   transition: background-color .25s, color .25s;
-}
+} */
 
 button:hover {
   background-color: blue;
@@ -60,10 +60,10 @@ nav {
 
 }
 
-nav a {
+/* nav a {
   color: inherit;
   text-decoration: none;
-}
+} */
 
 select {
   margin-bottom: 2em;

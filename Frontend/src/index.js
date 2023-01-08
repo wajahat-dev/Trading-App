@@ -9,25 +9,27 @@ import green from '@material-ui/core/colors/green';
 import purple from '@material-ui/core/colors/purple';
 import blue from '@material-ui/core/colors/blue';
 import red from '@material-ui/core/colors/red';
+import { Container } from '@material-ui/core';
 
 
 const store = configureStore();
 
 const theme = createMuiTheme({
   palette: {
-    // primary: green,
-    // secondary: red,
+
     primary: blue,
-    secondary: purple,
+    secondary: green,
   },
 });
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-    <MuiThemeProvider theme={theme}>
-      <App /> 
-      </MuiThemeProvider> 
+      <MuiThemeProvider theme={theme}>
+        <Container maxWidth="lg">
+          <App />
+        </Container>
+      </MuiThemeProvider>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

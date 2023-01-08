@@ -33,34 +33,40 @@ export const login = (email, password) => async (dispatch) => {
   
 
   dispatch(setToken('xxxxxxxxxxxxxxxxxxxxxx'));
-  window.location.replace('/')
+  // window.location.replace('/')
 
 };
 
 export const logout = () => async (dispatch, getState) => {
-  const {
-    authentication: { token },
-  } = getState();
-  const response = await fetch(`${baseUrl}/session`, {
-    method: "delete",
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  // const {
+  //   authentication: { token },
+  // } = getState();
+  // const response = await fetch(`${baseUrl}/session`, {
+  //   method: "delete",
+  //   headers: { Authorization: `Bearer ${token}` },
+  // });
 
-  if (response.ok) {
-    window.localStorage.removeItem(TOKEN_KEY);
-    dispatch(removeToken());
-  }
+  // if (response.ok) {
+  //   window.localStorage.removeItem(TOKEN_KEY);
+  //   dispatch(removeToken());
+  // }
+  window.localStorage.removeItem(TOKEN_KEY);
+  dispatch(removeToken());
 };
 
+
 export const signUp = (user) => async (dispatch) => {
-  const response = await fetch(`${baseUrl}/users`, {
-    method: 'post',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(user),
-  });
-  if (response.ok) {
-    const { token } = await response.json();
-    window.localStorage.setItem(TOKEN_KEY, token);
-    dispatch(setToken(token));
-  }
+  // const response = await fetch(`${baseUrl}/users`, {
+  //   method: 'post',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify(user),
+  // });
+  // if (response.ok) {
+  //   const { token } = await response.json();
+  //   window.localStorage.setItem(TOKEN_KEY, token);
+  //   dispatch(setToken(token));
+  // }
+  window.localStorage.setItem(TOKEN_KEY, 'xyz');
+  dispatch(setToken('xyz'));
+
 };

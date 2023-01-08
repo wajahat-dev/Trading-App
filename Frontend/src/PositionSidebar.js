@@ -1,24 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { NavLink, Route, Switch, useParams } from "react-router-dom";
 
-import LogoutButton from "./LogoutButton";
 import PositionDetail from "./PositionDetail";
 
-import { getPositions, updatePositionAndGet } from "./store/actions/positions";
-import { getWatchedStocks, updateWatchedStockAndGet } from './store/actions/watched-stocks'
-import { getHistoricalData } from './store/actions/ledger'
-import UserDetail from './UserDetail';
 import StockDetail from './StockDetail';
+import UserDetail from './UserDetail';
+import { getHistoricalData } from './store/actions/ledger';
+import { getPositions, updatePositionAndGet } from "./store/actions/positions";
+import { getWatchedStocks, updateWatchedStockAndGet } from './store/actions/watched-stocks';
 
-import { exitWatchedStock } from './store/actions/watched-stocks'
+import { exitWatchedStock } from './store/actions/watched-stocks';
 
 
-import SearchContainer from "./search/SearchContainer";
-import HeaderMUI from "./header";
-import { Box, Container } from "@material-ui/core";
-import { createTheme } from "@mui/material";
 import { purple } from "@material-ui/core/colors";
+import { createTheme } from "@mui/material";
+import CNavbar from "./globalcomponents/CNavbar";
+import SearchContainer from "./search/SearchContainer";
 
 const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePositionAndGet, updateWatchedStockAndGet }) => {
   const dispatch = useDispatch();
@@ -66,8 +64,6 @@ const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePosition
     }
   }, [positions, posLen, updatePositionAndGet])
   useEffect(() => {
-
-
     if (positions.length === 0 && flag === 0) {
       setflag(1)
       getPositions();
@@ -139,18 +135,13 @@ const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePosition
   });
 
   return (
-    // <main>
-    <Container maxWidth="lg">
-      {/* <LogoutButton /> */}
+    <>
+    
 
-      <HeaderMUI />
+      <CNavbar page={'positionsidebar'}/>
 
 
       <Switch>
-        
-
-        {/* <Box sx={{ flexGrow: 1 }}> */}
-
           <Route
 
             path="/position/:id"
@@ -161,14 +152,9 @@ const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePosition
             path="/stock/:stockSymbol"
             render={(props) => <StockDetail {...props} />}
           />
-
           <Route exact={true} path="/" component={UserDetail} />
           <Route component={PositionSidebar} />
-          {/* <Route component={NotFound} /> */}
-        {/* </Box> */}
-
       </Switch>
-      {/* <nav> */}
 
 
       <Switch>
@@ -177,7 +163,7 @@ const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePosition
 
       </Switch>
 
-      {/* <div className='sidebar-label'>Stocks</div>
+      <div className='sidebar-label'>Stocks</div>
         {positions.slice(0).reverse().map((position) => {
           return (
             <NavLink key={position.id} to={`/position/${position.id}`}>
@@ -229,10 +215,9 @@ const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePosition
               </div>
             </NavLink>
           );
-        })} */}
-      {/* </nav> */}
-    </Container>
-    // </main>
+        })} 
+   
+     </>
   );
 };
 

@@ -2,100 +2,103 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { signUp } from './store/actions/authentication';
 import { createInstance } from './store/actions/ledger';
-import {Link} from 'react-router-dom'; 
+import { Link } from 'react-router-dom';
 import leaf from './tradingImg.png';
+import CNavbar from './globalcomponents/CNavbar';
+import { Box, Button, Container, Paper, Typography } from '@material-ui/core';
+import CLoader from './globalcomponents/CLoader';
 
 const SignUpForm = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [cashValue, setCashValue] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [globalState, setGlobalState] = useState({
+    formData: {
+      name: '',
+      email: '',
+      cashValue: '',
+      password: '',
+      confirmPassword: '',
+    },
 
+  })
+  const [loader, setLoader] = useState(false)
   const dispatch = useDispatch();
 
-  const updateProperty = (callback) => (e) => {
-    callback(e.target.value);
-  };
+
+  const handleChange = (name, value) => {
+    debugger
+    setGlobalState(p => ({ ...p, formData: { ...p.formData, [name]: value } }))
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    debugger
+    setLoader(true)
+    await dispatch(signUp(globalState.formData));
+    await dispatch(createInstance({
+      deposit: globalState.formData.cashValue
+    }));
 
-    const newUser = {
-        name,
-        email,
-        cashValue,
-      password,
-      confirmPassword,
-    };
-    
-    await dispatch(signUp(newUser));
-
-    const deposit = cashValue;
-    const payload ={
-      deposit
-    };
-    await dispatch(createInstance(payload));
-
-   
   };
 
   return (
     <>
-    <div className="logout-button-holder">
-    <Link to="/">
-          <button type="button">
-          Home Page
-          </button>
-        </Link>
-      
-    </div>
-    <main className="centered middled">
-      <img className='leaf-rotate' src={leaf} alt="img" />
-      <form onSubmit={handleSubmit}>
-        <input
-          type='text'
-          placeholder='Full Name'
-          value={name}
-          onChange={updateProperty(setName)}
-          required
-        />
-        <input
-          type='email'
-          placeholder='Email'
-          value={email}
-          onChange={updateProperty(setEmail)}
-          required
-        />
-         <input
-          type="number"
-          placeholder="Deposit Amount"
-          required
-          value={cashValue}
-          onChange={updateProperty(setCashValue)}
-        />
-        <input
-          type='password'
-          placeholder='Password'
-          value={password}
-          onChange={updateProperty(setPassword)}
-        />
-        <input
-          type='password'
-          placeholder='Confirm Password'
-          value={confirmPassword}
-          onChange={updateProperty(setConfirmPassword)}
-        />
-        <button type='submit'>Sign Up</button>
-        <Link to="/login">
-          <button type="button">
-          Log in
-          </button>
-        </Link>
-      </form>
-    </main>
+      {loader && <CLoader />}
+      <CNavbar page={'signup'} />
+      <div>
+        <img className='leaf-rotate' src={leaf} alt="img" />
+        <form onSubmit={handleSubmit}>
+          <input
+            type='text'
+            placeholder='Full Name'
+            name={'name'}
+            value={globalState.formData.name}
+            onChange={e => {
+              debugger
+              handleChange(e.target.name, e.target.value)
+            }}
+            required
+          />
+          <input
+            name={'email'}
+            type='email'
+            placeholder='Email'
+            value={globalState.formData.email}
+            onChange={e => handleChange(e.target.name, e.target.value)}
+            required
+          />
+          <input
+            name={'cashValue'}
+            type="text"
+            placeholder="Deposit Amount"
+            required
+            value={globalState.formData.cashValue}
+            onChange={e => handleChange(e.target.name, e.target.value)}
+          />
+          <input
+            name={'password'}
+            type='password'
+            placeholder='Password'
+            value={globalState.formData.password}
+            onChange={e => handleChange(e.target.name, e.target.value)}
+          />
+          <input
+            name={'confirmPassword'}
+            type='password'
+            placeholder='Confirm Password'
+            value={globalState.formData.confirmPassword}
+            onChange={e => handleChange(e.target.name, e.target.value)}
+          />
+          <Button onClick={handleSubmit}>Sign Up</Button>
+          <Link to="/login">
+            <Button>
+              Log in
+            </Button>
+          </Link>
+        </form>
+      </div>
     </>
   );
 };
+
+
+
 
 export default SignUpForm;

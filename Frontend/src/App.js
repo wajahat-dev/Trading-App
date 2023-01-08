@@ -14,8 +14,8 @@ import HomePage from "./homepage/HomePage";
 const App = ({ loadToken }) => {
   const token = useSelector(state => state.authentication.token);
   const [loaded, setLoaded] = useState(false);
-  // const needLogin = !token;
-  const needLogin = false;
+  const needLogin = !token;
+  // const needLogin = true;
 
   useEffect(() => {
     setLoaded(true);
