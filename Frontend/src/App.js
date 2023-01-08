@@ -4,7 +4,7 @@ import { BrowserRouter, Switch } from "react-router-dom";
 
 import { loadToken } from "./store/actions/authentication";
 import { ProtectedRoute, PrivateRoute } from "./util/route-util";
-import LoginPanel from "./LoginPanel";
+import LoginPanel from "./loginpage/LoginPanel";
 import PositionSidebar from "./PositionSidebar";
 import SignUpForm from './SignUpForm';
 

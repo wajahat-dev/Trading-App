@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { login } from "./store/actions/authentication";
+import { login } from "../store/actions/authentication";
 import { Link } from 'react-router-dom';
 import leaf from './tradingImg.png';
 import { AppBar, Box, Button, FormControl, Grid, Input, InputLabel, ListItem, Paper, Toolbar, Typography, styled } from "@material-ui/core";
 import { TextField } from "@mui/material";
-import CNavbar from "./globalcomponents/CNavbar";
+import CNavbar from "../globalcomponents/CNavbar";
 
 
 const LoginPanel = (props) => {
@@ -71,14 +71,6 @@ const LoginPanel = (props) => {
                 value={password}
             type={password}
               />
-              {/* <Input
-                type="password"
-                placeholder="Password"
-                value={password}
-                label="Password"
-
-                onChange={updatePassword}
-              /> */}
 
             </div>
             <div>
@@ -95,19 +87,8 @@ const LoginPanel = (props) => {
               </Link>
             </div>
           </Box>
-
-
-
-
         </Grid>
-
       </Grid>
-
-
-      {/* <main className="centered middled"> */}
-
-
-      {/* </main> */}
     </>
   );
 };
