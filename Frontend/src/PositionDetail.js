@@ -59,19 +59,17 @@ useEffect(() => {
      let stockSymbol = positions.stockSymbol
 
 let API_CALL = `https://financialmodelingprep.com/api/v3/stock_news?tickers=${stockSymbol}&limit=10&apikey=${API_Key}`;
-
-
 fetch(API_CALL)
 .then(
     function(response){
         return response.json()
     }
 )
+
 .then(
     function(data){
       setStories(data)
       setStoriesLoading(false)
-        
     }
 )
 }
@@ -86,8 +84,6 @@ fetch(API_CALL)
       const API_Key = process.env.REACT_APP_FMP_API_KEY;
       let stockSymbol1 = positions.stockSymbol
       let API_CALL = `https://financialmodelingprep.com/api/v3/profile/${stockSymbol1}?apikey=${API_Key}`;
-     
-    
       fetch(API_CALL)
       .then(
           function(response){
@@ -104,6 +100,7 @@ fetch(API_CALL)
           }
       )
     }
+
     fetchCompanyInfo();  
     //setinterval would go here return the clear interval
     //return ()=> clearInterval
@@ -122,8 +119,6 @@ fetch(API_CALL)
     let API_CALL = `https://financialmodelingprep.com/api/v3/historical-chart/30min/${stockSymbol}?apikey=${API_Key}`;
       let stockChartXValuesFunction = [];
       let stockChartYValuesFunction = [];
-    
-    
       fetch(API_CALL)
       .then(
           function(response){
@@ -131,22 +126,18 @@ fetch(API_CALL)
           }
       )
       .then(
-          function(data){
-           
+          function(data){ 
               // setVolume(data['Time Series (5min)'][0]["5. volume"]);
               setstockSymbol(positions.stockSymbol);
               for(let key in data){
                   stockChartXValuesFunction.push(data[key]['date']);
                   stockChartYValuesFunction.push(data[key]['open']);
               }
-              
-              
               setstockChartXValues(stockChartXValuesFunction)
               setstockChartYValues(stockChartYValuesFunction)
               console.log(stockChartYValuesFunction)
               setSoldPrice(positions.currentPrice)
               setIsLoading(false); 
-              
           }
       )
         }
@@ -183,7 +174,6 @@ fetch(API_CALL)
         // borderColor: 'rgba(255, 99, 132, 0.2)',
         borderColor: stockChartYValues[0] > stockChartYValues[timeIndex] ? 'green' : 'red',
         borderWidth: 4,
-        
       },
     ],
   }
@@ -213,7 +203,6 @@ fetch(API_CALL)
     }]
     },
   }
- 
   const handleSubmit = (e) => {
     e.preventDefault();
     const buyPrice = positions.currentPrice
@@ -234,14 +223,9 @@ fetch(API_CALL)
             setSuccess('')
            },8000);
   };
-
   const handleClick = async (e) => {
-    
     const boughtPrice = positions.buyPrice
-    
     const shares = positions.shares
-   
-    
     const payload ={
     stockSymbol,
     stockName,

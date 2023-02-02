@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "../store/actions/authentication";
 import { Link } from 'react-router-dom';
-import leaf from './tradingImg.png';
+import leaf from '../tradingImg.png';
 import { AppBar, Box, Button, FormControl, Grid, Input, InputLabel, ListItem, Paper, Toolbar, Typography, styled } from "@material-ui/core";
 import { TextField } from "@mui/material";
 import CNavbar from "../globalcomponents/CNavbar";
