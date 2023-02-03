@@ -46,17 +46,18 @@ const App = ({ loadToken }) => {
           component={SignUpForm}
         />
         <ProtectedRoute
-          path="/homepage"
-          exact={true}
-          needLogin={needLogin}
-          component={HomePage}
-        />
-        <ProtectedRoute
           path="/profile"
           exact={true}
           needLogin={needLogin}
           component={Profile}
         />
+        <ProtectedRoute
+          path="/homepage"
+          exact={true}
+          needLogin={needLogin}
+          component={HomePage}
+        />
+        
         <PrivateRoute
           path="/"
           component={PositionSidebar}

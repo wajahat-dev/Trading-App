@@ -10,7 +10,7 @@ import { logout } from '../store/actions/authentication';
 const CNavbar = ({ page }) => {
     const dispatch = useDispatch();
     const handleClick = () => {
-      dispatch(logout());
+        dispatch(logout());
     };
 
 
@@ -30,7 +30,7 @@ const CNavbar = ({ page }) => {
                     </Box>
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                        {pageType(page,handleClick)}
+                        {pageType(page, handleClick)}
                     </Box>
                 </Toolbar>
             </AppBar>
@@ -39,7 +39,7 @@ const CNavbar = ({ page }) => {
 };
 
 
-const pageType = (page,handleClick) => {
+const pageType = (page, handleClick) => {
 
 
     switch (page) {
@@ -89,6 +89,15 @@ const pageType = (page,handleClick) => {
             </>
         case 'positionsidebar':
             return <>
+
+                <Button
+                    color={'#fafafa'}
+                    to="/profile"
+                    component={RouterLink}
+                >
+                    Profile
+                </Button>
+
                 <Button
                     color={'#fafafa'}
                     to="/"
