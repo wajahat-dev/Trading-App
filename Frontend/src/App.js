@@ -9,6 +9,7 @@ import PositionSidebar from "./PositionSidebar";
 import SignUpForm from './SignUpForm';
 
 import HomePage from "./homepage/HomePage";
+import Profile from "./Profile";
 
 
 const App = ({ loadToken }) => {
@@ -49,6 +50,12 @@ const App = ({ loadToken }) => {
           exact={true}
           needLogin={needLogin}
           component={HomePage}
+        />
+        <ProtectedRoute
+          path="/profile"
+          exact={true}
+          needLogin={needLogin}
+          component={Profile}
         />
         <PrivateRoute
           path="/"
