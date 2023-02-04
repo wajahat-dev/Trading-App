@@ -19,6 +19,8 @@ import CNavbar from "./globalcomponents/CNavbar";
 import SearchContainer from "./search/SearchContainer";
 import Kyc from "./kyc";
 import Profile from "./Profile";
+import DataTable from "./DataTable";
+import { Graph } from "./Graph";
 
 const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePositionAndGet, updateWatchedStockAndGet }) => {
   const dispatch = useDispatch();
@@ -155,20 +157,22 @@ const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePosition
           render={(props) => <StockDetail {...props} />}
         />
 
-<Route
+        <Route
 
-                path="/profile"
-                render={(props) => <Profile />}
-            />
+          path="/profile"
+          render={(props) => <Profile />}
+        />
 
         <Route
 
-path="/kycc"
-render={(props) => <Kyc  />}
-/>
+          path="/kycc"
+          render={(props) => <Kyc />}
+        />
         <Route exact={true} path="/" component={UserDetail} />
         <Route component={PositionSidebar} />
       </Switch>
+      <Graph />
+      <DataTable />
 
 
       <Switch>
@@ -176,7 +180,6 @@ render={(props) => <Kyc  />}
         <SearchContainer />
 
       </Switch>
-
       <div className='sidebar-label'>Stocks</div>
       {positions.slice(0).reverse().map((position) => {
         return (

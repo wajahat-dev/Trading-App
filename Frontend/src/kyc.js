@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Redirect } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getOnePosition } from './store/actions/current-position';
 import { createPosition, exitPosition } from './store/actions/positions';
@@ -13,11 +13,27 @@ import Base64 from 'crypto-js/enc-base64';
 import enc_utf8 from 'crypto-js/enc-utf8';
 import Utf8 from 'crypto-js/enc-utf8';
 import sha256 from 'crypto-js/sha256';
+import { Button } from '@material-ui/core';
 
 
 
 const Kyc = ({ authenticated, setAuthenticated }) => {
     const token = useSelector(state => state.authentication.token);
+    const [globalState, setGlobalState] = useState({
+        formData: {
+
+        }
+    })
+    
+    const handleSubmit = (e)=>{
+
+    }
+
+   
+  const handleChange = (name, value) => {
+    debugger
+    setGlobalState(p => ({ ...p, formData: { ...p.formData, [name]: value } }))
+  }
 
 
     if (!token) {
@@ -25,8 +41,37 @@ const Kyc = ({ authenticated, setAuthenticated }) => {
     }
     return (
         <div>
-            jazz cash
+            
             <JazzCash />
+            <form onSubmit={handleSubmit}>
+          <input
+            type='text'
+            placeholder='Full Name'
+            name={'name'}
+            value={globalState.formData.name}
+            onChange={e => {
+              debugger
+              handleChange(e.target.name, e.target.value)
+            }}
+            required
+          />
+          <input
+            name={'email'}
+            type='email'
+            placeholder='Email'
+            value={globalState.formData.email}
+            onChange={e => handleChange(e.target.name, e.target.value)}
+            required
+          />
+          
+          <Button onClick={handleSubmit}>Sign Up</Button>
+          <Link to="/login">
+            <Button>
+              Log in
+            </Button>
+          </Link>
+        </form>
+
         </div>
     );
 }
@@ -153,7 +198,7 @@ const JazzCash = () => {
 
     return (
         <>
-            react
+            
         </>
     )
 }
