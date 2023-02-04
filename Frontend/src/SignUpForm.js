@@ -7,6 +7,7 @@ import leaf from './tradingImg.png';
 import CNavbar from './globalcomponents/CNavbar';
 import { Box, Button, Container, Paper, Typography } from '@material-ui/core';
 import CLoader from './globalcomponents/CLoader';
+import CNotification from './globalcomponents/CNotification';
 
 const SignUpForm = () => {
   const [globalState, setGlobalState] = useState({
@@ -17,7 +18,8 @@ const SignUpForm = () => {
       password: '',
       confirmPassword: '',
     },
-
+    message: '',
+    open: false
   })
   const [loader, setLoader] = useState(false)
   const dispatch = useDispatch();
@@ -31,16 +33,24 @@ const SignUpForm = () => {
   const handleSubmit = async (e) => {
     debugger
     setLoader(true)
-    await dispatch(signUp(globalState.formData));
+    try {
+      await dispatch(signUp(globalState.formData));
     await dispatch(createInstance({
       deposit: globalState.formData.cashValue
     }));
+    } catch (error) {
+      
+    }finally{
+    setLoader(false)
+
+    }
 
   };
 
   return (
     <>
       {loader && <CLoader />}
+      <CNotification isOpen={globalState.open} message={globalState.message}/>
       <CNavbar page={'signup'} />
       <div>
         <img className='leaf-rotate' src={leaf} alt="img" />

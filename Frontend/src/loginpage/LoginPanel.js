@@ -6,16 +6,33 @@ import leaf from '../tradingImg.png';
 import { AppBar, Box, Button, FormControl, Grid, Input, InputLabel, ListItem, Paper, Toolbar, Typography, styled } from "@material-ui/core";
 import { TextField } from "@mui/material";
 import CNavbar from "../globalcomponents/CNavbar";
+import CLoader from "../globalcomponents/CLoader";
+import CNotification from "../globalcomponents/CNotification";
 
 
 const LoginPanel = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
+  const [loader, setLoader] = useState(false)
+  const [globalState, setGlobalState] = useState({
+    message: '',
+    open: false
+  })
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    dispatch(login(email, password));
+    debugger
+    setLoader(true)
+    try {
+      e.preventDefault();
+      dispatch(login(email, password));
+      setGlobalState(p => ({...p, message: 'User not found', open: true}))
+    } catch (error) {
+      
+    }finally{
+    setLoader(false)
+      
+    }
   };
 
   const updateEmail = (e) => {
@@ -36,6 +53,10 @@ const LoginPanel = (props) => {
 
   return (
     <>
+      <CNotification isOpen={globalState.open} setOpen={e => setGlobalState(p=>({...p, open:e}))} message={globalState.message}/>
+
+      {loader && <CLoader />}
+      {/* <CLoader /> */}
       <CNavbar page={'login'} />
 
       <Grid container spacing={3}>

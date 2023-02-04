@@ -1,5 +1,6 @@
+import { useDispatch } from "react-redux";
 import { baseUrl } from "../../config";
-import {setCurrentUser} from './current-user'
+import { setCurrentUser } from './current-user'
 export const TOKEN_KEY = "TOKEN_KEY";
 export const SET_TOKEN = "SET_TOKEN";
 export const REMOVE_TOKEN = "REMOVE_TOKEN";
@@ -15,25 +16,34 @@ export const loadToken = () => async (dispatch) => {
 };
 
 export const login = (email, password) => async (dispatch) => {
-  
-  // const response = await fetch(`${baseUrl}/session`, {
-  //   method: "put",
-  //   headers: { "Content-Type": "application/json" },
-  //   body: JSON.stringify({ email, password }),
-  // });
+  // export const login = async (email, password)  => {
+  const response = await fetch(`https://localhost:7000/api/login`, {
+    method: "post",
+    "accept": '*/*',
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      "username": email,
+      "password": password,
+      "clientid": 0
+    }),
+  });
 
-  // if (response.ok) {
-  //   const { token, user: {id}} = await response.json();
-    
-  //   window.localStorage.setItem(TOKEN_KEY, token);
-  //   dispatch(setToken(token));
-  //   dispatch(setCurrentUser(id));
-  //   window.location.replace('/')
-  // }
-  
+  if (response.ok) {
+    const data = await response.json();
 
-  dispatch(setToken('xxxxxxxxxxxxxxxxxxxxxx'));
-  // window.location.replace('/')
+    if (data.messageBox.includes('successfully')) {
+      window.localStorage.setItem(TOKEN_KEY, data.token);
+      dispatch(setToken(data.token));
+      // dispatch(setCurrentUser(id));
+      window.location.replace('/')
+    } else {
+      return data.messageBox
+    }
+
+  }
+
+
+
 
 };
 
@@ -56,17 +66,27 @@ export const logout = () => async (dispatch, getState) => {
 
 
 export const signUp = (user) => async (dispatch) => {
-  // const response = await fetch(`${baseUrl}/users`, {
-  //   method: 'post',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify(user),
-  // });
-  // if (response.ok) {
-  //   const { token } = await response.json();
-  //   window.localStorage.setItem(TOKEN_KEY, token);
-  //   dispatch(setToken(token));
-  // }
-  window.localStorage.setItem(TOKEN_KEY, 'xyz');
-  dispatch(setToken('xyz'));
+  const response = await fetch(`https://localhost:7000/api/signup`, {
+    method: 'post',
+    headers: { 'Content-Type': 'application/json' },
+    "accept": '*/*',
+    body: JSON.stringify({
+      "userNameOrEmail": user.email,
+      "password": user.password,
+      "confirmPassword": user.confirmPassword
+    }),
+  });
+ 
+  if (response.ok) {
+    const data = await response.json();
+
+    if (data.messageBox.includes('successfully')) {
+      const { token } = await response.json();
+      window.localStorage.setItem(TOKEN_KEY, token);
+      dispatch(setToken(token));
+    } 
+
+  }
+
 
 };
