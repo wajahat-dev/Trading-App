@@ -16,6 +16,7 @@ namespace pobject.Core.DatabaseEnvironment
         public int ClientId { get; }
         public int ExecuteNonQuery(string sqlCommand, List<SqlParameter> parameter = null);
         public DataTable SqlView(string sqlCommand);
+        public DataTable SqlView(string sqlCommand,List<SqlParameter> param);
         public DataTable SqlView(string sqlCommand, string ConnectionString = "");
         public Signup_Response CreateNewUser(Signup_Request request);
     }

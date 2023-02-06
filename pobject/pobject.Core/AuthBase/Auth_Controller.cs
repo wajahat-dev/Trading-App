@@ -30,10 +30,10 @@ namespace pobject.Core.AuthBase
             int auth = httpContextAccessor.HttpContext!.Request.Headers["Authorization"].Count;
             string token = auth > 0 ? httpContextAccessor.HttpContext!.Request.Headers["Authorization"][0].Split(' ')[1].ToString() : "";
             //var userId = jwtUtils.ValidateToken(token);
-            string client = _user.FindFirst(ClaimTypes.Sid).Value;
-
-            //_clientId = items["cid"] != null ? items["cid"]!.ToString() : null;
-            //_userId = items["uid"] != null ? items["uid"]!.ToString() : null;
+            string UserId = _user.FindFirst(ClaimTypes.Sid).Value;
+            string EmailOrUsername = _user.FindFirst(ClaimTypes.Email).Value;
+            string Name = _user.FindFirst(ClaimTypes.Name).Value;
+            string GivenName = _user.FindFirst(ClaimTypes.GivenName).Value;
 
             //Sid = clientCode
             //var userId = jwtUtils.ValidateToken(token);
@@ -42,7 +42,7 @@ namespace pobject.Core.AuthBase
             //    // attach user to context on successful jwt validation
             //    //httpContext.Items["Co_User_name"] = "Abu Baker Khan Dada";
             //}
-            _database.InitConnection(client, "5");
+            _database.InitConnection(UserId,EmailOrUsername);
         }
     }
 }

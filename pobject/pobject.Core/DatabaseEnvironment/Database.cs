@@ -46,12 +46,11 @@ namespace pobject.Core.DatabaseEnvironment
                 {
                     using (SqlCommand cmd = new SqlCommand(sqlCommand, con))
                     {
-                        cmd.CommandType = CommandType.Text;
-
-
-                        //cmd.Parameters.AddWithValue("@Name", name);
-                        //cmd.Parameters.AddWithValue("@City", city);
-
+                        cmd.CommandType = CommandType.Text; 
+                        foreach (SqlParameter item in parameter)
+                        {
+                            cmd.Parameters.Add(item);
+                        }
                         con.Open();
                         rowsAffected = cmd.ExecuteNonQuery();
                         con.Close();
@@ -141,21 +140,24 @@ namespace pobject.Core.DatabaseEnvironment
             // return 
             return item;
         }
-        public void InitConnection(string clientCode, string userID)
+        public void InitConnection(string UserId,string EmailOrUsername)
         {
             connectionString = _configuration["ConnectionStrings:DefaultConnection"];
             connection = new SqlConnection(connectionString);
-            DataTable ClientConfiguration = SqlView($"SELECT c.ClientID AS ID, c.ClientCode, d.ConnectionString AS DatabaseConnection FROM ClientConfiguration c INNER JOIN DatabaseConfiguration d ON c.Database_ID = d.Database_ID WHERE UsernameOrEmail = '{clientCode}'");
+            List<SqlParameter> parameters= new List<SqlParameter>();
+            parameters.Add(new SqlParameter("@EmailOrUsername", EmailOrUsername));
+            parameters.Add(new SqlParameter("@UserId", UserId));
+            DataTable ClientConfiguration = SqlView($"SELECT * FROM tbl_Users WHERE UserId = @UserId and  EmailOrUsername = @EmailOrUsername",parameters);
 
             if (ClientConfiguration.Rows.Count > 0)
             {
-                CustomerConfiguration cc = SqlRow<CustomerConfiguration>(ClientConfiguration.Rows[0]);
-                if (cc != null)
-                {
-                    clientConfig = cc;
-                    connectionString = cc.DatabaseConnection;
-                    connection = new SqlConnection(connectionString);
-                }
+                //CustomerConfiguration cc = SqlRow<CustomerConfiguration>(ClientConfiguration.Rows[0]);
+                //if (cc != null)
+                //{
+                //    clientConfig = cc;
+                //    //connectionString = cc.DatabaseConnection;
+                //    connection = new SqlConnection(connectionString);
+                //}
             }
         }
         public Signup_Response CreateNewUser(Signup_Request request)

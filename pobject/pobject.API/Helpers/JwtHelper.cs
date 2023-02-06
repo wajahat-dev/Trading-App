@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
 using pobject.Core.Login;
 using pobject.Core.Signup;
 using System.IdentityModel.Tokens.Jwt;
@@ -19,38 +20,63 @@ namespace pobject.API.Helpers
         string? GetPhone_FromToken(string token);
         string? GetUserIdFromToken(string token);
         string? GetRoleFromToken(string token);
+        string? Get_Email_FromToken();
+        string? Get_UserId_FromToken();
 
 
         //2. If we Use HttpContextAccessor Package to reterive Token from Http Request
         //We can also Put Properties in Interface to get Output ,Its Interesting and Learning 
-        public string Phone { get; }
-        public string UserId { get; }
-        public string Role { get; }
-        public string Email { get; }
+        //public string Phone { get; }
+        public string UserId { get;  }
+        //public string Role { get; }
+        public string Email { get;  }
     }
     public class JwtHelper : IJwtHelper
     {
         IConfiguration _config;
-        public JwtHelper(IConfiguration config)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public JwtHelper(IConfiguration config, IHttpContextAccessor httpContextAccessor)
         {
             _config = config;
+            _httpContextAccessor = httpContextAccessor;
         }
         //NOTE:
-
-
         //[HttpContextAccessor] This is a package that will automatically reterive _http Request from pipline if found,
         //Therefor if http request is found then we reterive Token from 'Authorization' Key in Header
 
-        HttpContextAccessor _httpContextAccessor = new HttpContextAccessor();
+        //HttpContextAccessor _httpContextAccessor = new HttpContextAccessor();
 
-        public string Phone => throw new NotImplementedException();
-
-        public string UserId => throw new NotImplementedException();
-
-        public string Role => throw new NotImplementedException();
-
-        public string Email => throw new NotImplementedException();
-
+        private UpdatedClaims claims = null;
+        //public string Email => claims.Email;
+        //public string UserId => claims.UserId;  
+        //public string Phone => claims.Phone; 
+        public string Email { get
+            {
+                return Get_Email_FromToken();
+            } 
+        } 
+        public string UserId { 
+            get 
+            { 
+                return Get_UserId_FromToken(); 
+            }  
+        }
+        public string Get_Email_FromToken()
+        {
+            var _user = _httpContextAccessor.HttpContext!.User;
+            int auth = _httpContextAccessor.HttpContext!.Request.Headers["Authorization"].Count;
+            string token = auth > 0 ? _httpContextAccessor.HttpContext!.Request.Headers["Authorization"][0].Split(' ')[1].ToString() : "";
+            string EmailOrUsername = _user.FindFirst(ClaimTypes.Email).Value;
+            return EmailOrUsername;
+        }
+        public string Get_UserId_FromToken()
+        {
+            var _user = _httpContextAccessor.HttpContext!.User;
+            int auth = _httpContextAccessor.HttpContext!.Request.Headers["Authorization"].Count;
+            string token = auth > 0 ? _httpContextAccessor.HttpContext!.Request.Headers["Authorization"][0].Split(' ')[1].ToString() : "";
+            string EmailOrUsername = _user.FindFirst(ClaimTypes.Sid).Value;
+            return EmailOrUsername;
+        }
         public string GenerateToken(Login_Response user)
         {
             byte[] key = Convert.FromBase64String(_config["ApplicationSettings:SecretKey"]);
@@ -159,9 +185,19 @@ namespace pobject.API.Helpers
                 return null;
             }
         }
+
     }
 
     //2. We can also Use Interface like  GetPhoe(string token)
     //In above, we just pass token from controller's Request's Objcet and reterive phone from in it.         
     //implementing property of Interface 
+
+
+    public class UpdatedClaims
+    {
+        public string Email { get; set; }
+        public string UserId { get; set; }
+        public string Phone { get; set; }
+
+    }
 }

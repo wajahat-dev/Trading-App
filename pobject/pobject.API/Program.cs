@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using pobject.Core.Signup;
 using pobject.API.Helpers;
+using pobject.Core.UserProfile;
+using pobject.API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,21 +14,23 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 //your class interfaces 
-builder.Services.AddTransient<ISignup_Service, Signup_Service>();
 builder.Services.AddScoped<IDatabase, Database>();
-builder.Services.AddTransient<ILoginService, LoginService>();
-//builder.Services.AddTransient<IExpenseService, ExpenseService>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<IJwtHelper, JwtHelper>();
+builder.Services.AddTransient<ILoginService, LoginService>();
+builder.Services.AddTransient<ISignup_Service, Signup_Service>();
+builder.Services.AddTransient<IUserProfileService, UserProfileService>();
+//builder.Services.AddTransient<IExpenseService, ExpenseService>();
 //builder.Services.AddSingleton<IEmailService, EmailService>();
 
 
 
 //for sending Datatables Data, [not applicable for minimal API]
-//builder.Services.AddControllersWithViews().AddJsonOptions(options =>
-//{
-//    options.JsonSerializerOptions.Converters.Add(new DataTableJsonConverter());
-//});
+builder.Services.AddControllersWithViews().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.WriteIndented = true;
+    options.JsonSerializerOptions.Converters.Add(new DataTableJsonConverter());
+});
 
 //CORS
 builder.Services.AddCors(
