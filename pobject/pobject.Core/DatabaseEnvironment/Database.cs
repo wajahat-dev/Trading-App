@@ -46,10 +46,13 @@ namespace pobject.Core.DatabaseEnvironment
                 {
                     using (SqlCommand cmd = new SqlCommand(sqlCommand, con))
                     {
-                        cmd.CommandType = CommandType.Text; 
-                        foreach (SqlParameter item in parameter)
+                        cmd.CommandType = CommandType.Text;
+                        if (parameter != null)
                         {
-                            cmd.Parameters.Add(item);
+                            foreach (SqlParameter item in parameter)
+                            {
+                                cmd.Parameters.Add(item);
+                            }
                         }
                         con.Open();
                         rowsAffected = cmd.ExecuteNonQuery();
@@ -160,7 +163,7 @@ namespace pobject.Core.DatabaseEnvironment
                 //}
             }
         }
-        public Signup_Response CreateNewUser(Signup_Request request)
+        public Signup_Response CreateNewUser(Signup_Request request,string RoleCodeIfLoggedInAsAdmin)
         {
             Signup_Response response = new Signup_Response();
             DataTable User = new DataTable();
@@ -175,7 +178,7 @@ namespace pobject.Core.DatabaseEnvironment
                 {
                     if (request.Password.Equals(request.ConfirmPassword))
                     {
-
+                        string RoleCode = string.IsNullOrEmpty(RoleCodeIfLoggedInAsAdmin) ? "X" : RoleCodeIfLoggedInAsAdmin;
 
                         #region SECURITY
                         // Hash the password using SHA256
@@ -192,9 +195,9 @@ namespace pobject.Core.DatabaseEnvironment
 
                         string Query = $@"
 declare @UserNumber  as int = (select isnull((MAX(UserNumber)+1),1) from [tbl_users])
-insert into tbl_users(UserNumber,UserId,EmailOrUsername,Password,Password2,Salt) 
-values(@UserNumber,NEWID(),@EmailOrUsername,@Password,@Password2,@salt) 
-select UserNumber,EmailOrUsername,UserId,InActiveDate,createdOn from tbl_users where UserNumber = @UserNumber and EmailOrUsername = @EmailOrUsername";
+insert into tbl_users(UserNumber,UserId,EmailOrUsername,Password,Password2,Salt,RoleCode) 
+values(@UserNumber,NEWID(),@EmailOrUsername,@Password,@Password2,@salt,'{RoleCode}') 
+select UserNumber,EmailOrUsername,UserId,InActiveDate,createdOn,RoleCode from tbl_users where UserNumber = @UserNumber and EmailOrUsername = @EmailOrUsername";
                          
                         List<SqlParameter> param = new List<SqlParameter>(); 
                         param.Add(new SqlParameter("@EmailOrUsername", Username));
@@ -207,10 +210,23 @@ select UserNumber,EmailOrUsername,UserId,InActiveDate,createdOn from tbl_users w
                         if (User.Rows.Count > 0)
                         {
                             response.User = SqlRow<CreatedUser>(User.Rows[0]);
+
+                            if (Convert.ToString(User.Rows[0]["RoleCode"]) == "X")
+                            {
+                                response.User.IsEndUser = true;
+                            }
+                            else if (Convert.ToString(User.Rows[0]["RoleCode"]) == "B")
+                            {
+                                response.User.IsSubAdmin = true;
+                            }
+                            else if (Convert.ToString(User.Rows[0]["RoleCode"]) == "A")
+                            {
+                                response.User.IsAdmin = true;
+                            }
+
                             //changing column Names for sending frontEnd 
                             response.User.User_ID = User.Rows[0]["UserId"].ToString();
                             response.User.DisplayName = request.DisplayName;
-                            
                             response.MessageBox = "successfully created.";
                             response.Success = true;
                         }

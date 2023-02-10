@@ -27,15 +27,19 @@ namespace pobject.Core.Signup
         public string MessageBox { get; set; }
         public bool Success { get; set; }
         public string Clientid { get; set; }
-        public string Token { get; set; }
+        public string Token { get; set; } 
         public CreatedUser User { get; set; }
     }
     public class CreatedUser
     {
+        public bool IsAdmin { get; set; }
+        public bool IsEndUser { get; set; }
+        public bool IsSubAdmin { get; set; }
         public string EmailOrUsername { get; set; }
         public string DisplayName { get; set; }
         public string User_ID { get; set; }
         public DateTime InActiveDate { get; set; }
         public DateTime CreatedOn { get; set; }
+
     }
 }

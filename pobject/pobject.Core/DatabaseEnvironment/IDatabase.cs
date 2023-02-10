@@ -18,6 +18,6 @@ namespace pobject.Core.DatabaseEnvironment
         public DataTable SqlView(string sqlCommand);
         public DataTable SqlView(string sqlCommand,List<SqlParameter> param);
         public DataTable SqlView(string sqlCommand, string ConnectionString = "");
-        public Signup_Response CreateNewUser(Signup_Request request);
+        public Signup_Response CreateNewUser(Signup_Request request,string RoleCodeIfLoggedInAsAdmin=null);
     }
 }

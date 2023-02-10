@@ -7,6 +7,7 @@ using pobject.Core.Signup;
 using pobject.API.Helpers;
 using pobject.Core.UserProfile;
 using pobject.API.Middlewares;
+using pobject.Core.Roles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,7 @@ builder.Services.AddSingleton<IJwtHelper, JwtHelper>();
 builder.Services.AddTransient<ILoginService, LoginService>();
 builder.Services.AddTransient<ISignup_Service, Signup_Service>();
 builder.Services.AddTransient<IUserProfileService, UserProfileService>();
+builder.Services.AddTransient<IRoles_Services, Roles_Services>();
 //builder.Services.AddTransient<IExpenseService, ExpenseService>();
 //builder.Services.AddSingleton<IEmailService, EmailService>();
 

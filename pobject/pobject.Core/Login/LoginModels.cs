@@ -19,7 +19,7 @@ namespace pobject.Core.Login
     public class Login_Response
     {
         public bool Success { get; set; }
-        public string MessageBox { get; set; }
+        public string MessageBox { get; set; } 
         public CreatedUser User { get; set; }
         public int ClientId { get; set; }
         public string Token { get; set; }

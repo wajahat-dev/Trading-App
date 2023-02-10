@@ -97,10 +97,27 @@ namespace pobject.Core.Login
                     if (IsFound)
                     {
                         response.User = SqlRow<CreatedUser>(result.Rows[0]);
+
+                        //X measne End Users
+                        //A Means Main Admin [Creator]
+                        //B Means Sub-Admins
+                        if (Convert.ToString(result.Rows[0]["RoleCode"]) == "A")
+                        {
+                            response.User.IsAdmin = true;
+                        }
+                        else if (Convert.ToString(result.Rows[0]["RoleCode"]) == "B")
+                        {
+                            response.User.IsSubAdmin = true;
+                        }
+                        else
+                        {
+                            //End User
+                            response.User.IsEndUser = true;   
+                        }
+
                         response.User.User_ID = Convert.ToString(result.Rows[0]["UserId"]);
                         response.User.DisplayName = response.User.EmailOrUsername.Length > 5 ? response.User.EmailOrUsername.Substring(0, 5) : response.User.EmailOrUsername;
                         response.Success = true;
-                        //token will build in controller 
                         response.MessageBox = "successfully Logged In...";
                     }
                     else
