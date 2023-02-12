@@ -17,7 +17,7 @@ export const createInstance = (data) => async (dispatch, getState) => {
     });
   
     if (response.ok) {
-      dispatch(getHistoricalData());
+      // dispatch(getHistoricalData());
     }
   };
   
@@ -28,13 +28,13 @@ export const createInstance = (data) => async (dispatch, getState) => {
     const {
       authentication: { token },
     } = getState();
-    const response = await fetch(`${baseUrl}/ledger`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (response.ok) {
-      const historyList = await response.json();
-      dispatch(load(historyList));
-    }
+    // const response = await fetch(`${baseUrl}/ledger`, {
+    //   headers: {
+    //     Authorization: `Bearer ${token}`,
+    //   },
+    // });
+    // if (response.ok) {
+    //   const historyList = await response.json();
+    //   dispatch(load(historyList));
+    // }
   };

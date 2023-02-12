@@ -78,6 +78,7 @@ const [stockChartYValues, setstockChartYValues] = useState([]);
       backgroundColor: 'rgba(53, 162, 235, 0.5)',
       yAxisID: 'y1',
     },
+    
   ],
 };
 

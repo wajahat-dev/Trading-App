@@ -43,7 +43,7 @@ const Kyc = ({ authenticated, setAuthenticated }) => {
         <div>
             
             <JazzCash />
-            <form onSubmit={handleSubmit}>
+            {/* <form onSubmit={handleSubmit}>
           <input
             type='text'
             placeholder='Full Name'
@@ -70,7 +70,7 @@ const Kyc = ({ authenticated, setAuthenticated }) => {
               Log in
             </Button>
           </Link>
-        </form>
+        </form> */}
 
         </div>
     );
@@ -165,12 +165,12 @@ const JazzCash = () => {
                 statetmp.pp_SecureHash = hmacDigest
                 // pp_BillReference= 'T' + date,
                 fetch(
-                    'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction', {
+                    'http://localhost:3001', {
                     method: "POST",
-                    mode:'cors',
+                    // mode: 'cors',
                     headers: {
-
-                        'Accept': '*/*',
+                        // 'Access-Control-Allow-Origin': '*',
+                        // 'Accept': '*/*',
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(statetmp)

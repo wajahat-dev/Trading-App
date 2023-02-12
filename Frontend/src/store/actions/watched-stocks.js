@@ -29,19 +29,23 @@ export const createWatchedStock = (data) => async (dispatch, getState) => {
 
 
 export const getWatchedStocks = () => async (dispatch, getState) => {
-  const {
-    authentication: { token },
-  } = getState();
-  const response = await fetch(`${baseUrl}/watchlist`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (response.ok) {
-    const watchedList = await response.json();
-    dispatch(load(watchedList));
-  } 
+  try {
+    const {
+      authentication: { token },
+    } = getState();
+    const response = await fetch(`${baseUrl}/watchlist`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  
+    if (response.ok) {
+      const watchedList = await response.json();
+      dispatch(load(watchedList));
+    } 
+  } catch (error) {
+    console.log(error)
+  }
 };
 
 export const exitWatchedStock = (id) => async (dispatch, getState) => {
