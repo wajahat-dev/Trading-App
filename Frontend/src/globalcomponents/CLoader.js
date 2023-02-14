@@ -1,11 +1,14 @@
-import * as React from 'react';
+import { Backdrop } from '@material-ui/core';
 import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
+import * as React from 'react';
 
-export default function CLoader() {
+export default function CLoader({ enabled }) {
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CircularProgress />
-    </Box>
+    <Backdrop open={enabled}
+      style={{ zIndex: 1 }}
+      sx={{ color: '#fff' }}
+    >
+      <CircularProgress style={{ color: ' #FFFFFF' }} />
+    </Backdrop>
   );
 }

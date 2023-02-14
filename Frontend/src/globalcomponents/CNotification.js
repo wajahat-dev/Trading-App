@@ -1,53 +1,31 @@
-import * as React from 'react';
-import Button from '@mui/material/Button';
+import { Alert } from '@mui/material';
 import Snackbar from '@mui/material/Snackbar';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
+import * as React from 'react';
 import { useEffect } from 'react';
-import { Switch } from 'react-router-dom';
 
-export default function CNotification({ isOpen, message, setOpen }) {
-    const [open, setOpen1] = React.useState(false);
+export default function CNotification({ isOpen, message, setOpen,varient='info' }) {
+    const [openLocal, setOpenLocal] = React.useState(false);
 
-    useEffect(()=>{
-        setOpen1(isOpen)
-    },[isOpen, open])
+    useEffect(() => {
+        setOpenLocal(isOpen)
+    }, [isOpen, openLocal])
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;
         }
         setOpen(false)
-        setOpen1(false);
+        setOpenLocal(false);
     };
-
-    const action = (
-        <React.Fragment>
-            <Button color="secondary" size="small" onClick={handleClose}>
-                UNDO
-            </Button>
-            <IconButton
-                size="small"
-                aria-label="close"
-                color="inherit"
-                onClick={handleClose}
-            >
-                <CloseIcon fontSize="small" />
-            </IconButton>
-        </React.Fragment>
-    );
-
     return (
         <div>
-   
-
             <Snackbar
-                open={open}
+                open={openLocal}
                 autoHideDuration={3000}
                 onClose={handleClose}
-                message={message}
-                // action={action}
-            />
+            >
+                <Alert severity={varient}>{message}</Alert>
+            </Snackbar>
         </div>
     );
 }

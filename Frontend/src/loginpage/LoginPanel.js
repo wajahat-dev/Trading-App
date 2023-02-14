@@ -1,13 +1,14 @@
+import { Button, Grid, Paper, styled } from "@material-ui/core";
+import { TextField } from "@mui/material";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { login } from "../store/actions/authentication";
-import { Link } from 'react-router-dom';
-import leaf from '../tradingImg.png';
-import { AppBar, Box, Button, FormControl, Grid, Input, InputLabel, ListItem, Paper, Toolbar, Typography, styled } from "@material-ui/core";
-import { TextField } from "@mui/material";
-import CNavbar from "../globalcomponents/CNavbar";
+import { Link, useHistory } from 'react-router-dom';
 import CLoader from "../globalcomponents/CLoader";
+import CNavbar from "../globalcomponents/CNavbar";
 import CNotification from "../globalcomponents/CNotification";
+import { TOKEN_KEY, setToken } from "../store/actions/authentication";
+import leaf from '../tradingImg.png';
+import {CItem} from "../globalcomponents/globalCss";
 
 
 const LoginPanel = (props) => {
@@ -19,19 +20,43 @@ const LoginPanel = (props) => {
     message: '',
     open: false
   })
+  let history = useHistory();
 
   const handleSubmit = async (e) => {
     debugger
+    e.preventDefault()
     setLoader(true)
     try {
-      e.preventDefault();
-      dispatch(login(email, password));
-      setGlobalState(p => ({...p, message: 'User not found', open: true}))
+      const response = await fetch(`https://localhost:7000/api/login`, {
+        method: "post",
+        "accept": '*/*',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          "username": email,
+          "password": password,
+          "clientid": 0
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.messageBox) {
+          if (data.messageBox.includes('successfully')) {
+            setGlobalState(p => ({ ...p, message: data.messageBox, open: true }))
+            window.localStorage.setItem(TOKEN_KEY, data.token);
+            dispatch(setToken(data.token));
+            // window.location.replace('/')
+            history.push("/");
+          } else {
+            setGlobalState(p => ({ ...p, message: data.messageBox, open: true }))
+          }
+        }
+      }
+
     } catch (error) {
-      
-    }finally{
-    setLoader(false)
-      
+      console.log(error)
+    } finally {
+      setLoader(false)
     }
   };
 
@@ -43,71 +68,58 @@ const LoginPanel = (props) => {
     setPassword(e.target.value);
   };
 
-  const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  }));
+
 
   return (
     <>
-      <CNotification isOpen={globalState.open} setOpen={e => setGlobalState(p=>({...p, open:e}))} message={globalState.message}/>
-
-      {loader && <CLoader />}
-      {/* <CLoader /> */}
+      <CNotification isOpen={globalState.open} setOpen={e => setGlobalState(p => ({ ...p, open: e }))} message={globalState.message} />
+      <CLoader enabled={loader} />
       <CNavbar page={'login'} />
-
-      <Grid container spacing={3}>
+      <Grid container spacing={3} style={{ marginTop: 7 }}>
         <Grid item xs={7}>
-          <img className='leaf-rotate' src={leaf} alt="img" />
+          <CItem>
+            <img className='leaf-rotate' src={leaf} alt="img" />
+          </CItem>
         </Grid>
         <Grid item xs={5}>
 
-          <Box
-            component="form"
-            sx={{
-              '& .MuiTextField-root': { m: 3, width: '25ch' },
-            }}
-            noValidate
-            autoComplete="off"
-          >
+          <Grid item xs={8}>
+            <TextField
+              required
+              fullWidth
+              id="outlined-required"
+              label="Email"
+              onChange={updateEmail}
+              value={email}
 
-            <div>
-              <TextField
-                required
-                id="outlined-required"
-                label="Email"
-                onChange={updateEmail}
-                value={email}
-
-              />
-              
-              <TextField
-                required
-                id="outlined-required"
-                label="Password"
-                onChange={updatePassword}
-                value={password}
-            type={password}
-              />
-
-            </div>
-            <div>
-              <Link to="/" underline="none"
-              >
-                <Button type="submit"
-                  onClick={handleSubmit}
-                >Log in</Button>
-              </Link>
-              <Link to="/signup"  underline="none">
-                <Button type="button" >
-                  Sign Up
-                </Button>
-              </Link>
-            </div>
-          </Box>
+            />
+          </Grid>
+          <Grid item xs={8} style={{ marginTop: 7 }}>
+            <TextField
+              required
+              fullWidth
+              id="outlined-required"
+              label="Password"
+              onChange={updatePassword}
+              value={password}
+              type={password}
+            />
+          </Grid>
+          <div>
+          </div>
+          <div>
+            <Link to="/" style={{ textDecoration: 'none' }}
+            >
+              <Button
+                onClick={handleSubmit}
+              >Log in</Button>
+            </Link>
+            <Link to="/signup" style={{ textDecoration: 'none' }}>
+              <Button type="button" >
+                Sign Up
+              </Button>
+            </Link>
+          </div>
         </Grid>
       </Grid>
     </>

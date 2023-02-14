@@ -1,31 +1,28 @@
-import { AppBar, Box, Button, Switch, Toolbar, Typography } from '@material-ui/core';
+import { AppBar, Box, Button, Toolbar, Typography } from '@material-ui/core';
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { Link, Route } from 'react-router-dom';
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useHistory } from "react-router-dom";
 import { logout } from '../store/actions/authentication';
-import Profile from '../Profile';
-import Kyc from '../kyc';
-
+import AccountMenu from '../AccountMenu';
 
 
 const CNavbar = ({ page }) => {
     const dispatch = useDispatch();
+    let history = useHistory();
+
     const handleClick = () => {
         dispatch(logout());
     };
-
-
     return (
-        <>  
-        <Box sx={{ flexGrow: 1 }}>
+        <>
+            <Box sx={{ flexGrow: 1 }}>
                 <AppBar position="static">
                     <Toolbar>
                         <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                             <Typography
                                 variant="h6"
                                 noWrap
-                                component="div"
+                                onClick={() => history.push("/")}
                                 sx={{ display: { xs: 'none', sm: 'block' } }}
                             >
                                 Forex Marketing
@@ -38,15 +35,13 @@ const CNavbar = ({ page }) => {
                     </Toolbar>
                 </AppBar>
             </Box>
-         
+
         </>
     );
 };
 
 
 const pageType = (page, handleClick) => {
-
-
     switch (page) {
         case 'login':
             return <>
@@ -94,38 +89,7 @@ const pageType = (page, handleClick) => {
             </>
         case 'positionsidebar':
             return <>
-
-                <Button
-                    color={'#fafafa'}
-                    to="/kycc"
-                    component={RouterLink}
-                >
-                    Kyc
-                </Button><Button
-                    color={'#fafafa'}
-                    to="/profile"
-                    component={RouterLink}
-                >
-                    Profile
-                </Button>
-
-
-                <Button
-                    color={'#fafafa'}
-                    to="/"
-                    component={RouterLink}
-                >
-                    Deshboard
-                </Button>
-
-                <Button
-                    color={'#fafafa'}
-                    to="/homepage"
-                    onClick={handleClick}
-                >
-                    Log Out
-                </Button>
-
+                <AccountMenu logoutHandler={handleClick} />
             </>
         default:
             return <></>
