@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import { logout } from '../store/actions/authentication';
 import AccountMenu from '../AccountMenu';
-
+import { Link } from 'react-router-dom';
 
 const CNavbar = ({ page }) => {
     const dispatch = useDispatch();
@@ -18,12 +18,20 @@ const CNavbar = ({ page }) => {
             <Box sx={{ flexGrow: 1 }}>
                 <AppBar position="static">
                     <Toolbar>
+                       
                         <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                             <Typography
                                 variant="h6"
                                 noWrap
                                 onClick={() => history.push("/")}
-                                sx={{ display: { xs: 'none', sm: 'block' } }}
+                                sx={{
+                                    display: { xs: 'none', sm: 'block' },
+                                    transition: 'color 0.2s ease-in-out',
+                                    '&:hover': {
+                                        color: 'primary.main',
+                                        cursor: 'pointer'
+                                    }
+                                }}
                             >
                                 Forex Marketing
                             </Typography>

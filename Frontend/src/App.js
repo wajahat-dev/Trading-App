@@ -10,6 +10,7 @@ import SignUpForm from './SignUpForm';
 
 import HomePage from "./homepage/HomePage";
 import Profile from "./Profile";
+import JazzCashCheckout from "./Banks/jazzcash";
 
 
 const App = ({ loadToken }) => {
@@ -45,6 +46,7 @@ const App = ({ loadToken }) => {
           needLogin={needLogin}
           component={SignUpForm}
         />
+        
        
         <ProtectedRoute
           path="/homepage"

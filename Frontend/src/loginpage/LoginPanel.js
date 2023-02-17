@@ -9,6 +9,8 @@ import CNotification from "../globalcomponents/CNotification";
 import { TOKEN_KEY, setToken } from "../store/actions/authentication";
 import leaf from '../tradingImg.png';
 import {CItem} from "../globalcomponents/globalCss";
+import CFooter from "../globalcomponents/CFooter";
+import { setUserDetails } from "../store/reducers/trades";
 
 
 const LoginPanel = (props) => {
@@ -45,6 +47,7 @@ const LoginPanel = (props) => {
             setGlobalState(p => ({ ...p, message: data.messageBox, open: true }))
             window.localStorage.setItem(TOKEN_KEY, data.token);
             dispatch(setToken(data.token));
+            dispatch(setUserDetails(data.user))
             // window.location.replace('/')
             history.push("/");
           } else {
@@ -122,6 +125,7 @@ const LoginPanel = (props) => {
           </div>
         </Grid>
       </Grid>
+      <CFooter />
     </>
   );
 };

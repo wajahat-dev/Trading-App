@@ -187,7 +187,7 @@ td.centered {
 
 .position-detail {
   flex: 1 0 0;
-  overflow-y: auto;
+  /* overflow-y: auto; */
 }
 
 .position-detail h1 {

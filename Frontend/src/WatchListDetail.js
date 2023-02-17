@@ -290,7 +290,7 @@ const WatchListDetail = ({ watchedStocks, getOneWatchedStock, createPosition }) 
               }}>1 month</Button>
           </div>
         </div>
-        <div className='your-position'>
+        {/* <div className='your-position'>
 
           <h2>Buy</h2>
           <form onSubmit={handleSubmit}>
@@ -311,7 +311,7 @@ const WatchListDetail = ({ watchedStocks, getOneWatchedStock, createPosition }) 
           </form>
 
 
-        </div>
+        </div> */}
       </div>
       <div className='newsFeed'>
         <h2>Stock Information</h2>

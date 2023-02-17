@@ -7,6 +7,7 @@ import currentPosition from "./reducers/current-position";
 import currentUser from "./reducers/current-user";
 import watchedStocks from './reducers/watched-stocks';
 import ledger from './reducers/ledger';
+import trades from './reducers/trades';
 import currentWatchedStock from './reducers/current-watched-stock'
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -18,7 +19,8 @@ const reducer = combineReducers({
   currentUser,
   watchedStocks,
   currentWatchedStock,
-  ledger
+  ledger,
+  trades
 });
 
 const configureStore = (initialState) => {

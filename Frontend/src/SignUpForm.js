@@ -9,6 +9,7 @@ import CNotification from './globalcomponents/CNotification';
 import { CItem } from './globalcomponents/globalCss';
 import { TOKEN_KEY, setToken } from './store/actions/authentication';
 import leaf from './tradingImg.png';
+import CFooter from './globalcomponents/CFooter';
 
 const INITIAL_USER = {
   name: '',
@@ -155,6 +156,7 @@ const SignUpForm = () => {
 
         </Grid>
       </Grid>
+      <CFooter />
 
     </>
   );
