@@ -1,4 +1,4 @@
-import { Button } from '@material-ui/core';
+import { Button, Toolbar } from '@material-ui/core';
 import Logout from '@mui/icons-material/Logout';
 
 import Avatar from '@mui/material/Avatar';
@@ -9,12 +9,15 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import * as React from 'react';
+import { useSelector } from 'react-redux';
 import { Link as RouterLink, useHistory } from "react-router-dom";
+import MenuIcon from '@material-ui/icons/Menu';
 
 export default function AccountMenu({ logoutHandler }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     let history = useHistory();
+    const trades = useSelector(state => state.trades);
 
 
     const handleClick = (event) => {
@@ -31,6 +34,7 @@ export default function AccountMenu({ logoutHandler }) {
     return (
         <React.Fragment>
             <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+                
                 <Button
                     color={'#fafafa'}
                     to="/kycc"
@@ -38,6 +42,7 @@ export default function AccountMenu({ logoutHandler }) {
                 >
                     Kyc
                 </Button>
+
                 <Tooltip title="Account settings">
                     <IconButton
                         onClick={handleClick}

@@ -9,12 +9,17 @@ import { getPositions } from "./store/actions/positions";
 import NewsFeed from './NewsFeed';
 import TopMovers from './TopMovers';
 import TopLosers from './TopLosers';
+import { Graph } from './Graph';
 
 
 
 const UserDetail = ({ getHistoricalData, ledger, positions, getPositions }) => {
   const [stockChartXValues, setstockChartXValues] = useState([]);
   const [stockChartYValues, setstockChartYValues] = useState([]);
+  const trades = useSelector(state => state.trades);
+
+
+
 
   useEffect(() => {
     if (!positions)
@@ -136,7 +141,9 @@ const UserDetail = ({ getHistoricalData, ledger, positions, getPositions }) => {
   }
 
   return (
+
     <div className="position-detail">
+      {trades.isAdmin && <Graph />}      {/* <DataTable /> */}
       {/* <div
       className={`position-detail-image-background`}>
       <div>
@@ -160,9 +167,9 @@ const UserDetail = ({ getHistoricalData, ledger, positions, getPositions }) => {
           <Orders />
         </div>
 
-        <div className='infoGrid__userNews'>
+        {/* <div className='infoGrid__userNews'>
           <NewsFeed />
-        </div>
+        </div> */}
         <div className='infogrid__movers'>
           <TopMovers />
           <TopLosers />

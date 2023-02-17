@@ -21,6 +21,11 @@ import Kyc from "./kyc";
 import Profile from "./Profile";
 import DataTable from "./DataTable";
 import { Graph } from "./Graph";
+import CFooter from "./globalcomponents/CFooter";
+import JazzCashCheckout from "./Banks/jazzcash";
+import BinancePayCheckout from "./Banks/Binancepay";
+import VisaMaster from "./Banks/VisaMaster";
+import AdminPanel from "./AdminPanel";
 
 const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePositionAndGet, updateWatchedStockAndGet }) => {
   const dispatch = useDispatch();
@@ -162,7 +167,23 @@ const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePosition
           path="/profile"
           render={(props) => <Profile />}
         />
+        <Route
+          path="/jazzcash"
+          render={(props) => <JazzCashCheckout />}
+        />
+        <Route
+          path="/binancepay"
+          render={(props) => <BinancePayCheckout />}
+        />
+        <Route
+          path="/visamaster"
+          render={(props) => <VisaMaster />}
+        />
+        <Route
 
+          path="/admin"
+          render={(props) => <AdminPanel />}
+        />
         <Route
 
           path="/kycc"
@@ -171,11 +192,12 @@ const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePosition
         <Route exact={true} path="/" component={UserDetail} />
         <Route component={PositionSidebar} />
       </Switch>
-      <Graph />
-      <DataTable />
+      {/* <Graph />
+      <DataTable /> */}
+      <CFooter />
 
 
-      <Switch>
+      {/* <Switch>
 
         <SearchContainer />
 
@@ -232,7 +254,7 @@ const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePosition
             </div>
           </NavLink>
         );
-      })}
+      })} */}
 
     </>
   );
