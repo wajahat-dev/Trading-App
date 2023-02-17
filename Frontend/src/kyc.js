@@ -128,10 +128,10 @@ const Kyc = ({ authenticated, setAuthenticated }) => {
     const classes = useStyles();
     const history = useHistory();
 
-    const handleClick = (title,slug) => {
+    const handleClick = (title, slug) => {
         debugger
         history.push({
-            pathname: '/'+slug,
+            pathname: '/' + slug,
             state: { title: title },
         });
     };
@@ -142,8 +142,7 @@ const Kyc = ({ authenticated, setAuthenticated }) => {
     }
     return (
 
-        <>
-            <JazzCash />
+        <>    
 
             <div className={classes.root}>
                 <Grid container spacing={2}>
@@ -217,136 +216,6 @@ const Kyc = ({ authenticated, setAuthenticated }) => {
     );
 }
 
-const JazzCash = () => {
-
-    // const JAZZCASH_HTTP_POST_URL = 
-    const INTEGRITY_KEY = "8scc0yux1z"
-    var arr = []
-
-    const [state, setState] = useState({
-        "pp_Version": "1.1",
-        "pp_BankID": "",
-        pp_ProductID: '',
-        pp_Language: "EN",
-        pp_SubMerchantID: "",
-        pp_TxnRefNo: "",
-        pp_Amount: "10000",
-        pp_Password: '',
-        pp_CNIC: '',
-        pp_MobileNumber: '',
-        pp_MerchantID: '',
-        pp_TxnType: '',
-        pp_DiscountedAmount: "",
-        pp_TxnCurrency: "PKR",
-        pp_TxnDateTime: "",
-        pp_BillReference: "BillRef",
-        pp_Description: "Hello",
-        pp_TxnExpiryDateTime: "",
-        pp_SecureHash: "",
-        ppmpf_1: "",
-        ppmpf_2: "",
-        ppmpf_3: "",
-        ppmpf_4: "",
-        ppmpf_5: "",
-        pp_ReturnURL: ''
-    })
-
-    const secureHash = (data) => {
-        const ordered = Object.keys(data).sort().reduce(
-            (obj, key) => {
-                obj[key] = data[key];
-                return obj;
-            },
-            {}
-        );
-        var hash = ""
-        Object.entries(ordered).forEach(
-            ([key, value]) => {
-                if (value != "") {
-                    hash += '&' + value
-                }
-            }
-        );;
-        return hash;
-    }
-
-    const convertToSHA = async (string) => {
-        await sha256(string).then((hash) => {
-            console.log(hash);
-        });
-    };
-    useEffect(() => {
-        const caller = () => {
-
-
-            try {
-                debugger
-                var date = new Date()
-                date = date.getFullYear() + ("0" + (date.getMonth())).slice(-2) + ("0" + date.getDate()).slice(-2) + ("0" + date.getHours()).slice(-2) + ("0" + date.getMinutes()).slice(-2) + ("0" + date.getSeconds()).slice(-2)
-                var date1 = new Date()
-                date1.setHours(date1.getHours() + 1);
-                date1 = date1.getFullYear() + ("0" + (date1.getMonth())).slice(-2) + ("0" + date1.getDate()).slice(-2) + ("0" + date1.getHours()).slice(-2) + ("0" + date1.getMinutes()).slice(-2) + ("0" + date1.getSeconds()).slice(-2)
-                var tXID = 'T' + date
-
-
-
-                var hash = secureHash({ ...state })
-                hash = INTEGRITY_KEY + hash; //Integritykey + hashString
-                const hmacDigest = hmacSHA256(hash, INTEGRITY_KEY).toString();
-
-                const statetmp = { ...state }
-                statetmp.pp_TxnDateTime = date
-                statetmp.pp_TxnExpiryDateTime = date1
-                statetmp.pp_TxnRefNo = 'T' + date
-                statetmp.pp_SecureHash = hmacDigest
-                console.log('wwwwww', process)
-                statetmp.pp_Password = REACT_APP_pp_Password
-                statetmp.pp_CNIC = REACT_APP_pp_CNIC
-                statetmp.pp_MobileNumber = REACT_APP_pp_MobileNumber
-                statetmp.pp_MerchantID = REACT_APP_pp_MerchantID
-                statetmp.pp_TxnType = REACT_APP_pp_MerchantID
-
-
-
-                // pp_BillReference= 'T' + date,
-                fetch(
-                    'http://localhost:3001', {
-                    method: "POST",
-                    // mode: 'cors',
-                    headers: {
-                        // 'Access-Control-Allow-Origin': '*',
-                        // 'Accept': '*/*',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(statetmp)
-                })
-                    .then(function (response) {
-
-                        return response.json();
-                    })
-                    .then(function (data) {
-                        setState(statetmp)
-                        console.log(data.pp_ResponseMessage)
-                    }).catch(err => {
-                        console.log(err)
-                    })
-            } catch (error) {
-                console.log('failed to jazzcash')
-            }
-        }
-        caller()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-
-
-
-
-    return (
-        <>
-
-        </>
-    )
-}
 
 
 
