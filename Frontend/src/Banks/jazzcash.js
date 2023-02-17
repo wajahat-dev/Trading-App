@@ -141,9 +141,10 @@ function JazzCashCheckout() {
         statetmp.pp_TxnRefNo = 'T' + date
         statetmp.pp_SecureHash = hmacDigest
         console.log('wwwwww', process)
+
         statetmp.pp_Password = REACT_APP_pp_Password
-        statetmp.pp_CNIC = REACT_APP_pp_CNIC
-        statetmp.pp_MobileNumber = REACT_APP_pp_MobileNumber
+        statetmp.pp_CNIC = cnicNumber
+        statetmp.pp_MobileNumber = phoneNumber
         statetmp.pp_MerchantID = REACT_APP_pp_MerchantID
         statetmp.pp_TxnType = REACT_APP_pp_MerchantID
         // pp_BillReference= 'T' + date,
