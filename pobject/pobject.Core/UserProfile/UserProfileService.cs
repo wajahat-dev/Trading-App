@@ -37,7 +37,7 @@ WHERE a.EmailOrUsername = @UsernameOrEmail AND a.USERID = @UserId",param);
             {
                 return null;
             }
-            return null;
+            return new DataTable();
         }
 
         public UserProfile_Response StoreUserProfile(UserProfile_Request request, Internal_JWT_Request jwt = null)
@@ -51,15 +51,38 @@ WHERE a.EmailOrUsername = @UsernameOrEmail AND a.USERID = @UserId",param);
                 sqlParameters.Add(new SqlParameter("@PHONE", request.PHONE));
                 sqlParameters.Add(new SqlParameter("@COUNTRY", request.COUNTRY));
                 sqlParameters.Add(new SqlParameter("@DOB", request.DOB));
+                string block = "";
+                if (request.BlockNow)
+                {
+                    block = " ,INACTIVEDATE = SYSDATETIME() ";
+                }
                 //sqlParameters.Add(new SqlParameter("@EMAIL", request.Email));    //secondary Email
 
                 //Logged In User
                 sqlParameters.Add(new SqlParameter("@EmailOrUsername", jwt.Email));    
-                sqlParameters.Add(new SqlParameter("@UserId", jwt.UserId));    
-                String Query = $@"UPDATE tbl_UserInfo 
-SET CNIC = @CNIC , DISPLAYNAME = @DISPLAYNAME, PHONE = @PHONE, COUNTRY = @COUNTRY , DOB = @DOB
+                sqlParameters.Add(new SqlParameter("@UserId", jwt.UserId));
+
+                String Query = string.Empty;
+
+                DataTable dt = GetUserProfile(jwt.Email,jwt.UserId);
+                if (dt.Rows.Count == 0)  //measns first time user making profile
+                {
+                    DataTable user = _database.SqlView($"select UserNumber from tbl_users where user_Id = '{jwt.UserId}' and EmailOrUsername='{jwt.Email}'")
+                        if (user.Rows.Count > 0)
+                    {
+                        string UserNumber = Convert.ToString(user.Rows[0]["UserNumber"]);
+                        Query = $@"INSERT INTO tbl_UserInfo(CNIC,UserNumber,UserId,DisplayName,Phone,country,DOB) 
+values(@CNIC ,{UserNumber},@UserId, @DISPLAYNAME, @PHONE, @COUNTRY , @DOB)";
+                    }
+                }
+                else
+                {
+                    Query = $@"UPDATE tbl_UserInfo 
+SET CNIC = @CNIC , DISPLAYNAME = @DISPLAYNAME, PHONE = @PHONE, COUNTRY = @COUNTRY , DOB = @DOB {block}
 WHERE UserId = @UserId";
-                int affected = _database.ExecuteNonQuery(Query, sqlParameters);
+                }
+
+                int affected = Query != null ? _database.ExecuteNonQuery(Query, sqlParameters) : 0;
                 if (affected > 0)
                 {
                     response.GoodResponse= true;
