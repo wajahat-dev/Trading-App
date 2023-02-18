@@ -82,7 +82,7 @@ const SignUpForm = () => {
                 "phone": globalState.formData.phone,
                 "country": globalState.formData.country,
                 "dob": globalState.formData.dob,
-                "blockNow": true
+                "blockNow": false
               }),
             });
             if (response1.ok) {

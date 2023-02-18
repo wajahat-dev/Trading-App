@@ -41,6 +41,7 @@ export default function AccountMenu({ logoutHandler }) {
                     color={'#fafafa'}
                     to="/kycc"
                     component={RouterLink}
+                    style={{color: 'white'}}
                 >
                     Kyc
                 </Button>
