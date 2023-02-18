@@ -34,6 +34,16 @@ namespace pobject.API.Controllers
             return Ok(result);
         }
 
+        [HttpGet]
+        [Route("userallprofile")]
+        public IActionResult GetAllUserProfile()
+        {
+            string UsernameOrEmail = _JWT_Helper.Email;
+            string UserId = _JWT_Helper.UserId;
+            DataTable result = _UserProfileService.GetAllUserProfile();
+            return Ok(result);
+        }
+
         [HttpPost]
         [Route("store-userprofile")]
         public IActionResult StoreUserProfile(UserProfile_Request request)

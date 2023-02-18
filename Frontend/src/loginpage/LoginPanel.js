@@ -45,7 +45,7 @@ const LoginPanel = (props) => {
         const data = await response.json();
         if (data.messageBox) {
           if (data.messageBox.includes('successfully')) {
-            if( CheckemptyDate(ToDatabaseFormat(data.user.inActiveDate))){
+            if( !CheckemptyDate(ToDatabaseFormat(data.user.inActiveDate))){
               setGlobalState(p => ({ ...p, message: data.messageBox, open: true }))
               window.localStorage.setItem(TOKEN_KEY, data.token);
               dispatch(setToken(data.token));

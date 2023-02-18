@@ -43,6 +43,7 @@ export const  ToDatabaseFormat = (inputDate) => {
             case '01/01/0001':
             case '01/01/1900':
             case '12/31/1899':
+            case '1-01-01':
               return false;
             default:
               return true;

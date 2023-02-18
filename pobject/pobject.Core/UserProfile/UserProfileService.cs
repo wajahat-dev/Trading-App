@@ -40,6 +40,29 @@ WHERE a.EmailOrUsername = @UsernameOrEmail AND a.USERID = @UserId",param);
             return new DataTable();
         }
 
+        public DataTable GetAllUserProfile()
+        {
+            DataTable user;
+            try
+            {
+                List<SqlParameter> param = new List<SqlParameter>();
+               
+                user = _database.SqlView($@"
+SELECT a.EmailOrUsername,a.USERID,b.CNIC,EMAIL,DISPLAYNAME,PHONE,COUNTRY,DOB,b.CREATEDON 
+FROM TBL_USERS a INNER JOIN TBL_USERINFO b ON a.UserId = b.UserId AND a.UserNumber = b.UserNumber");
+                if (user.Rows.Count > 0)
+                {
+                    return user;
+                }
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+            return new DataTable();
+        }
+
+
         public UserProfile_Response StoreUserProfile(UserProfile_Request request, Internal_JWT_Request jwt = null)
         {
             UserProfile_Response response = new UserProfile_Response();

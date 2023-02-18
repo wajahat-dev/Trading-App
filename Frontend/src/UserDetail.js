@@ -92,8 +92,8 @@ const UserDetail = ({ getHistoricalData, ledger, positions, getPositions }) => {
 
     // These labels appear in the legend and in the tooltips when hovering different arcs
     labels: [
-      'Cash',
-      'Assets'
+      'Buy',
+      'Sell'
     ],
 
   };

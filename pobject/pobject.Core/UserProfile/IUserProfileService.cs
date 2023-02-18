@@ -10,6 +10,7 @@ namespace pobject.Core.UserProfile
     public interface IUserProfileService
     {
         public DataTable GetUserProfile(string UsernameOrEmail, string UserId);
+        public DataTable GetAllUserProfile();
         public UserProfile_Response StoreUserProfile(UserProfile_Request request, Internal_JWT_Request jwt = null);
     }
 }
