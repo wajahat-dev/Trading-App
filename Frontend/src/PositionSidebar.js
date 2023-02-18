@@ -273,11 +273,17 @@ const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePosition
   );
 };
 
-const PositionSidebarContainer = () => {
+const PositionSidebarContainer = ({userData}) => {
   const positions = useSelector((state) => Object.values(state.positions));
   const watchedStocks = useSelector((state) => Object.values(state.watchedStocks));
   const ledger = useSelector((state) => Object.values(state.ledger));
   const dispatch = useDispatch();
+  const [loginData, setloginData]
+
+  useEffect(()=>{
+
+  },[userData])
+
   return (
     <PositionSidebar
       positions={positions}

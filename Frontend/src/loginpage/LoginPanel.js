@@ -14,7 +14,7 @@ import { setUserDetails } from "../store/reducers/trades";
 import { CheckemptyDate, ToDatabaseFormat } from "../Globalfunc/func";
 
 
-const LoginPanel = (props) => {
+const LoginPanel = ({setUserData}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
@@ -50,7 +50,9 @@ const LoginPanel = (props) => {
               window.localStorage.setItem(TOKEN_KEY, data.token);
               dispatch(setToken(data.token));
               dispatch(setUserDetails(data.user))
+              setUserData(data.user)
               history.push("/");
+              
             }else{
               setGlobalState(p => ({ ...p, message: "User account has been blocked, please contact to admin", open: true }))
             } 

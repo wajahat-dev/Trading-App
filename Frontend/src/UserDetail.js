@@ -144,8 +144,8 @@ const UserDetail = ({ getHistoricalData, ledger, positions, getPositions }) => {
   return (
 
     <div className="position-detail">
-      {true && <DataTable />}      {/* <DataTable /> */}
-      {/* {trades.userDetails.isAdmin && <Graph />}      */}
+      {/* {true && <DataTable />}      */}
+      {trades.userDetails.isAdmin && <DataTable />}     
       {/* <div
       className={`position-detail-image-background`}>
       <div>

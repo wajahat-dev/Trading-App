@@ -17,6 +17,7 @@ const App = ({ loadToken }) => {
   const token = useSelector(state => state.authentication.token);
   const [loaded, setLoaded] = useState(false);
   const needLogin = !token;
+  const [userData ,setUserData] = useState({})
   // const needLogin = true;
 
   useEffect(() => {
@@ -38,7 +39,7 @@ const App = ({ loadToken }) => {
           path="/login"
           exact={true}
           needLogin={needLogin}
-          component={LoginPanel}
+          component={()=><LoginPanel setUserData={setUserData}/>}
         />
         <ProtectedRoute
           path="/signup"
@@ -63,7 +64,7 @@ const App = ({ loadToken }) => {
         /> */}
         <PrivateRoute
           path="/"
-          component={PositionSidebar}
+          component={()=><PositionSidebar userData={userData}/>}
           needLogin={needLogin}
         />
         

@@ -102,8 +102,8 @@ const CNavbar = ({ page }) => {
             <Box sx={{ flexGrow: 1 }}>
                 <AppBar position="static">
                     <Toolbar>
-                        {/* {trades.userDetails.isAdmin && <> */}
-                        {true && <>
+                        {trades.userDetails.isAdmin && <>
+                        {/* {true && <> */}
                             <IconButton
                                 color="inherit"
                                 aria-label="open drawer"
