@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using pobject.API.Helpers;
+using pobject.Core;
 using pobject.Core.AuthBase;
 using pobject.Core.DatabaseEnvironment;
 using pobject.Core.OtherServices;
@@ -15,23 +16,20 @@ namespace pobject.API.Controllers
     [Route("api")]
     [EnableCors("AllowSpecificOrigin")]
     [ApiController]
-    [AllowAnonymous]
-    public class JazzCashController : ControllerBase
+    public class JazzCashController : Auth_Controller
     {
         private readonly IJazzCash_Services _JazzCash_Services;
         private readonly IJwtHelper _JWT_Helper;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        //public JazzCashController(IJazzCash_Services JazzCash_Services, IJwtHelper JWT_Helper, IHttpContextAccessor httpContextAccessor, IDatabase database) : base(httpContextAccessor, database)
-        //{
-        //    _JazzCash_Services = JazzCash_Services;
-        //    _JWT_Helper = JWT_Helper;
-        //    _httpContextAccessor = httpContextAccessor;
-        //}
-        public JazzCashController(IJazzCash_Services JazzCash_Services)
+        public JazzCashController(IJazzCash_Services JazzCash_Services, IJwtHelper JWT_Helper, IHttpContextAccessor httpContextAccessor, IDatabase database) : base(httpContextAccessor, database)
         {
             _JazzCash_Services = JazzCash_Services;
+            _JWT_Helper = JWT_Helper;
+            _httpContextAccessor = httpContextAccessor;
         }
+        
+        
         [HttpPost]
         [Route("jc_wallet")]
         public async Task<IActionResult> jc_wallet([FromBody] dynamic data)
@@ -78,6 +76,24 @@ namespace pobject.API.Controllers
             }
 
             return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("submit-jc_wallet-request")]
+        public async Task<IActionResult> jc_walletRequest([FromBody] JazzCashRequestSubmission request)
+        {
+            //Ignore UserId, Username from request , It will bind internally
+            request.EmailOrUsername = _JWT_Helper.Email;
+            request.UserID = _JWT_Helper.UserId;
+            StoreCode response = _JazzCash_Services.Submit_JazzCash_Request(request);
+            return Ok(response);
+        }
+        [HttpGet]
+        [Route("allpending-request")]
+        public async Task<IActionResult> GetPendingRequest()
+        {
+            StoreCode response = _JazzCash_Services.GetAllPendingRequest();
+            return Ok(response);
         }
 
     }
