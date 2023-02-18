@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using pobject.API.Helpers;
+using pobject.Core;
 using pobject.Core.AuthBase;
 using pobject.Core.DatabaseEnvironment;
+using pobject.Core.Models;
 using pobject.Core.OtherServices;
 
 namespace pobject.API.Controllers
@@ -12,10 +15,12 @@ namespace pobject.API.Controllers
     {
         private readonly IAdminAndUserServices _AdminAndUserServices;
         private readonly IHttpContextAccessor _HttpContextAccessor;
-        public AdminUserController(IAdminAndUserServices AdminAndUserServices, IHttpContextAccessor httpContextAccessor, IDatabase database) : base(httpContextAccessor, database)
+        private readonly IJwtHelper _JwtHelper;
+        public AdminUserController(IAdminAndUserServices AdminAndUserServices,IJwtHelper jwtHelper, IHttpContextAccessor httpContextAccessor, IDatabase database) : base(httpContextAccessor, database)
         {
             _AdminAndUserServices= AdminAndUserServices;
             _HttpContextAccessor= httpContextAccessor;
+            _JwtHelper= jwtHelper;
         }
         [HttpGet]
         [Route("all-users")]
@@ -39,5 +44,17 @@ namespace pobject.API.Controllers
             var response = _AdminAndUserServices.GetListOf(RoleCode);
             return Ok(response);
         }
+
+        #region Suspend User
+        [HttpPost]
+        [Route("suspend-user")]
+        public async Task<IActionResult> SuspendUser(UserSuspendRequest request)
+        {
+            request.AdminID = _JwtHelper.UserId;
+            StoreCode response = _AdminAndUserServices.SuspendAUser(request);
+            return Ok(response);
+        }
+        #endregion
+
     }
 }
