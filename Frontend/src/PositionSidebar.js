@@ -28,7 +28,7 @@ import VisaMaster from "./Banks/VisaMaster";
 import AdminPanel from "./AdminPanel";
 import DisableUserPage from "./DisableUserPage";
 
-const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePositionAndGet, updateWatchedStockAndGet }) => {
+const PositionSidebar = ({ userData, positions, formVisible, watchedStocks, updatePositionAndGet, updateWatchedStockAndGet }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -273,31 +273,31 @@ const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePosition
   );
 };
 
-const PositionSidebarContainer = ({userData}) => {
+const PositionSidebarContainer = ({ userData }) => {
   const positions = useSelector((state) => Object.values(state.positions));
   const watchedStocks = useSelector((state) => Object.values(state.watchedStocks));
   const ledger = useSelector((state) => Object.values(state.ledger));
   const dispatch = useDispatch();
-  const [loginData, setloginData]
 
-  useEffect(()=>{
-
-  },[userData])
 
   return (
-    <PositionSidebar
-      positions={positions}
-      watchedStocks={watchedStocks}
-      ledger={ledger}
-      updatePositionAndGet={(data) => {
-        dispatch(updatePositionAndGet(data))
-      }}
-      updateWatchedStockAndGet={(data) => {
-        dispatch(updateWatchedStockAndGet(data))
-      }}
+    <>
 
-      exitWatchedStock={(id) => dispatch(exitWatchedStock(id))}
-    />
+      <PositionSidebar
+        positions={positions}
+        watchedStocks={watchedStocks}
+        ledger={ledger}
+        updatePositionAndGet={(data) => {
+          dispatch(updatePositionAndGet(data))
+        }}
+        updateWatchedStockAndGet={(data) => {
+          dispatch(updateWatchedStockAndGet(data))
+        }}
+        userData={userData}
+        exitWatchedStock={(id) => dispatch(exitWatchedStock(id))}
+      />
+    </>
+
   );
 };
 

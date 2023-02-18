@@ -6,18 +6,7 @@ import { Button, Card, Icon, Modal } from "@material-ui/core";
 import CModal from './globalcomponents/CModal';
 import DeleteForever from '@mui/icons-material/DeleteForever';
 
-const selectedRow = {
-  emailOrUsername: "",
-  cnic: "",
-  email: "",
-  phone: "",
-  country: "",
-  dob: "",
-  action: undefined,
-}
-
-
-export default function DataTable() {
+export default function PendingRequestTable() {
 
   const [loader, setLoader] = React.useState(false)
   const [gridData, setGridData] = React.useState([])
@@ -25,7 +14,7 @@ export default function DataTable() {
     header: '',
     message: '',
     modal: false,
-    selectedRow: { ...selectedRow }
+    selectedRow: {}
   })
   const columns = [
     { field: 'emailOrUsername', headerName: 'User Name', width: 150, },
@@ -51,7 +40,7 @@ export default function DataTable() {
             .forEach(
               (c) => (thisRow[c.field] = params.getValue(params.id, c.field)),
             );
-          setGlobalState(p => ({ ...p, selectedRow: thisRow, modal: true, message: 'Do you want to suspend the User', header: 'User Suspension' }))
+          setGlobalState(p => ({ ...p, selectedRow: thisRow, modal: true, message: 'Do you want to suspend the User', header:'User Suspension' }))
         };
 
         return <Button
@@ -96,38 +85,11 @@ export default function DataTable() {
     getData()
   }, [])
 
-  const onClickModal = async () => {
-    try {
-      const response = await fetch(`https://localhost:7000/api/suspend-user`, {
-        method: "post",
-        "accept": '*/*',
-        body: JSON.stringify({
-          "userId": "string",
-          "adminID": "string",
-          "isSuspendAction": true
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem('TOKEN_KEY')
-            ? localStorage.getItem('TOKEN_KEY')
-            : ''
-            }`,
-
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setGridData(data)
-      }
-      setGlobalState(p => ({ ...p, modal: false }))
-
-    } catch (error) {
-      console.log(error)
-    } finally {
-      setLoader(false)
-    }
+  const onClickModal = () => {
 
 
+    
+    setGlobalState(p => ({ ...p, modal: false }))
   }
 
   return (
