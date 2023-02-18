@@ -28,8 +28,16 @@ namespace pobject.API.Controllers
             Login_Response result = _LoginService.LOGIN(request);
             if (result.Success)
             {
-                result.Token = _JWT_Helper.GenerateToken(result);
-                return Ok(result);
+                if (result.IsActiveUser)
+                {
+                    result.Token = _JWT_Helper.GenerateToken(result);
+                    return Ok(result);
+                }
+                else
+                { 
+                    result.MessageBox = "Your Account is Suspended , Please Contact from your Administrator";
+                    return Ok(result);
+                }
             }
             else
             {

@@ -23,6 +23,7 @@ namespace pobject.Core.Login
         public CreatedUser User { get; set; }
         public int ClientId { get; set; }
         public string Token { get; set; }
+        public bool IsActiveUser { get; set; }
     }
     public class UserInformation
     {

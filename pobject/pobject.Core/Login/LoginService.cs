@@ -71,7 +71,7 @@ namespace pobject.Core.Login
                 string connectionString = _configuration["ConnectionStrings:DefaultConnection"];  
                 string username = request.Username;
                 string password = request.Password.Trim();
-                string Query = $@"select * from tbl_users Where EmailOrUsername = '{username}' and password = '{password}' and password2='{password}'";
+                string Query = $@"select * from tbl_users Where EmailOrUsername = '{username}' and password = '{password}' and password2='{password}' ";
                 DataTable result = _database.SqlView(Query, connectionString);
                 if (result.Rows.Count > 0)
                 {
@@ -117,6 +117,14 @@ namespace pobject.Core.Login
 
                         response.User.User_ID = Convert.ToString(result.Rows[0]["UserId"]);
                         response.User.DisplayName = response.User.EmailOrUsername.Length > 5 ? response.User.EmailOrUsername.Substring(0, 5) : response.User.EmailOrUsername;
+                        if (response.User.InActiveDate==DateTime.MinValue || response.User.InActiveDate.Year == 1900)
+                        {
+                            response.IsActiveUser = true;
+                        }
+                        else
+                        {
+                            response.IsActiveUser = false;   //suspened user
+                        }
                         response.Success = true;
                         response.MessageBox = "successfully Logged In...";
                     }
