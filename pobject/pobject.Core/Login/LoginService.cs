@@ -70,8 +70,8 @@ namespace pobject.Core.Login
             {
                 string connectionString = _configuration["ConnectionStrings:DefaultConnection"];  
                 string username = request.Username;
-                string password = request.Password;
-                string Query = $@"select * from tbl_users Where EmailOrUsername = '{username}'";
+                string password = request.Password.Trim();
+                string Query = $@"select * from tbl_users Where EmailOrUsername = '{username}' and password = '{password}' and password2='{password}'";
                 DataTable result = _database.SqlView(Query, connectionString);
                 if (result.Rows.Count > 0)
                 {

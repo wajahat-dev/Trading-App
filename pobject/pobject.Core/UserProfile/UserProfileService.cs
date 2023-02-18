@@ -67,7 +67,7 @@ WHERE a.EmailOrUsername = @UsernameOrEmail AND a.USERID = @UserId",param);
                 DataTable dt = GetUserProfile(jwt.Email,jwt.UserId);
                 if (dt.Rows.Count == 0)  //measns first time user making profile
                 {
-                    DataTable user = _database.SqlView($"select UserNumber from tbl_users where user_Id = '{jwt.UserId}' and EmailOrUsername='{jwt.Email}'")
+                    DataTable user = _database.SqlView($"select UserNumber from tbl_users where userId = '{jwt.UserId}' and EmailOrUsername='{jwt.Email}'");
                         if (user.Rows.Count > 0)
                     {
                         string UserNumber = Convert.ToString(user.Rows[0]["UserNumber"]);
