@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 
 export default function CNotification({ isOpen, message, setOpen,varient='info' }) {
     const [openLocal, setOpenLocal] = React.useState(false);
-
+    // type AlertColor = 'success' | 'info' | 'warning' | 'error';
     useEffect(() => {
         setOpenLocal(isOpen)
     }, [isOpen, openLocal])

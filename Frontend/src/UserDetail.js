@@ -11,6 +11,7 @@ import TopMovers from './TopMovers';
 import TopLosers from './TopLosers';
 import { Graph } from './Graph';
 
+import DataTable from "./DataTable";
 
 
 const UserDetail = ({ getHistoricalData, ledger, positions, getPositions }) => {
@@ -143,7 +144,8 @@ const UserDetail = ({ getHistoricalData, ledger, positions, getPositions }) => {
   return (
 
     <div className="position-detail">
-      {trades.isAdmin && <Graph />}      {/* <DataTable /> */}
+      {true && <DataTable />}      {/* <DataTable /> */}
+      {/* {trades.userDetails.isAdmin && <Graph />}      */}
       {/* <div
       className={`position-detail-image-background`}>
       <div>

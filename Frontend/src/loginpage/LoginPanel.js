@@ -11,6 +11,7 @@ import leaf from '../tradingImg.png';
 import {CItem} from "../globalcomponents/globalCss";
 import CFooter from "../globalcomponents/CFooter";
 import { setUserDetails } from "../store/reducers/trades";
+import { CheckemptyDate, ToDatabaseFormat } from "../Globalfunc/func";
 
 
 const LoginPanel = (props) => {
@@ -44,12 +45,15 @@ const LoginPanel = (props) => {
         const data = await response.json();
         if (data.messageBox) {
           if (data.messageBox.includes('successfully')) {
-            setGlobalState(p => ({ ...p, message: data.messageBox, open: true }))
-            window.localStorage.setItem(TOKEN_KEY, data.token);
-            dispatch(setToken(data.token));
-            dispatch(setUserDetails(data.user))
-            // window.location.replace('/')
-            history.push("/");
+            if( CheckemptyDate(ToDatabaseFormat(data.user.inActiveDate))){
+              setGlobalState(p => ({ ...p, message: data.messageBox, open: true }))
+              window.localStorage.setItem(TOKEN_KEY, data.token);
+              dispatch(setToken(data.token));
+              dispatch(setUserDetails(data.user))
+              history.push("/");
+            }else{
+              setGlobalState(p => ({ ...p, message: "User account has been blocked, please contact to admin", open: true }))
+            } 
           } else {
             setGlobalState(p => ({ ...p, message: data.messageBox, open: true }))
           }

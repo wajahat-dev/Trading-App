@@ -23,6 +23,11 @@ const reducer = combineReducers({
   trades
 });
 
+// const p = persistReducer({
+//   key: 'main-root',
+//   storage,
+// },reducer)
+
 const configureStore = (initialState) => {
   return createStore(
     reducer,

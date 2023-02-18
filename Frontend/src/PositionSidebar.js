@@ -26,6 +26,7 @@ import JazzCashCheckout from "./Banks/jazzcash";
 import BinancePayCheckout from "./Banks/Binancepay";
 import VisaMaster from "./Banks/VisaMaster";
 import AdminPanel from "./AdminPanel";
+import DisableUserPage from "./DisableUserPage";
 
 const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePositionAndGet, updateWatchedStockAndGet }) => {
   const dispatch = useDispatch();
@@ -152,18 +153,15 @@ const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePosition
 
       <Switch>
         <Route
-
           path="/position/:id"
           render={(props) => <PositionDetail {...props} />}
         />
         <Route
-
           path="/stock/:stockSymbol"
           render={(props) => <StockDetail {...props} />}
         />
 
         <Route
-
           path="/profile"
           render={(props) => <Profile />}
         />
@@ -180,18 +178,33 @@ const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePosition
           render={(props) => <VisaMaster />}
         />
         <Route
+          path="/kycc"
+          render={(props) => <Kyc />}
+        />
+
+        {/* Starts Admin Routes */}
+        <Route
+          needLogin={true}
 
           path="/admin"
           render={(props) => <AdminPanel />}
         />
         <Route
+          needLogin={true}
 
-          path="/kycc"
-          render={(props) => <Kyc />}
+          path="/disable"
+          render={(props) => <DisableUserPage />}
         />
+        {/* Ends Admin Routes */}
+
+
+
+
+
         <Route exact={true} path="/" component={UserDetail} />
         <Route component={PositionSidebar} />
       </Switch>
+
       {/* <Graph />
       <DataTable /> */}
       <CFooter />

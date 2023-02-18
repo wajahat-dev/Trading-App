@@ -1,4 +1,4 @@
-import { Button, Toolbar } from '@material-ui/core';
+import { Button, Toolbar, makeStyles } from '@material-ui/core';
 import Logout from '@mui/icons-material/Logout';
 
 import Avatar from '@mui/material/Avatar';
@@ -30,6 +30,8 @@ export default function AccountMenu({ logoutHandler }) {
     const handleProfile = () => {
         history.push('/profile')
     }
+
+
 
     return (
         <React.Fragment>
