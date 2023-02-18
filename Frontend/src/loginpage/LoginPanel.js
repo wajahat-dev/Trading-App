@@ -84,6 +84,8 @@ const LoginPanel = ({setUserData}) => {
       <CNotification isOpen={globalState.open} setOpen={e => setGlobalState(p => ({ ...p, open: e }))} message={globalState.message} />
       <CLoader enabled={loader} />
       <CNavbar page={'login'} />
+      <form>
+
       <Grid container spacing={3} style={{ marginTop: 7 }}>
         <Grid item xs={7}>
           <CItem>
@@ -121,6 +123,7 @@ const LoginPanel = ({setUserData}) => {
             >
               <Button
                 onClick={handleSubmit}
+                // type='submit'
               >Log in</Button>
             </Link>
             <Link to="/signup" style={{ textDecoration: 'none' }}>
@@ -131,6 +134,7 @@ const LoginPanel = ({setUserData}) => {
           </div>
         </Grid>
       </Grid>
+      </form>
       <CFooter />
     </>
   );

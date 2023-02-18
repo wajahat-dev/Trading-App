@@ -170,6 +170,7 @@ const pageType = (page, handleClick) => {
                     color={'#fafafa'}
                     to="/homepage"
                     component={RouterLink}
+                    style={{color: 'white'}}
                 >
                     Home Page
                 </Button>
@@ -179,7 +180,7 @@ const pageType = (page, handleClick) => {
 
                 <Button
                     color={'#fafafa'}
-
+                    style={{color: 'white'}}
                     to="/homepage"
                     component={RouterLink}
                 >
@@ -191,7 +192,7 @@ const pageType = (page, handleClick) => {
             return <>
                 <Button
                     color={'#fafafa'}
-
+                    style={{color: 'white'}}
                     to="/login"
                     component={RouterLink}
                 >
@@ -200,7 +201,7 @@ const pageType = (page, handleClick) => {
 
                 <Button
                     color={'#fafafa'}
-
+                    style={{color: 'white'}}
                     to="/signup"
                     component={RouterLink}
                 >

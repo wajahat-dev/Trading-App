@@ -77,29 +77,32 @@ function JazzCashCheckout() {
         try {
             const response = await fetch(`https://localhost:7000/api/submit-jc_wallet-request`, {
                 method: "post",
-                "accept": '*/*',
                 headers: {
                     "Content-Type": "application/json",
+                    accept: '*/*',
+
                     Authorization: `Bearer ${localStorage.getItem('TOKEN_KEY')
                         ? localStorage.getItem('TOKEN_KEY')
                         : ''
                         }`,
                 },
                 body: JSON.stringify({
-                    "emailOrUsername": "string",
-                    "userID": "string",
-                    "description": "string",
-                    "payload": "string"
+                    "emailOrUsername": "",
+                    "userID": "",
+                    "description": "",
+                    "payload": JSON.stringify(data)
                 }),
             });
 
             if (response.ok) {
                 const data = await response.json();
+                // if (data.pp_ResponseMessage) {
+                //     setGlobalState(p => ({ ...p, varient: 'error', message: data.pp_ResponseMessage, open: true }))
+                // }
                 if (data.success) {
                     setCnicNumber('')
                     setPhoneNumber('')
                     setGlobalState(p => ({ ...p, varient: 'success', message: 'Send To Admin', open: true }))
-                    
                 }
             }
 

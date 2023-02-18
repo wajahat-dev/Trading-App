@@ -5,16 +5,24 @@ import { useState } from "react";
 import { Button, Card, Icon, Modal } from "@material-ui/core";
 import CModal from './globalcomponents/CModal';
 import DeleteForever from '@mui/icons-material/DeleteForever';
+import { CheckemptyDate, ToDatabaseFormat } from './Globalfunc/func';
+import CHeader from './globalcomponents/CHeader';
 
-const selectedRow = {
-  emailOrUsername: "",
-  cnic: "",
-  email: "",
-  phone: "",
-  country: "",
-  dob: "",
-  action: undefined,
+const selectedRow =
+{
+  "userId": "",
+  "emailOrUsername": "",
+  "useriD1": "",
+  "cnic": "",
+  "email": "",
+  "displayname": "",
+  "phone": "",
+  "country": "",
+  "dob": "",
+  "createdon": "",
+  inActivedate: ''
 }
+
 
 
 export default function DataTable() {
@@ -42,16 +50,16 @@ export default function DataTable() {
         const onClick = (e) => {
           e.stopPropagation(); // don't select this row after clicking
 
-          const api = params.api;
-          const thisRow = {}
+          // const api = params.api;
+          // const thisRow = {}
 
-          api
-            .getAllColumns()
-            .filter((c) => c.field !== '__check__' && !!c)
-            .forEach(
-              (c) => (thisRow[c.field] = params.getValue(params.id, c.field)),
-            );
-          setGlobalState(p => ({ ...p, selectedRow: thisRow, modal: true, message: 'Do you want to suspend the User', header: 'User Suspension' }))
+          // api
+          //   .getAllColumns()
+          //   .filter((c) => c.field !== '__check__' && !!c)
+          //   .forEach(
+          //     (c) => (thisRow[c.field] = params.getValue(params.id, c.field)),
+          //   );
+          setGlobalState(p => ({ ...p, selectedRow: params.row, modal: true, message: 'Do you want to suspend the User', header: 'User Suspension' }))
         };
 
         return <Button
@@ -63,7 +71,17 @@ export default function DataTable() {
           Suspend
         </Button>
       },
-    }]
+    },
+    {
+      field: 'inActivedate',
+      headerName: 'Is Suspended',
+      sortable: false,
+      renderCell: (params) => {
+
+        return CheckemptyDate(ToDatabaseFormat(params.row.inActivedate)) ? 'Yes' : 'No'
+      },
+    }
+  ]
 
   const getData = async () => {
     debugger
@@ -96,15 +114,17 @@ export default function DataTable() {
     getData()
   }, [])
 
-  const onClickModal = async () => {
+  const onClickModal = async (isSuspendAction) => {
+    setLoader(true)
+
     try {
       const response = await fetch(`https://localhost:7000/api/suspend-user`, {
         method: "post",
         "accept": '*/*',
         body: JSON.stringify({
-          "userId": "string",
+          "userId": globalState.selectedRow.userId,
           "adminID": "string",
-          "isSuspendAction": true
+          "isSuspendAction": isSuspendAction
         }),
         headers: {
           "Content-Type": "application/json",
@@ -116,8 +136,7 @@ export default function DataTable() {
         },
       });
       if (response.ok) {
-        const data = await response.json();
-        setGridData(data)
+        getData()
       }
       setGlobalState(p => ({ ...p, modal: false }))
 
@@ -126,16 +145,19 @@ export default function DataTable() {
     } finally {
       setLoader(false)
     }
-
-
   }
 
   return (
 
     <>
       <CLoader enabled={loader} />
-      <CModal open={globalState.modal} labels={{ one: 'Suspend User', two: 'Cancel' }} onClick={onClickModal} onClose={() => setGlobalState(p => ({ ...p, modal: false }))} header={globalState.header} message={globalState.message} />
+      <CModal open={globalState.modal}
+        labels={{ one: 'Suspend User', two: 'Un Suspend User' }}
+        onClose={() => onClickModal(false)}
+        onClick={() => onClickModal(true)}
+        header={globalState.header} message={globalState.message} />
       <div style={{ width: '100%', marginTop: 10 }}>
+        <CHeader header='Accounts Status'/>
         <DataGrid
           rows={gridData}
           columns={columns}

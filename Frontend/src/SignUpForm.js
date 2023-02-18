@@ -41,21 +41,28 @@ const SignUpForm = () => {
   const dispatch = useDispatch();
 
   const handleChange = (name, value) => {
-    debugger
     setGlobalState(p => ({ ...p, formData: { ...p.formData, [name]: value } }))
   }
 
 
 
 
+
   const handleSubmit = async (e) => {
     debugger
+    if(!globalState.formData.cnic){
+      setGlobalState(p => ({ ...p, message: 'CNIC Can not be blank', open: true, varient: 'info' }))
+      return
+    }
+
     setLoader(true)
     try {
-      const response = await fetch(`https://localhost:7000/api/signup?RoleCodeIfLoggedInAsAdmin=x`, {
+      const response = await fetch(`https://localhost:7000/api/signup?RoleCodeIfLoggedInAsAdmin=X`, {
         method: 'post',
-        headers: { 'Content-Type': 'application/json' },
-        "accept": '*/*',
+        headers: {
+          'Content-Type': 'application/json',
+          accept: '*/*',
+        },
         body: JSON.stringify({
           "userNameOrEmail": globalState.formData.email,
           "password": globalState.formData.password,
@@ -75,7 +82,6 @@ const SignUpForm = () => {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${apiOnedata.token}`,
               },
-              "accept": '*/*',
               body: JSON.stringify({
                 "cnic": globalState.formData.cnic,
                 "displayname": globalState.formData.name,
@@ -87,18 +93,12 @@ const SignUpForm = () => {
             });
             if (response1.ok) {
               const apiTwodata = await response1.json();
-              if(apiTwodata.goodResponse){
-    
+              if (apiTwodata.goodResponse) {
                 setGlobalState(p => ({ ...p, formData: { ...INITIAL_USER }, message: apiOnedata.messageBox, open: true, varient: "success" }))
                 window.localStorage.setItem(TOKEN_KEY, apiOnedata.token);
                 dispatch(setToken(apiOnedata.token));
               }
-          
             }
-
-
-
-
 
           } else {
             setGlobalState(p => ({ ...p, message: apiOnedata.messageBox, open: true, varient: 'info' }))
@@ -107,7 +107,7 @@ const SignUpForm = () => {
       }
 
     } catch (error) {
-
+      console.log('Sign up error',error)
     } finally {
       setLoader(false)
     }
@@ -116,142 +116,84 @@ const SignUpForm = () => {
   };
 
 
-  const storeProfileData = async (apiOnedata, token) => {
-    debugger
-    // setLoader1(true)
-    // try {
-    //   const response = await fetch(`https://localhost:7000/api/store-userprofile`, {
-    //     method: 'post',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     "accept": '*/*',
-    //     body: JSON.stringify({
-    //       "cnic": globalState.formData.cnic,
-    //       "displayname": globalState.formData.name,
-    //       "phone": globalState.formData.phone,
-    //       "country": globalState.formData.country,
-    //       "dob": globalState.formData.dob,
-    //       "blockNow": true
-    //     }),
-    //   });
-    //   if (response.ok) {
-    //     const apiTwodata = await response.json();
-    //     setGlobalState(p => ({ ...p, formData: { ...INITIAL_USER }, message: apiOnedata.messageBox, open: true, varient: "success" }))
-    //     window.localStorage.setItem(TOKEN_KEY, token);
-    //     dispatch(setToken(token));
-    //   }
-
-    // } catch (error) {
-
-    // } finally {
-    //   setLoader1(false)
-    // }
-    const response = await fetch(`https://localhost:7000/api/store-userprofile`, {
-      method: 'post',
-      headers: { 'Content-Type': 'application/json' },
-      "accept": '*/*',
-      body: JSON.stringify({
-        "cnic": globalState.formData.cnic,
-        "displayname": globalState.formData.name,
-        "phone": globalState.formData.phone,
-        "country": globalState.formData.country,
-        "dob": globalState.formData.dob,
-        "blockNow": true
-      }),
-    });
-    if (response.ok) {
-      const apiTwodata = await response.json();
-      setGlobalState(p => ({ ...p, formData: { ...INITIAL_USER }, message: apiOnedata.messageBox, open: true, varient: "success" }))
-      window.localStorage.setItem(TOKEN_KEY, token);
-      dispatch(setToken(token));
-    }
-  }
-
-
   return (
     <>
       <CLoader enabled={loader} />
       <CLoader enabled={loader1} />
       <CNotification varient={globalState.varient} isOpen={globalState.open} setOpen={e => setGlobalState(p => ({ ...p, open: e }))} message={globalState.message} />
       <CNavbar page={'signup'} />
-      <Grid container spacing={3} style={{ marginTop: 7 }}>
-        <Grid item xs={7}>
-          <CItem>
-            <img className='leaf-rotate' src={leaf} alt="img" />
-          </CItem>
-        </Grid>
-        <Grid item xs={5}>
-          <Grid item xs={8}>
-            <TextField
-              fullWidth
-              id="outlined-required"
-              label='Full Name'
-              name={'name'}
-              value={globalState.formData.name}
-              onChange={e => {
-                debugger
-                handleChange(e.target.name, e.target.value)
-              }}
-              required
-
-            />
+      {/* <form onSubmit={handleSubmit}> */}
+        <Grid container spacing={3} style={{ marginTop: 7 }}>
+          <Grid item xs={7}>
+            <CItem>
+              <img className='leaf-rotate' src={leaf} alt="img" />
+            </CItem>
           </Grid>
-          <Grid item xs={8} style={{ marginTop: 7 }}>
-            <TextField
-              fullWidth
-              id="outlined-required"
-              name={'email'}
-              type='email'
-              label='Email'
-              value={globalState.formData.email}
-              onChange={e => handleChange(e.target.name, e.target.value)}
-              required
-            />
-          </Grid>
+          <Grid item xs={5}>
+            <Grid item xs={8}>
+              <TextField
+                fullWidth
+                id="outlined-required"
+                label='Full Name'
+                name={'name'}
+                value={globalState.formData.name}
+                onChange={e => {
+                  // debugger
+                  handleChange(e.target.name, e.target.value)
+                }}
+                required
 
-
-
-
-
-
-
-
-          <Grid item xs={8} style={{ marginTop: 7 }}>
-            <TextField
-              fullWidth
-              id="outlined-required"
-              name={'cnic'}
-              type='cnic'
-              label='Cnic'
-              value={globalState.formData.cnic}
-              onChange={e => handleChange(e.target.name, e.target.value)}
-              required
-            />
-          </Grid>
-          <Grid item xs={8} style={{ marginTop: 7 }}>
-            <TextField
-              fullWidth
-              id="outlined-required"
-              name={'phone'}
-              type='phone'
-              label='Phone'
-              value={globalState.formData.phone}
-              onChange={e => handleChange(e.target.name, e.target.value)}
-              required
-            />
-          </Grid>
-          <Grid item xs={8} style={{ marginTop: 7 }}>
-            <TextField
-              fullWidth
-              id="outlined-required"
-              name={'country'}
-              type='text'
-              label='Country'
-              value={globalState.formData.country}
-              onChange={e => handleChange(e.target.name, e.target.value)}
-              required
-            />
-          </Grid><Grid item xs={8} style={{ marginTop: 7 }}>
-            {/* <TextField
+              />
+            </Grid>
+            <Grid item xs={8} style={{ marginTop: 7 }}>
+              <TextField
+                fullWidth
+                id="outlined-required"
+                name={'email'}
+                type='email'
+                label='Email'
+                value={globalState.formData.email}
+                onChange={e => handleChange(e.target.name, e.target.value)}
+                required
+              />
+            </Grid>
+            <Grid item xs={8} style={{ marginTop: 7 }}>
+              <TextField
+                fullWidth
+                id="outlined-required"
+                name={'cnic'}
+                type='cnic'
+                label='Cnic'
+                value={globalState.formData.cnic}
+                onChange={e => handleChange(e.target.name, e.target.value)}
+                required
+              />
+            </Grid>
+            <Grid item xs={8} style={{ marginTop: 7 }}>
+              <TextField
+                fullWidth
+                id="outlined-required"
+                name={'phone'}
+                type='phone'
+                label='Phone'
+                value={globalState.formData.phone}
+                onChange={e => handleChange(e.target.name, e.target.value)}
+                required
+              />
+            </Grid>
+            <Grid item xs={8} style={{ marginTop: 7 }}>
+              <TextField
+                fullWidth
+                id="outlined-required"
+                name={'country'}
+                type='text'
+                label='Country'
+                value={globalState.formData.country}
+                onChange={e => handleChange(e.target.name, e.target.value)}
+                required
+              />
+            </Grid><Grid item xs={8} style={{ marginTop: 7 }}>
+              {/* <TextField
               fullWidth
               id="outlined-required"
               name={'dob'}
@@ -261,7 +203,7 @@ const SignUpForm = () => {
               onChange={e => handleChange(e.target.name, e.target.value)}
               required
             /> */}
-            {/* <DesktopDatePicker
+              {/* <DesktopDatePicker
               label="For desktop"
               value={globalState.formData.dob}
 
@@ -269,74 +211,80 @@ const SignUpForm = () => {
 
               renderInput={(params) => <TextField {...params} />}
             /> */}
-            {/* <DatePicker
+              {/* <DatePicker
         mask="____/__/__"
         // value={value}
         // onChange={(newValue) => setValue(newValue)}
         renderInput={(params) => <TextField {...params} />}
       /> */}
+            </Grid>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <Grid item xs={8} style={{ marginTop: 7 }}>
+              <TextField
+                fullWidth
+                id="outlined-required"
+                name={'cashValue'}
+                type="text"
+                label="Deposit Amount"
+                required
+                value={globalState.formData.cashValue}
+                onChange={e => handleChange(e.target.name, e.target.value)}
+
+              />
+            </Grid>
+            <Grid item xs={8} style={{ marginTop: 7 }}>
+              <TextField
+                fullWidth
+                id="outlined-required"
+                name={'password'}
+                type='password'
+                required
+
+                label='Password'
+                value={globalState.formData.password}
+                onChange={e => handleChange(e.target.name, e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={8} style={{ marginTop: 7 }}>
+              <TextField
+                fullWidth
+                id="outlined-required"
+                name={'confirmPassword'}
+                type='password'
+                required
+
+                label='Confirm Password'
+                value={globalState.formData.confirmPassword}
+                onChange={e => handleChange(e.target.name, e.target.value)}
+
+              />
+            </Grid>
+
+            <Button onClick={handleSubmit}>Sign Up</Button>
+            {/* <Button type='submit'>Sign Up</Button> */}
+            <Link to="/login" style={{ textDecoration: 'none' }}>
+              <Button>
+                Log in
+              </Button>
+            </Link>
+
           </Grid>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          <Grid item xs={8} style={{ marginTop: 7 }}>
-            <TextField
-              fullWidth
-              id="outlined-required"
-              name={'cashValue'}
-              type="text"
-              label="Deposit Amount"
-              required
-              value={globalState.formData.cashValue}
-              onChange={e => handleChange(e.target.name, e.target.value)}
-
-            />
-          </Grid>
-          <Grid item xs={8} style={{ marginTop: 7 }}>
-            <TextField
-              fullWidth
-              id="outlined-required"
-              name={'password'}
-              type='password'
-              label='Password'
-              value={globalState.formData.password}
-              onChange={e => handleChange(e.target.name, e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={8} style={{ marginTop: 7 }}>
-            <TextField
-              fullWidth
-              id="outlined-required"
-              name={'confirmPassword'}
-              type='password'
-              label='Confirm Password'
-              value={globalState.formData.confirmPassword}
-              onChange={e => handleChange(e.target.name, e.target.value)}
-
-            />
-          </Grid>
-
-          <Button onClick={handleSubmit}>Sign Up</Button>
-          <Link to="/login" style={{ textDecoration: 'none' }}>
-            <Button>
-              Log in
-            </Button>
-          </Link>
-
         </Grid>
-      </Grid>
+      {/* </form> */}
       <CFooter />
 
     </>

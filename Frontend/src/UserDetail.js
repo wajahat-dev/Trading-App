@@ -12,6 +12,7 @@ import TopLosers from './TopLosers';
 import { Graph } from './Graph';
 
 import DataTable from "./DataTable";
+import PendingRequestTable from './PendingRequestTable';
 
 
 const UserDetail = ({ getHistoricalData, ledger, positions, getPositions }) => {
@@ -145,8 +146,8 @@ const UserDetail = ({ getHistoricalData, ledger, positions, getPositions }) => {
 
     <div className="position-detail">
       {/* {true && <DataTable />}      */}
-      {trades.userDetails.isAdmin && <DataTable />}     
-      {trades.userDetails.isAdmin && <DataTable />}     
+      {/* {trades.userDetails.isAdmin && <DataTable />}      */}
+      {trades.userDetails.isAdmin && <PendingRequestTable />}     
 
 
       {/* <div
