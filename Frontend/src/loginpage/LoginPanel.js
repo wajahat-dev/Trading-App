@@ -8,13 +8,14 @@ import CNavbar from "../globalcomponents/CNavbar";
 import CNotification from "../globalcomponents/CNotification";
 import { TOKEN_KEY, setToken } from "../store/actions/authentication";
 import leaf from '../tradingImg.png';
-import {CItem} from "../globalcomponents/globalCss";
+import { CItem } from "../globalcomponents/globalCss";
 import CFooter from "../globalcomponents/CFooter";
 import { setUserDetails } from "../store/reducers/trades";
 import { CheckemptyDate, ToDatabaseFormat } from "../Globalfunc/func";
+import { login } from "../services/Services";
 
 
-const LoginPanel = ({setUserData}) => {
+const LoginPanel = ({ setUserData }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
@@ -30,32 +31,39 @@ const LoginPanel = ({setUserData}) => {
     e.preventDefault()
     setLoader(true)
     try {
-      const response = await fetch(`https://localhost:7000/api/login`, {
-        method: "post",
-        "accept": '*/*',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          "username": email,
-          "password": password,
-          "clientid": 0
-        }),
-      });
+      // const response = await fetch(`https://localhost:7000/api/login`, {
+      //   method: "post",
+      //   "accept": '*/*',
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({
+      //     "username": email,
+      //     "password": password,
+      //     "clientid": 0
+      //   }),
+      // });
+
+      const response = await login({
+        "username": email,
+        "password": password,
+        "clientid": 0
+      })
+
 
       if (response.ok) {
         const data = await response.json();
         if (data.messageBox) {
           if (data.messageBox.includes('successfully')) {
-            if( !CheckemptyDate(ToDatabaseFormat(data.user.inActiveDate))){
+            if (!CheckemptyDate(ToDatabaseFormat(data.user.inActiveDate))) {
               setGlobalState(p => ({ ...p, message: data.messageBox, open: true }))
               window.localStorage.setItem(TOKEN_KEY, data.token);
               dispatch(setToken(data.token));
-              dispatch(setUserDetails(data.user))
+              // dispatch(setUserDetails(data.user))
               setUserData(data.user)
               history.push("/");
-              
-            }else{
+
+            } else {
               setGlobalState(p => ({ ...p, message: "User account has been blocked, please contact to admin", open: true }))
-            } 
+            }
           } else {
             setGlobalState(p => ({ ...p, message: data.messageBox, open: true }))
           }
@@ -86,54 +94,55 @@ const LoginPanel = ({setUserData}) => {
       <CNavbar page={'login'} />
       <form>
 
-      <Grid container spacing={3} style={{ marginTop: 7 }}>
-        <Grid item xs={7}>
-          <CItem>
-            <img className='leaf-rotate' src={leaf} alt="img" />
-          </CItem>
-        </Grid>
-        <Grid item xs={5}>
-
-          <Grid item xs={8}>
-            <TextField
-              required
-              fullWidth
-              id="outlined-required"
-              label="Email"
-              onChange={updateEmail}
-              value={email}
-
-            />
+        <Grid container spacing={3} style={{ marginTop: 7 }}>
+          <Grid item xs={7}>
+            <CItem>
+              <img className='leaf-rotate' src={leaf} alt="img" />
+            </CItem>
           </Grid>
-          <Grid item xs={8} style={{ marginTop: 7 }}>
-            <TextField
-              required
-              fullWidth
-              id="outlined-required"
-              label="Password"
-              onChange={updatePassword}
-              value={password}
-              type={password}
-            />
-          </Grid>
-          <div>
-          </div>
-          <div>
-            <Link to="/" style={{ textDecoration: 'none' }}
-            >
-              <Button
-                onClick={handleSubmit}
+          <Grid item xs={5}>
+
+            <Grid item xs={8}>
+              <TextField
+                required
+                fullWidth
+                id="outlined-required"
+                label="Email"
+                onChange={updateEmail}
+                value={email}
+
+              />
+            </Grid>
+            <Grid item xs={8} style={{ marginTop: 7 }}>
+              <TextField
+                required
+                fullWidth
+                id="outlined-required"
+                label="Password"
+                onChange={updatePassword}
+                value={password}
+                type='password'
+              />
+            </Grid>
+            <div>
+            </div>
+            <div style={{ marginTop: 7 }}>
+              <Link to="/" style={{ textDecoration: 'none' }}
+              >
+                <Button
+                  variant="outlined" color="neutral"
+                  onClick={handleSubmit}
                 // type='submit'
-              >Log in</Button>
-            </Link>
-            <Link to="/signup" style={{ textDecoration: 'none' }}>
-              <Button type="button" >
-                Sign Up
-              </Button>
-            </Link>
-          </div>
+                >Log in</Button>
+              </Link>
+              <Link to="/signup" style={{ textDecoration: 'none' }}>
+                <Button type="button" variant="outlined" color="neutral" >
+                  Sign Up
+                </Button>
+              </Link>
+            </div>
+          </Grid>
         </Grid>
-      </Grid>
       </form>
       <CFooter />
     </>

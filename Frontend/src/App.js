@@ -11,66 +11,72 @@ import SignUpForm from './SignUpForm';
 import HomePage from "./homepage/HomePage";
 import Profile from "./Profile";
 import JazzCashCheckout from "./Banks/jazzcash";
+import UserContext from "./ContextApi.js/UserContext";
+import { userDetails } from "./contants";
 
 
 const App = ({ loadToken }) => {
   const token = useSelector(state => state.authentication.token);
   const [loaded, setLoaded] = useState(false);
   const needLogin = !token;
-  const [userData ,setUserData] = useState({})
+  const [userData, setUserData] = useState({ ...userDetails })
+
   // const needLogin = true;
 
   useEffect(() => {
     setLoaded(true);
     loadToken();
-    
+
   }, [loadToken]);
-  
+
   if (!loaded) {
     return null;
   }
-  
+
   return (
     <>
-    <BrowserRouter>
-      <Switch>  
-        
-        <ProtectedRoute
-          path="/login"
-          exact={true}
-          needLogin={needLogin}
-          component={()=><LoginPanel setUserData={setUserData}/>}
-        />
-        <ProtectedRoute
-          path="/signup"
-          exact={true}
-          needLogin={needLogin}
-          component={SignUpForm}
-        />
-        
-       
-        <ProtectedRoute
-          path="/homepage"
-          exact={true}
-          needLogin={needLogin}
-          component={HomePage}
-        />
-         {/* <ProtectedRoute
+      <BrowserRouter>
+        <Switch>
+
+          <ProtectedRoute
+            path="/login"
+            exact={true}
+            needLogin={needLogin}
+            component={() => <LoginPanel setUserData={e => setUserData(e)} />}
+            // component={() => <LoginPanel setUserData={setUserData} />}
+          />
+          <ProtectedRoute
+            path="/signup"
+            exact={true}
+            needLogin={needLogin}
+            component={SignUpForm}
+          />
+
+
+          <ProtectedRoute
+            path="/homepage"
+            exact={true}
+            needLogin={needLogin}
+            component={HomePage}
+          />
+          {/* <ProtectedRoute
           // path="/profile"
           path="/login"
           exact={true}
           needLogin={needLogin}
           component={Profile}
         /> */}
-        <PrivateRoute
-          path="/"
-          component={()=><PositionSidebar userData={userData}/>}
-          needLogin={needLogin}
-        />
-        
-      </Switch>
-    </BrowserRouter>
-    
+          <PrivateRoute
+            path="/"
+            // component={() => <PositionSidebar  />}
+            component={() => <UserContext.Provider value={userData}><PositionSidebar /></UserContext.Provider >}
+            // component={() => <UserContext.Provider value={userData}><PositionSidebar /></UserContext.Provider >}
+            needLogin={needLogin}
+          />
+
+        </Switch>
+      </BrowserRouter>
+
     </>
   );
 };

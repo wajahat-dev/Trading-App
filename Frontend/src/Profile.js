@@ -2,12 +2,13 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CLoader from './globalcomponents/CLoader';
+import UserContext from './ContextApi.js/UserContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,7 +42,8 @@ const Profile = (props) => {
     formData: { cnic: 'dummy', displayName: 'dummy', phone: 'dummy', country: 'dummy', dob: 'dummy' }
   })
   const [loader, setLoader] = React.useState(false)
-
+  const userData = useContext(UserContext);
+  console.log('wwwwwwwwwwwwwww',userData)
 
   const getData = async () => {
     debugger

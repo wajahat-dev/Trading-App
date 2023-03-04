@@ -11,12 +11,15 @@ import sha256 from 'crypto-js/sha256';
 import React, { useState } from "react";
 import CNotification from "../globalcomponents/CNotification";
 import CLoader from "../globalcomponents/CLoader";
-
+import { generateDateTime, generateExpiryDateTime, generateSecureHash, generateSecureHashv2, getTransactionDateTime, getTransactionExpiry } from "../Globalfunc/func";
+import crypto from 'crypto'
+import querystring from 'querystring'
 
 const REACT_APP_pp_Password = process.env.REACT_APP_pp_Password
 const REACT_APP_pp_CNIC = process.env.REACT_APP_pp_CNIC
 const REACT_APP_pp_MobileNumber = process.env.REACT_APP_pp_MobileNumber
 const REACT_APP_pp_MerchantID = process.env.REACT_APP_pp_MerchantID
+const REACT_APP_pp_salt = process.env.REACT_APP_pp_salt
 
 
 
@@ -49,6 +52,7 @@ function JazzCashCheckout() {
     const classes = useStyles();
     const [phoneNumber, setPhoneNumber] = useState("");
     const [cnicNumber, setCnicNumber] = useState("");
+    const [amount, setAmount] = useState("");
     const [loader, setLoader] = useState(false)
 
     const [globalState, setGlobalState] = useState({
@@ -102,6 +106,7 @@ function JazzCashCheckout() {
                 if (data.success) {
                     setCnicNumber('')
                     setPhoneNumber('')
+                    setAmount('')
                     setGlobalState(p => ({ ...p, varient: 'success', message: 'Send To Admin', open: true }))
                 }
             }
@@ -116,95 +121,50 @@ function JazzCashCheckout() {
 
 
     const JazzCash = () => {
-
-        // const JAZZCASH_HTTP_POST_URL = 
-        const INTEGRITY_KEY = "8scc0yux1z"
-        var payload = {
-            "pp_Version": "1.1",
-            "pp_BankID": "",
-            pp_ProductID: '',
-            pp_Language: "EN",
-            pp_SubMerchantID: "",
-            pp_TxnRefNo: "",
-            pp_Amount: "10000",
-            pp_Password: '',
-            pp_CNIC: '',
-            pp_MobileNumber: '',
-            pp_MerchantID: '',
-            pp_TxnType: '',
-            pp_DiscountedAmount: "",
-            pp_TxnCurrency: "PKR",
-            pp_TxnDateTime: "",
-            pp_BillReference: "BillRef",
-            pp_Description: "Hello",
-            pp_TxnExpiryDateTime: "",
-            pp_SecureHash: "",
-            ppmpf_1: "",
-            ppmpf_2: "",
-            ppmpf_3: "",
-            ppmpf_4: "",
-            ppmpf_5: "",
-            pp_ReturnURL: ''
-        }
-        const secureHash = (data) => {
-            const ordered = Object.keys(data).sort().reduce(
-                (obj, key) => {
-                    obj[key] = data[key];
-                    return obj;
-                },
-                {}
-            );
-            var hash = ""
-            Object.entries(ordered).forEach(
-                ([key, value]) => {
-                    if (value != "") {
-                        hash += '&' + value
-                    }
-                }
-            );;
-            return hash;
-        }
-
-        const convertToSHA = async (string) => {
-            await sha256(string).then((hash) => {
-                console.log(hash);
-            });
-        };
-
-
         try {
             debugger
-            var date = new Date()
-            date = date.getFullYear() + ("0" + (date.getMonth())).slice(-2) + ("0" + date.getDate()).slice(-2) + ("0" + date.getHours()).slice(-2) + ("0" + date.getMinutes()).slice(-2) + ("0" + date.getSeconds()).slice(-2)
-            var date1 = new Date()
-            date1.setHours(date1.getHours() + 1);
-            date1 = date1.getFullYear() + ("0" + (date1.getMonth())).slice(-2) + ("0" + date1.getDate()).slice(-2) + ("0" + date1.getHours()).slice(-2) + ("0" + date1.getMinutes()).slice(-2) + ("0" + date1.getSeconds()).slice(-2)
-            var tXID = 'T' + date
-
-
-
-            var hash = secureHash({ ...payload })
-            hash = INTEGRITY_KEY + hash; //Integritykey + hashString
-            const hmacDigest = hmacSHA256(hash, INTEGRITY_KEY).toString();
-
-            const statetmp = { ...payload }
-            statetmp.pp_TxnDateTime = date
-            statetmp.pp_TxnExpiryDateTime = date1
-            statetmp.pp_TxnRefNo = 'T' + date
-            statetmp.pp_SecureHash = hmacDigest
-            console.log('wwwwww', process)
-
-            statetmp.pp_Password = REACT_APP_pp_Password
-            statetmp.pp_CNIC = cnicNumber
-            statetmp.pp_MobileNumber = phoneNumber
-            statetmp.pp_MerchantID = REACT_APP_pp_MerchantID
-            statetmp.pp_TxnType = REACT_APP_pp_MerchantID
-            // pp_BillReference= 'T' + date,
-            apiCalling(payload)
+            const INTEGRITY_KEY = REACT_APP_pp_salt
+            var payload = {
+                "pp_Version": "1.1",
+                "pp_TxnType": "MWALLET",
+                "pp_Language": "EN",
+                "pp_MerchantID": "",
+                "pp_SubMerchantID": "",
+                "pp_Password": "",
+                "pp_BankID": "",
+                "pp_ProductID": "",
+                "pp_TxnRefNo": "",
+                "pp_Amount": "",
+                "pp_TxnCurrency": "PKR",
+                "pp_TxnDateTime": "",
+                "pp_BillReference": "billref", 
+                "pp_Description": "Description of transaction", 
+                "pp_TxnExpiryDateTime": "",
+                "pp_ReturnURL": "",
+                "ppmpf_1": "",
+                "ppmpf_2": "",
+                "ppmpf_3": "",
+                "ppmpf_4": "",
+                "ppmpf_5": ""
+            }
+            payload.pp_MerchantID = REACT_APP_pp_MerchantID
+            payload.pp_Password = REACT_APP_pp_Password
+            payload.pp_TxnRefNo = 'T' + getTransactionDateTime()
+            payload.pp_TxnDateTime = getTransactionDateTime()
+            payload.pp_TxnExpiryDateTime = getTransactionExpiry(30)
+            payload['pp_SecureHash'] = generateSecureHash(payload,INTEGRITY_KEY,hmacSHA256)
+            
+            payload.ppmpf_1 = phoneNumber
+            payload.pp_Amount = amount
+            payload.pp_ReturnURL = 'https://wajahatali.vercel.app/' // must be hosted website not work in local
+            
+            
+            
+            console.log(payload)
+            // apiCalling(payload)
         } catch (error) {
             console.log('failed to jazzcash')
         }
-
     }
 
 
@@ -241,6 +201,17 @@ function JazzCashCheckout() {
                                     onChange={handleCnicNumberChange}
                                 />
                             </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    id="Amount"
+                                    label="Amount"
+                                    variant="outlined"
+                                    fullWidth
+                                    className={classes.input}
+                                    value={amount}
+                                    onChange={(e)=>setAmount(e.target.value)}
+                                />
+                            </Grid>
                         </Grid>
                         <Button
                             type="submit"
@@ -249,6 +220,7 @@ function JazzCashCheckout() {
                             className={classes.button}
                             disabled={!phoneNumber || !cnicNumber}
                             onClick={JazzCash}
+                            style={{marginBottom: 8}}
                         >
                             Checkout
                         </Button>

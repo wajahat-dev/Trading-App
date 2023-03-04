@@ -274,13 +274,15 @@ const SignUpForm = () => {
               />
             </Grid>
 
-            <Button onClick={handleSubmit}>Sign Up</Button>
+            <div style={{ marginTop: 7 }}>
+            <Button variant="outlined" color="neutral" onClick={handleSubmit}>Sign Up</Button>
             {/* <Button type='submit'>Sign Up</Button> */}
             <Link to="/login" style={{ textDecoration: 'none' }}>
-              <Button>
+              <Button variant="outlined" color="neutral">
                 Log in
               </Button>
             </Link>
+            </div>
 
           </Grid>
         </Grid>

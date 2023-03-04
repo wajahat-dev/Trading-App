@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { Line, Doughnut } from 'react-chartjs-2';
 import Orders from './dashboard/Orders'
@@ -13,12 +13,14 @@ import { Graph } from './Graph';
 
 import DataTable from "./DataTable";
 import PendingRequestTable from './PendingRequestTable';
+import UserContext from './ContextApi.js/UserContext';
 
 
 const UserDetail = ({ getHistoricalData, ledger, positions, getPositions }) => {
   const [stockChartXValues, setstockChartXValues] = useState([]);
   const [stockChartYValues, setstockChartYValues] = useState([]);
   const trades = useSelector(state => state.trades);
+  const userData = useContext(UserContext);
 
 
 
@@ -147,7 +149,7 @@ const UserDetail = ({ getHistoricalData, ledger, positions, getPositions }) => {
     <div className="position-detail">
       {/* {true && <DataTable />}      */}
       {/* {trades.userDetails.isAdmin && <DataTable />}      */}
-      {trades.userDetails.isAdmin && <PendingRequestTable />}     
+      {userData.isAdmin && <PendingRequestTable />}     
 
 
       {/* <div

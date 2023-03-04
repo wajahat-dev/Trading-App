@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   AppBar,
   Button,
@@ -15,6 +15,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import { makeStyles } from '@material-ui/core/styles';
 import DataTable from './DataTable';
 import { useSelector } from 'react-redux';
+import UserContext from './ContextApi.js/UserContext';
 
 const drawerWidth = 240;
 
@@ -47,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
 function DisableUserPage() {
 
   const trades = useSelector(state => state.trades);
-
+  const userData = useContext(UserContext);
   const classes = useStyles();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -61,7 +62,7 @@ function DisableUserPage() {
 
   return (
     <div className={classes.root}>
-      {trades.userDetails.isAdmin && <DataTable />}
+      {userData.isAdmin && <DataTable />}
 
     </div>
   );
