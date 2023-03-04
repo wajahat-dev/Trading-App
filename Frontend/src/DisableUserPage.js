@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(3),
   },
 }));
-
+ 
 function DisableUserPage() {
 
   const trades = useSelector(state => state.trades);
