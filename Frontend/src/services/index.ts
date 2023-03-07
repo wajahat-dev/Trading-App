@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+// import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
 enum StatusCode {
   Unauthorized = 401,
@@ -22,9 +23,11 @@ const injectToken = (config: AxiosRequestConfig): AxiosRequestConfig => {
     }
     return config;
   } catch (error) {
-    throw new Error(error);
+    throw new Error(`${error}`);
   }
 };
+
+
 
 class Http {
   private instance: AxiosInstance | null = null;
@@ -44,15 +47,16 @@ class Http {
       Promise.reject(error)
     );
 
-    http.interceptors.response.use(
-      (response) => {
-        return { data: response.data, status: response.status };
-      },
-      (error) => {
-        const { response } = error;
-        return this.handleError(response);
-      }
-    );
+    // http.interceptors.response.use(
+    //   (response) =>  {
+    //     // return { data: response.data, status: response.status, statusText: '', headers, config:{} };
+    //     return { data: response.data, status: response.status };
+    //   },
+    //   (error) => {
+    //     const { response } = error;
+    //     return this.handleError(response);
+    //   }
+    // );
 
     this.instance = http;
     return http;
@@ -96,7 +100,7 @@ class Http {
 
   // Handle global app errors
   // We can handle generic app errors depending on the status code
-  private handleError(error) {
+  private handleError(error: AxiosResponse) {
     const { status } = error;
 
     switch (status) {
