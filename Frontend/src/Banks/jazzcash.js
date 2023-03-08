@@ -147,7 +147,7 @@ function JazzCashCheckout() {
                 "ppmpf_4": "",
                 "ppmpf_5": ""
             }
-            payload.  = REACT_APP_pp_MerchantID
+            payload.pp_MerchantID  = REACT_APP_pp_MerchantID
             payload.pp_Password = REACT_APP_pp_Password
             payload.pp_TxnRefNo = 'T' + getTransactionDateTime()
             payload.pp_TxnDateTime = getTransactionDateTime()
@@ -161,7 +161,7 @@ function JazzCashCheckout() {
             
             
             console.log(payload)
-            // apiCalling(payload)
+            apiCalling(payload)
         } catch (error) {
             console.log('failed to jazzcash')
         }

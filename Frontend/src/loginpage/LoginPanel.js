@@ -12,7 +12,7 @@ import { CItem } from "../globalcomponents/globalCss";
 import CFooter from "../globalcomponents/CFooter";
 import { setUserDetails } from "../store/reducers/trades";
 import { CheckemptyDate, ToDatabaseFormat } from "../Globalfunc/func";
-import { login } from "../services/Services";
+// import { login } from "../services/Services";
 
 
 const LoginPanel = ({ setUserData }) => {
@@ -31,22 +31,22 @@ const LoginPanel = ({ setUserData }) => {
     e.preventDefault()
     setLoader(true)
     try {
-      // const response = await fetch(`https://localhost:7000/api/login`, {
-      //   method: "post",
-      //   "accept": '*/*',
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({
-      //     "username": email,
-      //     "password": password,
-      //     "clientid": 0
-      //   }),
-      // });
+      const response = await fetch(`https://localhost:7000/api/login`, {
+        method: "post",
+        "accept": '*/*',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          "username": email,
+          "password": password,
+          "clientid": 0
+        }),
+      });
 
-      const response = await login({
-        "username": email,
-        "password": password,
-        "clientid": 0
-      })
+      // const response = await login({
+      //   "username": email,
+      //   "password": password,
+      //   "clientid": 0
+      // })
 
 
       if (response.ok) {
