@@ -178,6 +178,17 @@ namespace pobject.Core.DatabaseEnvironment
                 {
                     if (request.Password.Equals(request.ConfirmPassword))
                     {
+
+
+                        string QueryForIdentification = $"select* from tbl_users where  EmailOrUsername = '{Username}'";
+                        DataTable result1 = SqlView(QueryForIdentification);
+                        if (result1.Rows.Count > 0)
+                        {
+                            response.MessageBox = "Email Already Exists";
+                            response.Success = false;
+                            return response;
+                        }
+
                         string RoleCode = string.IsNullOrEmpty(RoleCodeIfLoggedInAsAdmin) ? "X" : RoleCodeIfLoggedInAsAdmin;
 
                         #region SECURITY

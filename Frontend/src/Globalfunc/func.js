@@ -136,3 +136,10 @@ export const generateSecureHashv2 = (request, integrityText, crypto) => {
         .digest('hex')
         .toUpperCase();
 }
+
+export const EmailValidation = (value) => {
+    const validRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    const regex = new RegExp(validRegex);
+    if (value.trim() !== '' && regex.test(value)) return false
+    return true
+  };

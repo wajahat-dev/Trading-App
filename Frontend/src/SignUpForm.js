@@ -13,6 +13,7 @@ import CFooter from './globalcomponents/CFooter';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { EmailValidation } from './Globalfunc/func';
 
 
 
@@ -50,10 +51,31 @@ const SignUpForm = () => {
 
   const handleSubmit = async (e) => {
     debugger
+    let existCon = false
     if(!globalState.formData.cnic){
       setGlobalState(p => ({ ...p, message: 'CNIC Can not be blank', open: true, varient: 'info' }))
-      return
+      existCon = true
+    }else if(!globalState.formData.email){
+      setGlobalState(p => ({ ...p, message: 'Email Can not be blank', open: true, varient: 'info' }))
+      existCon = true
+
+    }else if(!globalState.formData.password){
+      setGlobalState(p => ({ ...p, message: 'Password Can not be blank', open: true, varient: 'info' }))
+      existCon = true
+
+    }else if(!globalState.formData.confirmPassword){
+      setGlobalState(p => ({ ...p, message: 'Confirm Password Can not be blank', open: true, varient: 'info' }))
+      existCon = true
+
+    }else if(globalState.formData.confirmPassword !== globalState.formData.password){
+      setGlobalState(p => ({ ...p, message: 'Passwords Must Match', open: true, varient: 'info' }))
+      existCon = true
+    }else if(EmailValidation(globalState.formData.email)){
+      setGlobalState(p => ({ ...p, message: 'Email must be in correct format', open: true, varient: 'info' }))
+      existCon = true
     }
+
+    if(existCon) return 
 
     setLoader(true)
     try {
@@ -97,6 +119,10 @@ const SignUpForm = () => {
                 setGlobalState(p => ({ ...p, formData: { ...INITIAL_USER }, message: apiOnedata.messageBox, open: true, varient: "success" }))
                 window.localStorage.setItem(TOKEN_KEY, apiOnedata.token);
                 dispatch(setToken(apiOnedata.token));
+              }else{
+                if(apiTwodata.messageBox){
+                  setGlobalState(p => ({ ...p, message: apiTwodata.messageBox, open: true, varient: 'info' }))
+                }
               }
             }
 

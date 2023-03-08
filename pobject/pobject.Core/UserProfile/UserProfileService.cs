@@ -6,6 +6,8 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.SqlClient;
+using pobject.Core.Signup;
 
 namespace pobject.Core.UserProfile
 {
@@ -68,6 +70,16 @@ FROM TBL_USERS a INNER JOIN TBL_USERINFO b ON a.UserId = b.UserId AND a.UserNumb
             UserProfile_Response response = new UserProfile_Response();
             try
             {
+       
+                string QueryForCNIC = $"select* from tbl_UserInfo where CNIC = '{request.CNIC}'";
+                DataTable result1 = _database.SqlView(QueryForCNIC);
+                if (result1.Rows.Count > 0)
+                {
+                    response.MessageBox = "CNIC must be unique";
+                    response.GoodResponse = false;
+                    return response;
+                }
+
                 List<SqlParameter> sqlParameters = new List<SqlParameter>();
                 sqlParameters.Add(new SqlParameter("@CNIC", request.CNIC)); //should be readonly
                 sqlParameters.Add(new SqlParameter("@DISPLAYNAME", request.DISPLAYNAME));
@@ -79,6 +91,9 @@ FROM TBL_USERS a INNER JOIN TBL_USERINFO b ON a.UserId = b.UserId AND a.UserNumb
                 {
                     block = " ,INACTIVEDATE = SYSDATETIME() ";
                 }
+                
+
+
                 //sqlParameters.Add(new SqlParameter("@EMAIL", request.Email));    //secondary Email
 
                 //Logged In User
