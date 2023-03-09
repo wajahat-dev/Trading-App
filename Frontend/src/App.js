@@ -28,10 +28,17 @@ const App = ({ loadToken }) => {
     loadToken();
 
   }, [loadToken]);
+  useEffect(()=>{
+    console.log('wwwwwwwwwwwwwwwwwwww')
+  },[])
 
+  
   if (!loaded) {
     return null;
   }
+
+
+
 
   return (
     <>

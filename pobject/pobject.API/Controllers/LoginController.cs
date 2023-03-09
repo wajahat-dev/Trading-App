@@ -43,6 +43,32 @@ namespace pobject.API.Controllers
             {
                 return Ok(result);
             }
-        } 
+        }
+
+        [HttpPost]
+        [Route("getLoginInfo")]
+        public IActionResult GetLoginInfo(LoginInformation request)
+        {
+            Login_Response result = _LoginService.GetLoginInfo(request);
+            if (result.Success)
+            {
+                if (result.IsActiveUser)
+                {
+                    result.Token = _JWT_Helper.GenerateToken(result);
+                    return Ok(result);
+                }
+                else
+                {
+                    result.MessageBox = "Your Account is Suspended , Please Contact from your Administrator";
+                    return Ok(result);
+                }
+            }
+            else
+            {
+                return Ok(result);
+            }
+        }
+
+
     }
 }

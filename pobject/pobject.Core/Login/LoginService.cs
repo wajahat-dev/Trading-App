@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using pobject.Core.CommonHelper;
 using pobject.Core.DatabaseEnvironment;
 using pobject.Core.Signup;
@@ -6,11 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace pobject.Core.Login
 {
@@ -150,6 +154,64 @@ namespace pobject.Core.Login
             }
             return response;
         }
+
+        public Login_Response GetLoginInfo(LoginInformation request)
+        {
+            Login_Response response = new Login_Response();
+
+
+            try
+            {
+
+
+                string Query = $@"select * from tbl_users Where EmailOrUsername = '{request.EmailOrUsername}' ";
+                DataTable result = _database.SqlView(Query);
+                if (result.Rows.Count > 0)
+                {
+
+
+                    var hmac = new HMACSHA512(Encoding.UTF8.GetBytes(request.token));
+                    string decodedSalt = mycrpto.DecodeSalt((string)result.Rows[0]["salt"]);
+
+                    // Create a JWT token handler and specify the validation parameters
+                    var handler = new JwtSecurityTokenHandler();
+                    var validationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes($@"{decodedSalt}")),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+
+                    var claimsPrincipal = handler.ValidateToken($@"{hmac}", validationParameters, out var validatedToken);
+                    var jwtToken = (JwtSecurityToken)validatedToken;
+
+                    // Extract user data from the JWT token's claims
+                    string userId = jwtToken.Claims.First(x => x.Type == "user_id").Value;
+                    string email = jwtToken.Claims.First(x => x.Type == "email").Value;
+
+
+                }
+                else
+                {
+
+                }
+
+               
+
+              
+            }
+            catch (Exception ex)
+            {
+                
+            }
+
+            return response;
+        }
+
+
+
+
         public T SqlRow<T>(DataRow row) where T : new()
         {
             // create a new object
