@@ -6,10 +6,15 @@ using pobject.Core;
 using pobject.Core.AuthBase;
 using pobject.Core.DatabaseEnvironment;
 using pobject.Core.OtherServices;
+using pobject.API.Helpers;
 using pobject.Core.UserProfile;
 using System;
 using System.Data;
 using System.Net.Http.Headers;
+using System.Security.Cryptography;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 
 namespace pobject.API.Controllers
 {
@@ -35,8 +40,47 @@ namespace pobject.API.Controllers
         public async Task<IActionResult> jc_wallet([FromBody] dynamic data)
         {
             HttpResponseMessage result = new HttpResponseMessage();
+           
+
             try
             {
+
+                var payload = new Dictionary<string, string>
+{
+    { "pp_Version", "1.1" },
+    { "pp_TxnType", "MWALLET" },
+    { "pp_Language", "EN" },
+    { "pp_MerchantID", "" },
+    { "pp_SubMerchantID", "" },
+    { "pp_Password", "" },
+    { "pp_BankID", "" },
+    { "pp_ProductID", "" },
+    { "pp_TxnRefNo", "" },
+    { "pp_Amount", "" },
+    { "pp_TxnCurrency", "PKR" },
+    { "pp_TxnDateTime", "" },
+    { "pp_BillReference", "billref" },
+    { "pp_Description", "Description of transaction" },
+    { "pp_TxnExpiryDateTime", "" },
+    { "pp_ReturnURL", "https://wajahatali.vercel.app/" },
+    { "ppmpf_1", "" },
+    { "ppmpf_2", "" },
+    { "ppmpf_3", "" },
+    { "ppmpf_4", "" },
+    { "ppmpf_5", "" }
+};
+                payload["pp_MerchantID"] = "MC53678";
+                payload["pp_Password"] = "808ww559vu";
+                payload["pp_TxnRefNo"] = "T" + JazzHelper.GetTransactionDateTime();
+                payload["pp_TxnDateTime"] = JazzHelper.GetTransactionDateTime();
+                payload["pp_TxnExpiryDateTime"] = JazzHelper.GetTransactionExpiry(30);
+                payload["pp_SecureHash"] = JazzHelper.GenerateSecureHash(payload, "8scc0yux1z");
+
+                JObject json = JsonConvert.DeserializeObject<JObject>(data.ToString());
+
+                //payload["ppmpf_1"] = data.string.phoneNumber;
+
+
                 #region A Way
                 Uri baseAddress = new Uri($"https://sandbox.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction");
                 HttpClient client = new HttpClient();

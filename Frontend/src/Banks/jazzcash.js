@@ -11,9 +11,11 @@ import sha256 from 'crypto-js/sha256';
 import React, { useState } from "react";
 import CNotification from "../globalcomponents/CNotification";
 import CLoader from "../globalcomponents/CLoader";
-import { generateDateTime, generateExpiryDateTime, generateSecureHash, generateSecureHashv2, getTransactionDateTime, getTransactionExpiry } from "../Globalfunc/func";
+import { CNICValidation, PhoneValidation, generateDateTime, generateExpiryDateTime, generateSecureHash, generateSecureHashv2, getTransactionDateTime, getTransactionExpiry } from "../Globalfunc/func";
 import crypto from 'crypto'
 import querystring from 'querystring'
+import { useHistory } from 'react-router-dom';
+import { setTimeout } from "timers";
 
 const REACT_APP_pp_Password = process.env.REACT_APP_pp_Password
 const REACT_APP_pp_CNIC = process.env.REACT_APP_pp_CNIC
@@ -54,6 +56,8 @@ function JazzCashCheckout() {
     const [cnicNumber, setCnicNumber] = useState("");
     const [amount, setAmount] = useState("");
     const [loader, setLoader] = useState(false)
+    const history = useHistory();
+
 
     const [globalState, setGlobalState] = useState({
         message: '',
@@ -62,10 +66,12 @@ function JazzCashCheckout() {
     })
 
     const handlePhoneNumberChange = (event) => {
+
         setPhoneNumber(event.target.value);
     };
 
     const handleCnicNumberChange = (event) => {
+
         setCnicNumber(event.target.value);
     };
 
@@ -75,7 +81,26 @@ function JazzCashCheckout() {
     };
 
 
-    const apiCalling = async (data) => {
+    const apiCalling = async () => {
+
+        let existCon = false
+        if (!phoneNumber) {
+            setGlobalState(p => ({ ...p, message: 'Phone Can not be blank', open: true, varient: 'info' }))
+            existCon = true
+        } else if (!CNICValidation(cnicNumber)) {
+            setGlobalState(p => ({ ...p, message: 'CNIC Can not be blank', open: true, varient: 'info' }))
+            existCon = true
+        } else if (!amount) {
+            setGlobalState(p => ({ ...p, message: 'Amount Can not be blank', open: true, varient: 'info' }))
+            existCon = true
+        } else if (PhoneValidation(phoneNumber)) {
+            setGlobalState(p => ({ ...p, message: 'Phone must be in correct format', open: true, varient: 'info' }))
+            existCon = true
+        }
+
+        if (existCon) return
+
+
         setLoader(true)
 
         try {
@@ -94,7 +119,9 @@ function JazzCashCheckout() {
                     "emailOrUsername": "",
                     "userID": "",
                     "description": "",
-                    "payload": JSON.stringify(data)
+                    "payload": JSON.stringify({
+                        phoneNumber, cnicNumber, amount
+                    })
                 }),
             });
 
@@ -108,6 +135,9 @@ function JazzCashCheckout() {
                     setPhoneNumber('')
                     setAmount('')
                     setGlobalState(p => ({ ...p, varient: 'success', message: 'Send To Admin', open: true }))
+                    setTimeout(()=>{
+                        history.push('/kycc')
+                    }, 2000);
                 }
             }
 
@@ -123,45 +153,42 @@ function JazzCashCheckout() {
     const JazzCash = () => {
         try {
             debugger
-            const INTEGRITY_KEY = REACT_APP_pp_salt
-            var payload = {
-                "pp_Version": "1.1",
-                "pp_TxnType": "MWALLET",
-                "pp_Language": "EN",
-                "pp_MerchantID": "",
-                "pp_SubMerchantID": "",
-                "pp_Password": "",
-                "pp_BankID": "",
-                "pp_ProductID": "",
-                "pp_TxnRefNo": "",
-                "pp_Amount": "",
-                "pp_TxnCurrency": "PKR",
-                "pp_TxnDateTime": "",
-                "pp_BillReference": "billref", 
-                "pp_Description": "Description of transaction", 
-                "pp_TxnExpiryDateTime": "",
-                "pp_ReturnURL": "",
-                "ppmpf_1": "",
-                "ppmpf_2": "",
-                "ppmpf_3": "",
-                "ppmpf_4": "",
-                "ppmpf_5": ""
-            }
-            payload.pp_MerchantID  = REACT_APP_pp_MerchantID
-            payload.pp_Password = REACT_APP_pp_Password
-            payload.pp_TxnRefNo = 'T' + getTransactionDateTime()
-            payload.pp_TxnDateTime = getTransactionDateTime()
-            payload.pp_TxnExpiryDateTime = getTransactionExpiry(30)
-            payload['pp_SecureHash'] = generateSecureHash(payload,INTEGRITY_KEY,hmacSHA256)
-            
-            payload.ppmpf_1 = phoneNumber
-            payload.pp_Amount = amount
-            payload.pp_ReturnURL = 'https://wajahatali.vercel.app/' // must be hosted website not work in local
-            
-            
-            
-            console.log(payload)
-            apiCalling(payload)
+            // const INTEGRITY_KEY = REACT_APP_pp_salt
+            // var payload = {
+            //     "pp_Version": "1.1",
+            //     "pp_TxnType": "MWALLET",
+            //     "pp_Language": "EN",
+            //     "pp_MerchantID": "",
+            //     "pp_SubMerchantID": "",
+            //     "pp_Password": "",
+            //     "pp_BankID": "",
+            //     "pp_ProductID": "",
+            //     "pp_TxnRefNo": "",
+            //     "pp_Amount": "",
+            //     "pp_TxnCurrency": "PKR",
+            //     "pp_TxnDateTime": "",
+            //     "pp_BillReference": "billref",
+            //     "pp_Description": "Description of transaction",
+            //     "pp_TxnExpiryDateTime": "",
+            //     "pp_ReturnURL": "",
+            //     "ppmpf_1": "",
+            //     "ppmpf_2": "",
+            //     "ppmpf_3": "",
+            //     "ppmpf_4": "",
+            //     "ppmpf_5": ""
+            // }
+            // payload.pp_MerchantID = REACT_APP_pp_MerchantID
+            // payload.pp_Password = REACT_APP_pp_Password
+            // payload.pp_TxnRefNo = 'T' + getTransactionDateTime()
+            // payload.pp_TxnDateTime = getTransactionDateTime()
+            // payload.pp_TxnExpiryDateTime = getTransactionExpiry(30)
+            // payload['pp_SecureHash'] = generateSecureHash(payload, INTEGRITY_KEY, hmacSHA256)
+
+            // payload.ppmpf_1 = phoneNumber
+            // payload.pp_Amount = amount
+            // payload.pp_ReturnURL = 'https://wajahatali.vercel.app/' // must be hosted website not work in local
+            // console.log(payload)
+            apiCalling()
         } catch (error) {
             console.log('failed to jazzcash')
         }
@@ -198,6 +225,7 @@ function JazzCashCheckout() {
                                     fullWidth
                                     className={classes.input}
                                     value={cnicNumber}
+                                    placeholder="#####-#######-#"
                                     onChange={handleCnicNumberChange}
                                 />
                             </Grid>
@@ -209,7 +237,7 @@ function JazzCashCheckout() {
                                     fullWidth
                                     className={classes.input}
                                     value={amount}
-                                    onChange={(e)=>setAmount(e.target.value)}
+                                    onChange={(e) => setAmount(e.target.value)}
                                 />
                             </Grid>
                         </Grid>
@@ -218,9 +246,9 @@ function JazzCashCheckout() {
                             variant="contained"
                             color="primary"
                             className={classes.button}
-                            disabled={!phoneNumber || !cnicNumber}
+                            disabled={!phoneNumber || !cnicNumber || !amount}
                             onClick={JazzCash}
-                            style={{marginBottom: 8}}
+                            style={{ marginBottom: 8 }}
                         >
                             Checkout
                         </Button>

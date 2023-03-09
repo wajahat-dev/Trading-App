@@ -71,15 +71,6 @@ FROM TBL_USERS a INNER JOIN TBL_USERINFO b ON a.UserId = b.UserId AND a.UserNumb
             try
             {
        
-                string QueryForCNIC = $"select* from tbl_UserInfo where CNIC = '{request.CNIC}'";
-                DataTable result1 = _database.SqlView(QueryForCNIC);
-                if (result1.Rows.Count > 0)
-                {
-                    response.MessageBox = "CNIC must be unique";
-                    response.GoodResponse = false;
-                    return response;
-                }
-
                 List<SqlParameter> sqlParameters = new List<SqlParameter>();
                 sqlParameters.Add(new SqlParameter("@CNIC", request.CNIC)); //should be readonly
                 sqlParameters.Add(new SqlParameter("@DISPLAYNAME", request.DISPLAYNAME));

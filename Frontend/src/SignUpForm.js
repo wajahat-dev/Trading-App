@@ -121,7 +121,7 @@ const SignUpForm = () => {
                 dispatch(setToken(apiOnedata.token));
               }else{
                 if(apiTwodata.messageBox){
-                  setGlobalState(p => ({ ...p, message: apiTwodata.messageBox, open: true, varient: 'info' }))
+                  setGlobalState(p => ({ ...p, message: 'Email must be in correct format', open: true, varient: 'info' }))
                 }
               }
             }

@@ -189,6 +189,18 @@ namespace pobject.Core.DatabaseEnvironment
                             return response;
                         }
 
+                        //string QueryForCNIC = $"select* from tbl_UserInfo where CNIC = '{request.CNIC}'";
+                        //DataTable result2 = _database.SqlView(QueryForCNIC);
+                        //if (result1.Rows.Count > 0)
+                        //{
+                        //    //DELETE FROM tbl_users WHERE EmailOrUsername = 'string'
+                        //    //string QueryForDeleteEmail = $"DELETE FROM tbl_users WHERE EmailOrUsername = '{request.CNIC}'";
+
+                        //    response.MessageBox = "CNIC must be unique";
+                        //    response.GoodResponse = false;
+                        //    return response;
+                        //}
+
                         string RoleCode = string.IsNullOrEmpty(RoleCodeIfLoggedInAsAdmin) ? "X" : RoleCodeIfLoggedInAsAdmin;
 
                         #region SECURITY

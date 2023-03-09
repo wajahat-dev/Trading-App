@@ -143,3 +143,19 @@ export const EmailValidation = (value) => {
     if (value.trim() !== '' && regex.test(value)) return false
     return true
   };
+
+
+  export const PhoneValidation = (value) => {
+    const validRegex = /^((\+92)?(0092)?(92)?(0)?)(3)([0-9]{9})$/;
+    const regex = new RegExp(validRegex);
+    if (value.trim() !== '' && regex.test(value)) return false
+    return true
+  };
+
+
+  export const CNICValidation = (value) => {
+    const validRegex = /^([0-9]{5})[\-]([0-9]{7})[\-]([0-9]{1})+/
+    const regex = new RegExp(validRegex);
+    if (value.trim() !== '' && !regex.test(value)) return false
+    return true
+  };

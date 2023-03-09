@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, Route, Switch, useParams } from "react-router-dom";
 
@@ -27,9 +27,14 @@ import BinancePayCheckout from "./Banks/Binancepay";
 import VisaMaster from "./Banks/VisaMaster";
 import AdminPanel from "./AdminPanel";
 import DisableUserPage from "./DisableUserPage";
+import UserContext from "./ContextApi.js/UserContext";
 
 const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePositionAndGet, updateWatchedStockAndGet }) => {
   const dispatch = useDispatch();
+  const userData = useContext(UserContext);
+
+
+
 
   useEffect(() => {
     dispatch(getPositions())
@@ -149,7 +154,7 @@ const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePosition
 
 
       <CNavbar page={'positionsidebar'} />
-
+      Login as {userData?.isAdmin ? 'Admin' : 'User'}
 
       <Switch>
         <Route

@@ -39,11 +39,11 @@ const useStyles = makeStyles((theme) => ({
 const Profile = (props) => {
   const classes = useStyles();
   const [globalState, setGlobalState] = useState({
-    formData: { cnic: 'dummy', displayName: 'dummy', phone: 'dummy', country: 'dummy', dob: 'dummy' }
+    formData: { cnic: '', displayName: '', phone: '', country: '', dob: '', createdon: '' }
   })
   const [loader, setLoader] = React.useState(false)
   const userData = useContext(UserContext);
-  console.log('wwwwwwwwwwwwwww',userData)
+
 
   const getData = async () => {
     debugger
@@ -65,7 +65,7 @@ const Profile = (props) => {
         if (data.length > 0) {
           setGlobalState(p => ({
             ...p,
-            formData: { cnic: data[0].cnic, displayName: data[0].displayname, phone: data[0].phone, country: data[0].country, dob: data[0].dob }
+            formData: { createdon: data[0].createdon , cnic: data[0].cnic, displayName: data[0].displayname, phone: data[0].phone, country: data[0].country, dob: data[0].dob }
           }))
 
         }
@@ -97,9 +97,9 @@ const Profile = (props) => {
               className={classes.avatar}
             />
             <Typography variant="h5" gutterBottom>
-              {globalState.formData.displayName}
+            Your Email: {globalState.formData.displayName}
             </Typography>
-            <Typography variant="body1">{globalState.formData.dob}</Typography>
+            <Typography variant="body1">Your DOB: {globalState.formData.dob}</Typography>
           </Grid>
         </Grid>
         <Grid container justify="center">
@@ -110,6 +110,7 @@ const Profile = (props) => {
                   <Typography variant="body1">CNIC: {globalState.formData.cnic}</Typography>
                   <Typography variant="body1">Phone: {globalState.formData.phone}</Typography>
                   <Typography variant="body1">Country: {globalState.formData.country}</Typography>
+                  <Typography variant="body1">Account Creation: {globalState.formData.createdon}</Typography>
                 </Typography>
               </CardContent>
             </Card>

@@ -11,7 +11,7 @@ import leaf from '../tradingImg.png';
 import { CItem } from "../globalcomponents/globalCss";
 import CFooter from "../globalcomponents/CFooter";
 import { setUserDetails } from "../store/reducers/trades";
-import { CheckemptyDate, ToDatabaseFormat } from "../Globalfunc/func";
+import { CheckemptyDate, EmailValidation, ToDatabaseFormat } from "../Globalfunc/func";
 // import { login } from "../services/Services";
 
 
@@ -29,6 +29,21 @@ const LoginPanel = ({ setUserData }) => {
   const handleSubmit = async (e) => {
     debugger
     e.preventDefault()
+    let existCon = false
+    if(!email){
+      setGlobalState(p => ({ ...p, message: 'Email Can not be blank', open: true, varient: 'info' }))
+      existCon = true
+
+    }else if(!password){
+      setGlobalState(p => ({ ...p, message: 'Password Can not be blank', open: true, varient: 'info' }))
+      existCon = true
+
+    }else if(EmailValidation(email)){
+      setGlobalState(p => ({ ...p, message: 'Email must be in correct format', open: true, varient: 'info' }))
+      existCon = true
+    }
+    if(existCon) return 
+    
     setLoader(true)
     try {
       const response = await fetch(`https://localhost:7000/api/login`, {
