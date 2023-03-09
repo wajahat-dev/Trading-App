@@ -18,6 +18,15 @@ using Newtonsoft.Json.Linq;
 
 namespace pobject.API.Controllers
 {
+
+    public class JazzRequest
+    {
+        public string phoneNumber { get; set; }
+        public string cnicNumber { get; set; }
+        public string amount { get; set; }
+    }
+
+
     [Route("api")]
     [EnableCors("AllowSpecificOrigin")]
     [ApiController]
@@ -33,14 +42,14 @@ namespace pobject.API.Controllers
             _JWT_Helper = JWT_Helper;
             _httpContextAccessor = httpContextAccessor;
         }
-        
-        
+
+
         [HttpPost]
         [Route("jc_wallet")]
-        public async Task<IActionResult> jc_wallet([FromBody] dynamic data)
+        public async Task<IActionResult> jc_wallet(JazzRequest request)
         {
             HttpResponseMessage result = new HttpResponseMessage();
-           
+
 
             try
             {
@@ -76,15 +85,17 @@ namespace pobject.API.Controllers
                 payload["pp_TxnExpiryDateTime"] = JazzHelper.GetTransactionExpiry(30);
                 payload["pp_SecureHash"] = JazzHelper.GenerateSecureHash(payload, "8scc0yux1z");
 
-                JObject json = JsonConvert.DeserializeObject<JObject>(data.ToString());
+                //JObject json = JsonConvert.DeserializeObject<JObject>(data.ToString());
 
-                //payload["ppmpf_1"] = data.string.phoneNumber;
+                payload["ppmpf_1"] = request.phoneNumber;
+                payload["pp_Amount"] = request.amount;
 
 
                 #region A Way
                 Uri baseAddress = new Uri($"https://sandbox.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction");
                 HttpClient client = new HttpClient();
-                HttpResponseMessage response = await client.PostAsync(baseAddress, new StringContent(data.ToString(), System.Text.Encoding.UTF8, "application/json"));
+                //HttpResponseMessage response = await client.PostAsync(baseAddress, new StringContent(data.ToString(), System.Text.Encoding.UTF8, "application/json"));
+                HttpResponseMessage response = await client.PostAsync(baseAddress, new StringContent(payload.ToString(), System.Text.Encoding.UTF8, "application/json"));
                 return Content(await response.Content.ReadAsStringAsync(), "application/json");
                 #endregion
 
