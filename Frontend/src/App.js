@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { BrowserRouter, Switch } from "react-router-dom";
 
-import { loadToken } from "./store/actions/authentication";
+import { TOKEN_KEY, loadToken } from "./store/actions/authentication";
 import { ProtectedRoute, PrivateRoute } from "./util/route-util";
 import LoginPanel from "./loginpage/LoginPanel";
 import PositionSidebar from "./PositionSidebar";
@@ -13,6 +13,7 @@ import Profile from "./Profile";
 import JazzCashCheckout from "./Banks/jazzcash";
 import UserContext from "./ContextApi.js/UserContext";
 import { userDetails } from "./contants";
+import CNotification from "./globalcomponents/CNotification";
 
 
 const App = ({ loadToken }) => {
@@ -20,6 +21,11 @@ const App = ({ loadToken }) => {
   const [loaded, setLoaded] = useState(false);
   const needLogin = !token;
   const [userData, setUserData] = useState({ ...userDetails })
+  const [globalState, setGlobalState] = useState({
+    message: '',
+    open: false,
+    varient: 'info'
+})
 
   // const needLogin = true;
 
@@ -29,8 +35,37 @@ const App = ({ loadToken }) => {
 
   }, [loadToken]);
   useEffect(()=>{
-    console.log('wwwwwwwwwwwwwwwwwwww')
+
+    maintainSession()
+
+
+
   },[])
+
+  const maintainSession =  async ()=>{
+    
+    const data = await fetch(`https://localhost:7000/api/getLoginInfo`, {
+      method: "get",
+      "accept": '*/*',
+      headers: {
+        "Content-Type": "application/json",
+        accept: '*/*',
+
+        Authorization: `Bearer ${localStorage.getItem('TOKEN_KEY')
+            ? localStorage.getItem('TOKEN_KEY')
+            : ''
+            }`,
+    },
+    });
+    debugger
+    if(data.success && data.messageBox === ''){
+      setUserData(data.user)
+    }else{
+      setGlobalState(p => ({ ...p, message: data.messageBox, open: true }))
+    }
+    
+  }
+
 
   
   if (!loaded) {
@@ -42,6 +77,8 @@ const App = ({ loadToken }) => {
 
   return (
     <>
+      <CNotification isOpen={globalState.open} setOpen={e => setGlobalState(p => ({ ...p, open: e }))} message={globalState.message} />
+
       <BrowserRouter>
         <Switch>
 

@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using pobject.API.Helpers;
 using pobject.Core.AuthBase;
-using pobject.Core.Login; 
+using pobject.Core.Login;
+using Microsoft.Net.Http.Headers;
+
 namespace pobject.API.Controllers
 {
     [Route("api")]
@@ -45,16 +48,18 @@ namespace pobject.API.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("getLoginInfo")]
-        public IActionResult GetLoginInfo(LoginInformation request)
+        //public IActionResult GetLoginInfo(LoginInformation request)
+        public IActionResult GetLoginInfo()
         {
-            Login_Response result = _LoginService.GetLoginInfo(request);
+            var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+            Login_Response result = _LoginService.GetLoginInfo(_bearer_token);
+               
             if (result.Success)
             {
                 if (result.IsActiveUser)
                 {
-                    result.Token = _JWT_Helper.GenerateToken(result);
                     return Ok(result);
                 }
                 else

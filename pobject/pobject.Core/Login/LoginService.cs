@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json.Linq;
 using pobject.Core.CommonHelper;
 using pobject.Core.DatabaseEnvironment;
@@ -14,6 +15,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+
 
 
 namespace pobject.Core.Login
@@ -75,7 +77,10 @@ namespace pobject.Core.Login
                 string connectionString = _configuration["ConnectionStrings:DefaultConnection"];  
                 string username = request.Username;
                 string password = request.Password.Trim();
+                
                 string Query = $@"select * from tbl_users Where EmailOrUsername = '{username}' and password = '{password}' and password2='{password}' ";
+                
+                
                 DataTable result = _database.SqlView(Query, connectionString);
                 if (result.Rows.Count > 0)
                 {
@@ -155,51 +160,65 @@ namespace pobject.Core.Login
             return response;
         }
 
-        public Login_Response GetLoginInfo(LoginInformation request)
+        public Login_Response GetLoginInfo(string _bearer_token)
         {
             Login_Response response = new Login_Response();
-
-
+           
             try
             {
+                var handler = new JwtSecurityTokenHandler();
+                var jwtDecoded = handler.ReadToken(_bearer_token) as JwtSecurityToken;
+                var email = jwtDecoded.Claims.FirstOrDefault(j => j.Type.EndsWith("email")).Value ?? "";
+                response.Token = $@"{_bearer_token}";
+                string Query = $@"select * from tbl_users Where EmailOrUsername = '{email}' ";
 
-
-                string Query = $@"select * from tbl_users Where EmailOrUsername = '{request.EmailOrUsername}' ";
                 DataTable result = _database.SqlView(Query);
                 if (result.Rows.Count > 0)
                 {
+                    bool IsFound = false;
 
-
-                    var hmac = new HMACSHA512(Encoding.UTF8.GetBytes(request.token));
-                    string decodedSalt = mycrpto.DecodeSalt((string)result.Rows[0]["salt"]);
-
-                    // Create a JWT token handler and specify the validation parameters
-                    var handler = new JwtSecurityTokenHandler();
-                    var validationParameters = new TokenValidationParameters
+                    IsFound = true;
+                    if (IsFound)
                     {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes($@"{decodedSalt}")),
-                        ValidateIssuer = false,
-                        ValidateAudience = false
-                    };
+                        response.User = SqlRow<CreatedUser>(result.Rows[0]);
 
-                    var claimsPrincipal = handler.ValidateToken($@"{hmac}", validationParameters, out var validatedToken);
-                    var jwtToken = (JwtSecurityToken)validatedToken;
+                        //X measne End Users
+                        //A Means Main Admin [Creator]
+                        //B Means Sub-Admins
+                        if (Convert.ToString(result.Rows[0]["RoleCode"]) == "A")
+                        {
+                            response.User.IsAdmin = true;
+                        }
+                        else if (Convert.ToString(result.Rows[0]["RoleCode"]) == "B")
+                        {
+                            response.User.IsSubAdmin = true;
+                        }
+                        else
+                        {
+                            //End User
+                            response.User.IsEndUser = true;
+                        }
 
-                    // Extract user data from the JWT token's claims
-                    string userId = jwtToken.Claims.First(x => x.Type == "user_id").Value;
-                    string email = jwtToken.Claims.First(x => x.Type == "email").Value;
-
-
+                        response.User.User_ID = Convert.ToString(result.Rows[0]["UserId"]);
+                        response.User.DisplayName = response.User.EmailOrUsername.Length > 5 ? response.User.EmailOrUsername.Substring(0, 5) : response.User.EmailOrUsername;
+                        if (response.User.InActiveDate == DateTime.MinValue || response.User.InActiveDate.Year == 1900)
+                        {
+                            response.IsActiveUser = true;
+                        }
+                        else
+                        {
+                            response.IsActiveUser = false;   //suspened user
+                        }
+                        response.Success = true;
+                        response.MessageBox = "";
+                    }
+                    else
+                    {
+                        response.User = null;
+                        response.Success = false;
+                        response.MessageBox = "Unauthorized";
+                    }
                 }
-                else
-                {
-
-                }
-
-               
-
-              
             }
             catch (Exception ex)
             {
