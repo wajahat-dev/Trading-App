@@ -11,5 +11,6 @@ namespace pobject.Core.Login
         Login_Response DoLogin(Login_Request request);
         Login_Response LOGIN(Login_Request request);
         Login_Response GetLoginInfo(string token);
+
     }
 }

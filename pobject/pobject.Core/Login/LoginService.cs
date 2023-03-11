@@ -84,7 +84,9 @@ namespace pobject.Core.Login
                 DataTable result = _database.SqlView(Query, connectionString);
                 if (result.Rows.Count > 0)
                 {
-                    bool IsFound = false;
+               
+
+                bool IsFound = false;
                     #region SECUTITY
                     // Retrieve the salt and hash from the database and compare to the entered password
                     //byte[] retrievedSalt = (byte[])result.Rows[0]["salt"];
@@ -106,7 +108,6 @@ namespace pobject.Core.Login
                     if (IsFound)
                     {
                         response.User = SqlRow<CreatedUser>(result.Rows[0]);
-
                         //X measne End Users
                         //A Means Main Admin [Creator]
                         //B Means Sub-Admins
@@ -159,6 +160,9 @@ namespace pobject.Core.Login
             }
             return response;
         }
+
+     
+
 
         public Login_Response GetLoginInfo(string _bearer_token)
         {

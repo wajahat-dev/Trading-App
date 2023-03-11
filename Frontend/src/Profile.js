@@ -9,6 +9,8 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CLoader from './globalcomponents/CLoader';
 import UserContext from './ContextApi.js/UserContext';
+import { Link } from '@material-ui/core';
+import { useHistory  } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
 const Profile = (props) => {
   const classes = useStyles();
   const [globalState, setGlobalState] = useState({
-    formData: { cnic: '', displayName: '', phone: '', country: '', dob: '', createdon: '' }
+    formData: { cnic: '', displayName: '', phone: '', country: '', dob: '', createdon: '', referral_Code: '' }
   })
   const [loader, setLoader] = React.useState(false)
   const userData = useContext(UserContext);
@@ -65,7 +67,7 @@ const Profile = (props) => {
         if (data.length > 0) {
           setGlobalState(p => ({
             ...p,
-            formData: { createdon: data[0].createdon , cnic: data[0].cnic, displayName: data[0].displayname, phone: data[0].phone, country: data[0].country, dob: data[0].dob }
+            formData: { referral_Code: data[0].referral_code, createdon: data[0].createdon, cnic: data[0].cnic, displayName: data[0].displayname, phone: data[0].phone, country: data[0].country, dob: data[0].dob }
           }))
 
         }
@@ -82,8 +84,10 @@ const Profile = (props) => {
   React.useEffect(() => {
     getData()
   }, [])
-
-
+  const history = useHistory ();
+  const handleClick = () => {
+    // history.push(`/referral?code=${globalState.formData.referral_Code}`);
+  }
 
   return (
     <>
@@ -97,7 +101,7 @@ const Profile = (props) => {
               className={classes.avatar}
             />
             <Typography variant="h5" gutterBottom>
-            Your Email: {globalState.formData.displayName}
+              Your Email: {globalState.formData.displayName}
             </Typography>
             <Typography variant="body1">Your DOB: {globalState.formData.dob}</Typography>
           </Grid>
@@ -111,6 +115,12 @@ const Profile = (props) => {
                   <Typography variant="body1">Phone: {globalState.formData.phone}</Typography>
                   <Typography variant="body1">Country: {globalState.formData.country}</Typography>
                   <Typography variant="body1">Account Creation: {globalState.formData.createdon}</Typography>
+                  <Typography variant="body1">Referral Code:
+                    {/* <p onClick={handleClick} >
+                      {`${process.env.REACT_APP_BASEURL}/referral?code=${globalState.formData.referral_Code}`}
+                    </p> */}
+                    {globalState.formData.referral_Code}
+                  </Typography>
                 </Typography>
               </CardContent>
             </Card>

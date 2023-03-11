@@ -28,6 +28,7 @@ import VisaMaster from "./Banks/VisaMaster";
 import AdminPanel from "./AdminPanel";
 import DisableUserPage from "./DisableUserPage";
 import UserContext from "./ContextApi.js/UserContext";
+import Referral from "./Referral";
 
 const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePositionAndGet, updateWatchedStockAndGet }) => {
   const dispatch = useDispatch();
@@ -185,6 +186,10 @@ const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePosition
         <Route
           path="/kycc"
           render={(props) => <Kyc />}
+        />
+         <Route
+          path="/referral"
+          render={(props) => <Referral />}
         />
 
         {/* Starts Admin Routes */}

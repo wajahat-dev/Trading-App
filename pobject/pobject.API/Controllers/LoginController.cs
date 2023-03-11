@@ -76,5 +76,16 @@ namespace pobject.API.Controllers
         }
 
 
+        [HttpPost]
+        [EnableCors("AllowSpecificOrigin")]
+        [Route("registerreferral")]
+        //public IActionResult GetLoginInfo(LoginInformation request)
+        public IActionResult RegisterReferral()
+        {
+            Login_Response result = _LoginService.GetLoginInfo("");
+
+            return Ok(result);
+        }
+
     }
 }

@@ -15,7 +15,8 @@ public class UserProfile_Request
     public string PHONE { get; set; }
     public string COUNTRY { get; set; }
     public string DOB { get; set; } 
-    public bool BlockNow { get; set; } 
+    public bool BlockNow { get; set; }
+    public string referral_code { get; set; }
 }
 public class UserProfile_Response
 {

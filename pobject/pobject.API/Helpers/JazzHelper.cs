@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Security.Cryptography;
+using System.Reflection;
 
 namespace pobject.API.Helpers
 {
@@ -28,6 +29,26 @@ namespace pobject.API.Helpers
             byte[] hashBytes = ComputeHmacSHA256(message, key);
 
             return Convert.ToBase64String(hashBytes);
+        }
+        public static Dictionary<string, string> ObjectToDictionary(object obj)
+        {
+            Dictionary<string, string> ret = new Dictionary<string, string>();
+
+            foreach (PropertyInfo prop in obj.GetType().GetProperties())
+            {
+                //string propName = prop.Name;
+                //var val = obj.GetType().GetProperty(propName).GetValue(obj, null);
+                //if (val != null)
+                //{
+                //    ret.Add(propName, val);
+                //}
+                //else
+                //{
+                //    ret.Add(propName, null);
+                //}
+            }
+
+            return ret;
         }
 
         public static byte[] ComputeHmacSHA256(string message, string key)

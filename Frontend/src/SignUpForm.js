@@ -27,6 +27,7 @@ const INITIAL_USER = {
   phone: '',
   country: '',
   dob: '',
+  referral_code: '',
 }
 
 
@@ -79,7 +80,7 @@ const SignUpForm = () => {
 
     setLoader(true)
     try {
-      const response = await fetch(`https://localhost:7000/api/signup?RoleCodeIfLoggedInAsAdmin=X`, {
+      const response = await fetch(`https://localhost:7000/api/signup?RoleCodeIfLoggedInAsAdmin=X&referralcode=`+globalState.referral_code, {
         method: 'post',
         headers: {
           'Content-Type': 'application/json',
@@ -295,6 +296,18 @@ const SignUpForm = () => {
 
                 label='Confirm Password'
                 value={globalState.formData.confirmPassword}
+                onChange={e => handleChange(e.target.name, e.target.value)}
+
+              />
+            </Grid>
+            <Grid item xs={8} style={{ marginTop: 7 }}>
+              <TextField
+                fullWidth
+                id="outlined-required"
+                name={'referral_code'}
+                type='text'
+                label='Referral Code'
+                value={globalState.formData.referral_code}
                 onChange={e => handleChange(e.target.name, e.target.value)}
 
               />
