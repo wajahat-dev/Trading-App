@@ -49,6 +49,7 @@ namespace pobject.API.Controllers
         }
 
         [HttpGet]
+        [EnableCors("AllowSpecificOrigin")]
         [Route("getLoginInfo")]
         //public IActionResult GetLoginInfo(LoginInformation request)
         public IActionResult GetLoginInfo()

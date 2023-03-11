@@ -14,6 +14,7 @@ import JazzCashCheckout from "./Banks/jazzcash";
 import UserContext from "./ContextApi.js/UserContext";
 import { userDetails } from "./contants";
 import CNotification from "./globalcomponents/CNotification";
+import CLoader from "./globalcomponents/CLoader";
 
 
 const App = ({ loadToken }) => {
@@ -25,7 +26,8 @@ const App = ({ loadToken }) => {
     message: '',
     open: false,
     varient: 'info'
-})
+  })
+  const [loader, setLoader] = useState(false)
 
   // const needLogin = true;
 
@@ -34,40 +36,47 @@ const App = ({ loadToken }) => {
     loadToken();
 
   }, [loadToken]);
-  useEffect(()=>{
+  useEffect(() => {
 
     maintainSession()
 
 
 
-  },[])
+  }, [])
 
-  const maintainSession =  async ()=>{
-    
-    const data = await fetch(`https://localhost:7000/api/getLoginInfo`, {
-      method: "get",
-      "accept": '*/*',
-      headers: {
-        "Content-Type": "application/json",
-        accept: '*/*',
+  const maintainSession = async () => {
+    setLoader(true)
 
-        Authorization: `Bearer ${localStorage.getItem('TOKEN_KEY')
+    try {
+      const response = await fetch(`https://localhost:7000/api/getLoginInfo`, {
+        method: "get",
+        headers: {
+          "Content-Type": "application/json",
+          accept: '*/*',
+          Authorization: `Bearer ${localStorage.getItem('TOKEN_KEY')
             ? localStorage.getItem('TOKEN_KEY')
             : ''
             }`,
-    },
-    });
-    debugger
-    if(data.success && data.messageBox === ''){
-      setUserData(data.user)
-    }else{
-      setGlobalState(p => ({ ...p, message: data.messageBox, open: true }))
+        },
+      });
+      const data = await response.json()
+      debugger
+      if (data.success && data.messageBox === '') {
+        setUserData(data.user)
+      } else {
+        setGlobalState(p => ({ ...p, message: data.messageBox, open: true }))
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoader(false)
+
     }
-    
+
   }
 
 
-  
+
   if (!loaded) {
     return null;
   }
@@ -78,6 +87,7 @@ const App = ({ loadToken }) => {
   return (
     <>
       <CNotification isOpen={globalState.open} setOpen={e => setGlobalState(p => ({ ...p, open: e }))} message={globalState.message} />
+      <CLoader enabled={loader} />
 
       <BrowserRouter>
         <Switch>
@@ -87,7 +97,7 @@ const App = ({ loadToken }) => {
             exact={true}
             needLogin={needLogin}
             component={() => <LoginPanel setUserData={e => setUserData(e)} />}
-            // component={() => <LoginPanel setUserData={setUserData} />}
+          // component={() => <LoginPanel setUserData={setUserData} />}
           />
           <ProtectedRoute
             path="/signup"
