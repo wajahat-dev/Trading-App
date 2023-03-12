@@ -218,6 +218,17 @@ namespace pobject.Core.DatabaseEnvironment
                             return response;
                         }
 
+
+                        string QueryForCNIC = $"select * from tbl_userinfo where cnic = '{request.cnic}'";
+                        DataTable result2 = SqlView(QueryForCNIC);
+                        if (result2.Rows.Count > 0)
+                        {
+                            response.MessageBox = "CNIC Already Exists";
+                            response.Success = false;
+                            return response;
+                        }
+
+
                         //string QueryForCNIC = $"select* from tbl_UserInfo where CNIC = '{request.CNIC}'";
                         //DataTable result2 = _database.SqlView(QueryForCNIC);
                         //if (result1.Rows.Count > 0)

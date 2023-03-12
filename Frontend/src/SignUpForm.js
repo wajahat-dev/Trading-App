@@ -80,7 +80,7 @@ const SignUpForm = () => {
 
     setLoader(true)
     try {
-      const response = await fetch(`https://localhost:7000/api/signup?RoleCodeIfLoggedInAsAdmin=X&referralcode=`+globalState.referral_code, {
+      const response = await fetch(`https://localhost:7000/api/signup?RoleCodeIfLoggedInAsAdmin=X&referralcode=${globalState.formData.referral_code || ""}&cnic=${globalState.formData.cnic || ""}`, {
         method: 'post',
         headers: {
           'Content-Type': 'application/json',

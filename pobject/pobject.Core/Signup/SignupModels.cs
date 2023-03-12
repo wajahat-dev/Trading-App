@@ -20,6 +20,7 @@ namespace pobject.Core.Signup
         public string Password { get; set; }
         public string ConfirmPassword { get; set; }
         public string referral_code { get; set; }
+        public string cnic { get; set; }
         public string DisplayName { get; set; } //not for frontEnd Field, It will give to user internally
     }
 

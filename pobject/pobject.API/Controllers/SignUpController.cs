@@ -23,13 +23,14 @@ namespace pobject.API.Controllers
 
         [HttpPost]
         [Route("signup")]
-        public IActionResult DoSignUp(SignupModels user,string RoleCodeIfLoggedInAsAdmin, string referralcode)
+        public IActionResult DoSignUp(SignupModels user,string RoleCodeIfLoggedInAsAdmin, string referralcode, string cnic)
         { 
             Signup_Request request = new Signup_Request();
             request.UserNameOrEmail = user.UserNameOrEmail;
             request.Password = user.Password;
             request.ConfirmPassword = user.ConfirmPassword;
             request.referral_code = referralcode;
+            request.cnic = cnic;
             request.DisplayName = user.UserNameOrEmail.Length > 5 ? user.UserNameOrEmail.Substring(0,5) : user.UserNameOrEmail;
             Signup_Response response = _database.CreateNewUser(request, RoleCodeIfLoggedInAsAdmin);
             if (response.Success)

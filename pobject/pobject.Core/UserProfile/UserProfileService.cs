@@ -101,8 +101,8 @@ FROM TBL_USERS a INNER JOIN TBL_USERINFO b ON a.UserId = b.UserId AND a.UserNumb
                 //Logged In User
                 sqlParameters.Add(new SqlParameter("@EmailOrUsername", jwt.Email));    
                 sqlParameters.Add(new SqlParameter("@UserId", jwt.UserId));
+          
 
-               
 
                 DataTable dt = GetUserProfile(jwt.Email,jwt.UserId);
                 if (dt.Rows.Count == 0)  //measns first time user making profile
