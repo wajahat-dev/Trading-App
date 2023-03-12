@@ -42,5 +42,15 @@ namespace pobject.Core.CommonHelper
 
             return true;
         }
+        public static string DecodeSalt(string encodedSalt)
+        {
+       
+            byte[] bytes = System.Text.Encoding.Unicode.GetBytes(encodedSalt);
+            string str = System.Text.Encoding.Unicode.GetString(bytes);
+            return str;
+
+        }
+
+
     }
 }

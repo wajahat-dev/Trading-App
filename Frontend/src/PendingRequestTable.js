@@ -36,7 +36,7 @@ export default function PendingRequestTable() {
 
 
     const columns = [
-        { field: 'usernameOrEmail', headerName: 'User Name', width: 150, },
+        { field: 'usernameOrEmail', headerName: 'User Name', width: 250, },
         { field: 'userId', headerName: 'User ID', width: 150, },
         { field: 'desc', headerName: 'Desc', width: 150, },
         { field: 'createdOn', headerName: 'Created At', width: 150, },
@@ -106,10 +106,13 @@ export default function PendingRequestTable() {
             const response = await fetch(`https://localhost:7000/api/jc_wallet`, {
                 method: "post",
                 body: JSON.stringify({
-                    "emailOrUsername": globalState.selectedRow.usernameOrEmail,
-                    "userID": globalState.selectedRow.userId,
-                    "description": "string",
-                    "payload": "string"
+                              // "emailOrUsername": globalState.selectedRow.usernameOrEmail,
+                    // "userID": globalState.selectedRow.userId,
+                    // "description": "string",
+                    // "payload": "string"
+                    phoneNumber: '03432589896',
+                    amount: '100',
+                    cnicNumber: ''
                 }),
                 headers: {
                     "Content-Type": "application/json",
@@ -145,7 +148,7 @@ export default function PendingRequestTable() {
 
             <CModal open={globalState.modal} labels={{ one: 'Yes Approve', two: 'Cancel' }} onClick={onClickModal} onClose={() => setGlobalState(p => ({ ...p, modal: false }))} header={globalState.header} message={globalState.message} />
             <div style={{ width: '100%', marginTop: 10 }}>
-                <CHeader header='User to be Approved:'/>
+                <CHeader header='Transaction to be Approved:'/>
                 <DataGrid
                     rows={gridData}
                     columns={columns}

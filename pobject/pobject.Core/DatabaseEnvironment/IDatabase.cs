@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using pobject.Core.Signup;
+using pobject.Core.UserProfile;
 
 namespace pobject.Core.DatabaseEnvironment
 {
@@ -19,5 +20,6 @@ namespace pobject.Core.DatabaseEnvironment
         public DataTable SqlView(string sqlCommand,List<SqlParameter> param);
         public DataTable SqlView(string sqlCommand, string ConnectionString = "");
         public Signup_Response CreateNewUser(Signup_Request request,string RoleCodeIfLoggedInAsAdmin=null);
+        public Boolean RegisterReferral(Signup_Request request, string userid);
     }
 }

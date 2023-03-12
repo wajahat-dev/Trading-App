@@ -34,7 +34,7 @@ const CFooter = () => {
                     }}
                 >
                     <Typography variant="caption" color="initial">
-                        Copyright ©2023. [] Limited
+                        Copyright Forex Marketing ©2023. [] Pvt Limited
                     </Typography>
                 </Box>
         </Paper>

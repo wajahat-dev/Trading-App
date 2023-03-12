@@ -13,6 +13,7 @@ import CFooter from './globalcomponents/CFooter';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { EmailValidation } from './Globalfunc/func';
 
 
 
@@ -26,6 +27,7 @@ const INITIAL_USER = {
   phone: '',
   country: '',
   dob: '',
+  referral_code: '',
 }
 
 
@@ -50,14 +52,35 @@ const SignUpForm = () => {
 
   const handleSubmit = async (e) => {
     debugger
+    let existCon = false
     if(!globalState.formData.cnic){
       setGlobalState(p => ({ ...p, message: 'CNIC Can not be blank', open: true, varient: 'info' }))
-      return
+      existCon = true
+    }else if(!globalState.formData.email){
+      setGlobalState(p => ({ ...p, message: 'Email Can not be blank', open: true, varient: 'info' }))
+      existCon = true
+
+    }else if(!globalState.formData.password){
+      setGlobalState(p => ({ ...p, message: 'Password Can not be blank', open: true, varient: 'info' }))
+      existCon = true
+
+    }else if(!globalState.formData.confirmPassword){
+      setGlobalState(p => ({ ...p, message: 'Confirm Password Can not be blank', open: true, varient: 'info' }))
+      existCon = true
+
+    }else if(globalState.formData.confirmPassword !== globalState.formData.password){
+      setGlobalState(p => ({ ...p, message: 'Passwords Must Match', open: true, varient: 'info' }))
+      existCon = true
+    }else if(EmailValidation(globalState.formData.email)){
+      setGlobalState(p => ({ ...p, message: 'Email must be in correct format', open: true, varient: 'info' }))
+      existCon = true
     }
+
+    if(existCon) return 
 
     setLoader(true)
     try {
-      const response = await fetch(`https://localhost:7000/api/signup?RoleCodeIfLoggedInAsAdmin=X`, {
+      const response = await fetch(`https://localhost:7000/api/signup?RoleCodeIfLoggedInAsAdmin=X&referralcode=`+globalState.referral_code, {
         method: 'post',
         headers: {
           'Content-Type': 'application/json',
@@ -97,6 +120,10 @@ const SignUpForm = () => {
                 setGlobalState(p => ({ ...p, formData: { ...INITIAL_USER }, message: apiOnedata.messageBox, open: true, varient: "success" }))
                 window.localStorage.setItem(TOKEN_KEY, apiOnedata.token);
                 dispatch(setToken(apiOnedata.token));
+              }else{
+                if(apiTwodata.messageBox){
+                  setGlobalState(p => ({ ...p, message: 'Email must be in correct format', open: true, varient: 'info' }))
+                }
               }
             }
 
@@ -273,14 +300,28 @@ const SignUpForm = () => {
 
               />
             </Grid>
+            <Grid item xs={8} style={{ marginTop: 7 }}>
+              <TextField
+                fullWidth
+                id="outlined-required"
+                name={'referral_code'}
+                type='text'
+                label='Referral Code'
+                value={globalState.formData.referral_code}
+                onChange={e => handleChange(e.target.name, e.target.value)}
 
-            <Button onClick={handleSubmit}>Sign Up</Button>
+              />
+            </Grid>
+
+            <div style={{ marginTop: 7 }}>
+            <Button variant="outlined" color="neutral" onClick={handleSubmit}>Sign Up</Button>
             {/* <Button type='submit'>Sign Up</Button> */}
             <Link to="/login" style={{ textDecoration: 'none' }}>
-              <Button>
+              <Button variant="outlined" color="neutral">
                 Log in
               </Button>
             </Link>
+            </div>
 
           </Grid>
         </Grid>

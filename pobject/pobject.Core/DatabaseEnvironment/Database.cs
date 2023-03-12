@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using pobject.Core.CommonHelper;
 using pobject.Core.Signup;
+using pobject.Core.UserProfile;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -163,6 +164,28 @@ namespace pobject.Core.DatabaseEnvironment
                 //}
             }
         }
+
+        public Boolean RegisterReferral(Signup_Request request, string userid)
+        {
+            String Query = string.Empty;
+         
+
+            DataTable userdate = SqlView($@"select * from tbl_Users where referral_code = '{request.referral_code}'");
+            if (userdate.Rows.Count > 0)
+            {
+                Query = $@"INSERT INTO Referrals(ReferralCode,ReferredUserId,ReferrerUserId,ReferralDate,EmailOrUsername,CommissionAmount) 
+                values('{userdate.Rows[0]["referral_code"].ToString()}','{userdate.Rows[0]["UserId"]}', '{userid}', '{DateTime.Today}', '{userdate.Rows[0]["EmailOrUsername"]}' , 10)";
+
+                DataTable result1 = SqlView(Query);
+                return true;
+            }
+            
+
+
+            return false;
+        }
+
+
         public Signup_Response CreateNewUser(Signup_Request request,string RoleCodeIfLoggedInAsAdmin)
         {
             Signup_Response response = new Signup_Response();
@@ -171,6 +194,12 @@ namespace pobject.Core.DatabaseEnvironment
             connection = new SqlConnection(connectionString);
             try
             {
+
+
+
+                
+
+
                 string Username = request.UserNameOrEmail;
                 string password = request.Password;
                 string password2 = request.ConfirmPassword;
@@ -178,6 +207,29 @@ namespace pobject.Core.DatabaseEnvironment
                 {
                     if (request.Password.Equals(request.ConfirmPassword))
                     {
+
+
+                        string QueryForIdentification = $"select* from tbl_users where  EmailOrUsername = '{Username}'";
+                        DataTable result1 = SqlView(QueryForIdentification);
+                        if (result1.Rows.Count > 0)
+                        {
+                            response.MessageBox = "Email Already Exists";
+                            response.Success = false;
+                            return response;
+                        }
+
+                        //string QueryForCNIC = $"select* from tbl_UserInfo where CNIC = '{request.CNIC}'";
+                        //DataTable result2 = _database.SqlView(QueryForCNIC);
+                        //if (result1.Rows.Count > 0)
+                        //{
+                        //    //DELETE FROM tbl_users WHERE EmailOrUsername = 'string'
+                        //    //string QueryForDeleteEmail = $"DELETE FROM tbl_users WHERE EmailOrUsername = '{request.CNIC}'";
+
+                        //    response.MessageBox = "CNIC must be unique";
+                        //    response.GoodResponse = false;
+                        //    return response;
+                        //}
+
                         string RoleCode = string.IsNullOrEmpty(RoleCodeIfLoggedInAsAdmin) ? "X" : RoleCodeIfLoggedInAsAdmin;
 
                         #region SECURITY
@@ -193,12 +245,18 @@ namespace pobject.Core.DatabaseEnvironment
                         }
                         #endregion
 
+
+                        response.referral_code = globalfunctions.GenerateReferralCode();
+
                         string Query = $@"
 declare @UserNumber  as int = (select isnull((MAX(UserNumber)+1),1) from [tbl_users])
-insert into tbl_users(UserNumber,UserId,EmailOrUsername,Password,Password2,Salt,RoleCode) 
-values(@UserNumber,NEWID(),@EmailOrUsername,@Password,@Password2,@salt,'{RoleCode}') 
+insert into tbl_users(UserNumber,UserId,EmailOrUsername,Password,Password2,Salt,RoleCode, referral_code) 
+values(@UserNumber,NEWID(),@EmailOrUsername,@Password,@Password2,@salt,'{RoleCode}', '{response.referral_code}') 
 select UserNumber,EmailOrUsername,UserId,InActiveDate,createdOn,RoleCode from tbl_users where UserNumber = @UserNumber and EmailOrUsername = @EmailOrUsername";
-                         
+
+
+                       
+
                         List<SqlParameter> param = new List<SqlParameter>(); 
                         param.Add(new SqlParameter("@EmailOrUsername", Username));
                         //param.Add(new SqlParameter("@Password",hash));
@@ -207,8 +265,16 @@ select UserNumber,EmailOrUsername,UserId,InActiveDate,createdOn,RoleCode from tb
                         param.Add(new SqlParameter("@Password2", password2));
                         param.Add(new SqlParameter("@Salt",salt)); 
                         User = SqlView(Query,param);
+                        
                         if (User.Rows.Count > 0)
                         {
+
+                            if (!String.IsNullOrEmpty(request.referral_code) ) // add refferal code
+                            {
+                                Boolean isRegistered = RegisterReferral(request, User.Rows[0]["UserId"].ToString());
+
+                            }
+
                             response.User = SqlRow<CreatedUser>(User.Rows[0]);
 
                             if (Convert.ToString(User.Rows[0]["RoleCode"]) == "X")

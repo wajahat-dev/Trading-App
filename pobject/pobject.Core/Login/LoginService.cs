@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json.Linq;
 using pobject.Core.CommonHelper;
 using pobject.Core.DatabaseEnvironment;
 using pobject.Core.Signup;
@@ -6,11 +9,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+
+
 
 namespace pobject.Core.Login
 {
@@ -71,11 +77,16 @@ namespace pobject.Core.Login
                 string connectionString = _configuration["ConnectionStrings:DefaultConnection"];  
                 string username = request.Username;
                 string password = request.Password.Trim();
+                
                 string Query = $@"select * from tbl_users Where EmailOrUsername = '{username}' and password = '{password}' and password2='{password}' ";
+                
+                
                 DataTable result = _database.SqlView(Query, connectionString);
                 if (result.Rows.Count > 0)
                 {
-                    bool IsFound = false;
+               
+
+                bool IsFound = false;
                     #region SECUTITY
                     // Retrieve the salt and hash from the database and compare to the entered password
                     //byte[] retrievedSalt = (byte[])result.Rows[0]["salt"];
@@ -97,7 +108,6 @@ namespace pobject.Core.Login
                     if (IsFound)
                     {
                         response.User = SqlRow<CreatedUser>(result.Rows[0]);
-
                         //X measne End Users
                         //A Means Main Admin [Creator]
                         //B Means Sub-Admins
@@ -150,6 +160,81 @@ namespace pobject.Core.Login
             }
             return response;
         }
+
+     
+
+
+        public Login_Response GetLoginInfo(string _bearer_token)
+        {
+            Login_Response response = new Login_Response();
+           
+            try
+            {
+                var handler = new JwtSecurityTokenHandler();
+                var jwtDecoded = handler.ReadToken(_bearer_token) as JwtSecurityToken;
+                var email = jwtDecoded.Claims.FirstOrDefault(j => j.Type.EndsWith("email")).Value ?? "";
+                response.Token = $@"{_bearer_token}";
+                string Query = $@"select * from tbl_users Where EmailOrUsername = '{email}' ";
+
+                DataTable result = _database.SqlView(Query);
+                if (result.Rows.Count > 0)
+                {
+                    bool IsFound = false;
+
+                    IsFound = true;
+                    if (IsFound)
+                    {
+                        response.User = SqlRow<CreatedUser>(result.Rows[0]);
+
+                        //X measne End Users
+                        //A Means Main Admin [Creator]
+                        //B Means Sub-Admins
+                        if (Convert.ToString(result.Rows[0]["RoleCode"]) == "A")
+                        {
+                            response.User.IsAdmin = true;
+                        }
+                        else if (Convert.ToString(result.Rows[0]["RoleCode"]) == "B")
+                        {
+                            response.User.IsSubAdmin = true;
+                        }
+                        else
+                        {
+                            //End User
+                            response.User.IsEndUser = true;
+                        }
+
+                        response.User.User_ID = Convert.ToString(result.Rows[0]["UserId"]);
+                        response.User.DisplayName = response.User.EmailOrUsername.Length > 5 ? response.User.EmailOrUsername.Substring(0, 5) : response.User.EmailOrUsername;
+                        if (response.User.InActiveDate == DateTime.MinValue || response.User.InActiveDate.Year == 1900)
+                        {
+                            response.IsActiveUser = true;
+                        }
+                        else
+                        {
+                            response.IsActiveUser = false;   //suspened user
+                        }
+                        response.Success = true;
+                        response.MessageBox = "";
+                    }
+                    else
+                    {
+                        response.User = null;
+                        response.Success = false;
+                        response.MessageBox = "Unauthorized";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                
+            }
+
+            return response;
+        }
+
+
+
+
         public T SqlRow<T>(DataRow row) where T : new()
         {
             // create a new object

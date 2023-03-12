@@ -9,4 +9,5 @@ export const userDetails = {
     isSubAdmin: false,
     displayName: "",
     user_ID: "",
+    referral_Code: ""
 }

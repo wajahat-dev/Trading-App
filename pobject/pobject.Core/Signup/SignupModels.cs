@@ -19,6 +19,7 @@ namespace pobject.Core.Signup
         public string UserNameOrEmail { get; set; }
         public string Password { get; set; }
         public string ConfirmPassword { get; set; }
+        public string referral_code { get; set; }
         public string DisplayName { get; set; } //not for frontEnd Field, It will give to user internally
     }
 
@@ -27,8 +28,10 @@ namespace pobject.Core.Signup
         public string MessageBox { get; set; }
         public bool Success { get; set; }
         public string Clientid { get; set; }
-        public string Token { get; set; } 
+        public string Token { get; set; }
         public CreatedUser User { get; set; }
+
+        public string referral_code { get; set; }
     }
     public class CreatedUser
     {
@@ -40,6 +43,7 @@ namespace pobject.Core.Signup
         public string User_ID { get; set; }
         public DateTime InActiveDate { get; set; }
         public DateTime CreatedOn { get; set; }
+        public string Referral_Code { get; set; }
 
     }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, Route, Switch, useParams } from "react-router-dom";
 
@@ -27,9 +27,15 @@ import BinancePayCheckout from "./Banks/Binancepay";
 import VisaMaster from "./Banks/VisaMaster";
 import AdminPanel from "./AdminPanel";
 import DisableUserPage from "./DisableUserPage";
+import UserContext from "./ContextApi.js/UserContext";
+import Referral from "./Referral";
 
-const PositionSidebar = ({ userData, positions, formVisible, watchedStocks, updatePositionAndGet, updateWatchedStockAndGet }) => {
+const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePositionAndGet, updateWatchedStockAndGet }) => {
   const dispatch = useDispatch();
+  const userData = useContext(UserContext);
+
+
+
 
   useEffect(() => {
     dispatch(getPositions())
@@ -149,7 +155,7 @@ const PositionSidebar = ({ userData, positions, formVisible, watchedStocks, upda
 
 
       <CNavbar page={'positionsidebar'} />
-
+      Login as {userData?.isAdmin ? 'Admin' : 'User'}
 
       <Switch>
         <Route
@@ -180,6 +186,10 @@ const PositionSidebar = ({ userData, positions, formVisible, watchedStocks, upda
         <Route
           path="/kycc"
           render={(props) => <Kyc />}
+        />
+         <Route
+          path="/referral"
+          render={(props) => <Referral />}
         />
 
         {/* Starts Admin Routes */}
@@ -273,7 +283,7 @@ const PositionSidebar = ({ userData, positions, formVisible, watchedStocks, upda
   );
 };
 
-const PositionSidebarContainer = ({ userData }) => {
+const PositionSidebarContainer = (props) => {
   const positions = useSelector((state) => Object.values(state.positions));
   const watchedStocks = useSelector((state) => Object.values(state.watchedStocks));
   const ledger = useSelector((state) => Object.values(state.ledger));
@@ -293,7 +303,6 @@ const PositionSidebarContainer = ({ userData }) => {
         updateWatchedStockAndGet={(data) => {
           dispatch(updateWatchedStockAndGet(data))
         }}
-        userData={userData}
         exitWatchedStock={(id) => dispatch(exitWatchedStock(id))}
       />
     </>

@@ -33,18 +33,22 @@ export const createPosition = (data) => async (dispatch, getState) => {
 
 
 export const getPositions = () => async (dispatch, getState) => {
-  const {
-    authentication: { token },
-  } = getState();
-  const response = await fetch(`${baseUrl}/positions`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (response.ok) {
-    const list = await response.json();
-    dispatch(load(list));
+  try {
+    const {
+      authentication: { token },
+    } = getState();
+    const response = await fetch(`${baseUrl}/positions`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  
+    if (response.ok) {
+      const list = await response.json();
+      dispatch(load(list));
+    }
+  } catch (error) {
+    console.log(error)
   }
 };
 

@@ -6,6 +6,8 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.SqlClient;
+using pobject.Core.Signup;
 
 namespace pobject.Core.UserProfile
 {
@@ -25,7 +27,7 @@ namespace pobject.Core.UserProfile
                 param.Add(new SqlParameter("@UsernameOrEmail", UsernameOrEmail));
                 param.Add(new SqlParameter("@UserId", UserId));
                 user = _database.SqlView($@"
-SELECT a.EmailOrUsername,a.USERID,b.CNIC,EMAIL,DISPLAYNAME,PHONE,COUNTRY,DOB,b.CREATEDON 
+SELECT a.referral_code, a.EmailOrUsername,a.USERID,b.CNIC,EMAIL,DISPLAYNAME,PHONE,COUNTRY,DOB,b.CREATEDON 
 FROM TBL_USERS a INNER JOIN TBL_USERINFO b ON a.UserId = b.UserId AND a.UserNumber = b.UserNumber
 WHERE a.EmailOrUsername = @UsernameOrEmail AND a.USERID = @UserId",param);
                 if (user.Rows.Count > 0)
@@ -62,12 +64,24 @@ FROM TBL_USERS a INNER JOIN TBL_USERINFO b ON a.UserId = b.UserId AND a.UserNumb
             return new DataTable();
         }
 
+        public string GetUserReferral() {
+
+            return "";
+        }
+
+      
 
         public UserProfile_Response StoreUserProfile(UserProfile_Request request, Internal_JWT_Request jwt = null)
         {
             UserProfile_Response response = new UserProfile_Response();
             try
             {
+
+
+                String Query = String.Empty;
+
+
+
                 List<SqlParameter> sqlParameters = new List<SqlParameter>();
                 sqlParameters.Add(new SqlParameter("@CNIC", request.CNIC)); //should be readonly
                 sqlParameters.Add(new SqlParameter("@DISPLAYNAME", request.DISPLAYNAME));
@@ -79,13 +93,16 @@ FROM TBL_USERS a INNER JOIN TBL_USERINFO b ON a.UserId = b.UserId AND a.UserNumb
                 {
                     block = " ,INACTIVEDATE = SYSDATETIME() ";
                 }
+                
+
+
                 //sqlParameters.Add(new SqlParameter("@EMAIL", request.Email));    //secondary Email
 
                 //Logged In User
                 sqlParameters.Add(new SqlParameter("@EmailOrUsername", jwt.Email));    
                 sqlParameters.Add(new SqlParameter("@UserId", jwt.UserId));
 
-                String Query = string.Empty;
+               
 
                 DataTable dt = GetUserProfile(jwt.Email,jwt.UserId);
                 if (dt.Rows.Count == 0)  //measns first time user making profile

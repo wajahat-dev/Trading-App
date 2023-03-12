@@ -17,6 +17,8 @@ import { Button, Typography } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import { useHistory } from 'react-router-dom';
+import blue from '@material-ui/core/colors/blue';
+import red from '@material-ui/core/colors/red';
 
 
 const REACT_APP_pp_Password = process.env.REACT_APP_pp_Password
@@ -62,7 +64,9 @@ const useStyles = makeStyles((theme) => ({
             },
         },
     },
-    focusVisible: {},
+    focusVisible: {
+      
+    },
     imageButton: {
         position: 'absolute',
         left: 0,
@@ -153,9 +157,11 @@ const Kyc = ({ authenticated, setAuthenticated }) => {
                             <ButtonBase
                                 focusRipple
                                 className={classes.image}
-                                focusVisibleClassName={classes.focusVisible}
+                                // focusVisibleClassName={classes.focusVisible}
                                 style={{
                                     width: image.width,
+                                    backgroundColor: '#2196f3',
+                                    color: 'rgb(0,0,0)',
                                 }}
                                 onClick={() => handleClick(image.title, image.slug)}
                             >

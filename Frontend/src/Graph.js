@@ -10,7 +10,6 @@ import {
   Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import { faker } from '@faker-js/faker';
 
 export function Graph() {
 
@@ -65,7 +64,6 @@ const [stockChartYValues, setstockChartYValues] = useState([]);
   datasets: [
     {
       label: 'Dataset 1',
-    //   data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
       data: stockChartXValues,
       borderColor: 'rgb(255, 99, 132)',
       backgroundColor: 'rgba(255, 99, 132, 0.5)',

@@ -52,5 +52,8 @@ namespace pobject.API.Controllers
             UserProfile_Response response = _UserProfileService.StoreUserProfile(request, jwt);
             return Ok(response);
         }
+
+    
+
     }
 }

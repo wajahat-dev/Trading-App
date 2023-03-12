@@ -31,4 +31,9 @@ namespace pobject.Core.Login
         public string DisplayName { get; set; }
         public string EmailOrUsername { get; set; }
     }
+    public class LoginInformation
+    {
+        public string EmailOrUsername { get; set; }
+        public string token { get; set; }
+    }
 }

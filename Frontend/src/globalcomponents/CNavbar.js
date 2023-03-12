@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import { logout } from '../store/actions/authentication';
@@ -25,6 +25,7 @@ import { ListItemButton } from '@mui/material';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
+import UserContext from '../ContextApi.js/UserContext';
 // import { Disabled as DisabledIcon } from '@material-ui/icons';
 
 
@@ -44,6 +45,7 @@ const CNavbar = ({ page }) => {
     let history = useHistory();
     const trades = useSelector(state => state.trades);
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const userData = useContext(UserContext);
 
     const handleDrawerOpen = () => {
         setDrawerOpen(!drawerOpen);
@@ -62,7 +64,7 @@ const CNavbar = ({ page }) => {
 
     const classes = useStyles();
 
-
+    console.log('Navbar', userData)
     const list = (anchor) => (
         <Box
             sx={{ width: 250 }}
@@ -72,7 +74,7 @@ const CNavbar = ({ page }) => {
         >
             <List>
                 <ListItem key={'Disable'} disablePadding button component={Link} to="/disable">
-                    <ListItemButton>
+                    <ListItemButton onClick={handleDrawerOpen}>
                         <ListItemIcon >
                             <PersonOffIcon />
                         </ListItemIcon>
@@ -96,15 +98,19 @@ const CNavbar = ({ page }) => {
         </Box>
     );
 
+    const admin = userData?.isAdmin ? (page ===  'positionsidebar' ? true : false) : false
 
     return (
         <>
             <Box sx={{ flexGrow: 1 }}>
                 <AppBar position="static">
                     <Toolbar>
-                        {trades.userDetails.isAdmin && <>
-                        {/* {true && <> */}
-                            <IconButton
+                        {admin && <>
+                            {/* {true && <>  */}
+                            {/* {trades.userDetails.isAdmin && <> */}
+
+
+                            < IconButton
                                 color="inherit"
                                 aria-label="open drawer"
                                 onClick={handleDrawerOpen}
@@ -128,7 +134,7 @@ const CNavbar = ({ page }) => {
                         }
 
                         <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                            <Typography
+                            {/* <Typography
                                 variant="h6"
                                 noWrap
                                 onClick={() => history.push("/")}
@@ -142,7 +148,15 @@ const CNavbar = ({ page }) => {
                                 }}
                             >
                                 Forex Marketing
-                            </Typography>
+                            </Typography> */}
+                            {/* <Link to="/" style={{ textDecoration: 'none' }}> */}
+                            <Button color={'#fafafa'}
+                                style={{ color: 'white' }}
+                                to="/"
+                                component={RouterLink} >
+                                Forex Marketing
+                            </Button>
+                            {/* </Link> */}
                         </Box>
                         <Box sx={{ flexGrow: 1 }} />
                         <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
@@ -154,7 +168,7 @@ const CNavbar = ({ page }) => {
                     </Toolbar>
                 </AppBar>
 
-            </Box>
+            </Box >
 
         </>
     );
@@ -170,7 +184,7 @@ const pageType = (page, handleClick) => {
                     color={'#fafafa'}
                     to="/homepage"
                     component={RouterLink}
-                    style={{color: 'white'}}
+                    style={{ color: 'white' }}
                 >
                     Home Page
                 </Button>
@@ -180,7 +194,7 @@ const pageType = (page, handleClick) => {
 
                 <Button
                     color={'#fafafa'}
-                    style={{color: 'white'}}
+                    style={{ color: 'white' }}
                     to="/homepage"
                     component={RouterLink}
                 >
@@ -192,7 +206,7 @@ const pageType = (page, handleClick) => {
             return <>
                 <Button
                     color={'#fafafa'}
-                    style={{color: 'white'}}
+                    style={{ color: 'white' }}
                     to="/login"
                     component={RouterLink}
                 >
@@ -201,7 +215,7 @@ const pageType = (page, handleClick) => {
 
                 <Button
                     color={'#fafafa'}
-                    style={{color: 'white'}}
+                    style={{ color: 'white' }}
                     to="/signup"
                     component={RouterLink}
                 >

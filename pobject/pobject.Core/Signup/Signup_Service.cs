@@ -1,4 +1,5 @@
-﻿using pobject.Core.DatabaseEnvironment;
+﻿using pobject.Core.CommonHelper;
+using pobject.Core.DatabaseEnvironment;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -51,14 +52,17 @@ namespace pobject.Core.Signup
                     {
                         string Query = $@"
 declare @NewClientId  as int = (select (MAX(clientid)+1) from tbl_Users)
-insert into tbl_Users(username,password,name,Clientid) 
-values('{username}','{pass}','{Name}',@NewClientId) 
+insert into tbl_Users(username,password,name,Clientid, referral_code) 
+values('{username}','{pass}','{Name}',@NewClientId, '{globalfunctions.GenerateReferralCode()}') 
 select * from tbl_Users where Clientid = @NewClientId";
 
                         //int User_id = request.User_Id;
                         Query = $@"UPDATE tbl_Users set 
                                         Username = '{username}',password = {pass},name = '{Name}'  
                                         where User_Id = {0} and Clientid = {_database.ClientId}";
+
+
+
                         int result = _database.ExecuteNonQuery(Query);
                         if (result > 0)
                         {
