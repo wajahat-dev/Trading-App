@@ -167,21 +167,26 @@ namespace pobject.Core.DatabaseEnvironment
 
         public Boolean RegisterReferral(Signup_Request request, string userid)
         {
-            String Query = string.Empty;
-         
+            try {
+                String Query = string.Empty;
 
-            DataTable userdate = SqlView($@"select * from tbl_Users where referral_code = '{request.referral_code}'");
-            if (userdate.Rows.Count > 0)
-            {
-                Query = $@"INSERT INTO Referrals(ReferralCode,ReferredUserId,ReferrerUserId,ReferralDate,EmailOrUsername,CommissionAmount) 
-                values('{userdate.Rows[0]["referral_code"].ToString()}','{userdate.Rows[0]["UserId"]}', '{userid}', '{DateTime.Today}', '{userdate.Rows[0]["EmailOrUsername"]}' , 10)";
 
-                DataTable result1 = SqlView(Query);
-                return true;
+                DataTable userdate = SqlView($@"select * from tbl_Users where referral_code = '{request.referral_code}'");
+                if (userdate.Rows.Count > 0)
+                {
+        
+
+                    Query = $@"INSERT INTO tbl_Referrals(ReferralCode,ReferredUserId,ReferredEmail, ReferrerUserId,ReferralDate,ReferrerEmail,CommissionAmount) 
+                values('{request.referral_code}','{userdate.Rows[0]["UserId"]}', '{userdate.Rows[0]["EmailOrUsername"]}' , '{userid}', '{DateTime.Today}', '{request.UserNameOrEmail}' , 10)";
+
+                    DataTable result1 = SqlView(Query);
+                    return true;
+                } 
             }
-            
+            catch (Exception e)
+            {
 
-
+            }
             return false;
         }
 
@@ -276,14 +281,22 @@ select UserNumber,EmailOrUsername,UserId,InActiveDate,createdOn,RoleCode from tb
                         param.Add(new SqlParameter("@Password2", password2));
                         param.Add(new SqlParameter("@Salt",salt)); 
                         User = SqlView(Query,param);
-                        
+
+                     
+
                         if (User.Rows.Count > 0)
                         {
 
-                            if (!String.IsNullOrEmpty(request.referral_code) ) // add refferal code
+                            if (!String.IsNullOrEmpty(request.referral_code) && request.referral_code != "N") // add refferal code
                             {
                                 Boolean isRegistered = RegisterReferral(request, User.Rows[0]["UserId"].ToString());
-
+                                if (!isRegistered)
+                                {
+                                    response.MessageBox = "Can't referred";
+                                    response.Success = true;
+                                    return response;
+                                }
+                               
                             }
 
                             response.User = SqlRow<CreatedUser>(User.Rows[0]);

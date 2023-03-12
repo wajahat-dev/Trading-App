@@ -164,12 +164,16 @@ const UserDetail = ({ getHistoricalData, ledger, positions, getPositions }) => {
         <Deposits />
 
       </div>
+      <div>
+        {/* <Graph /> */}
+      </div>
       <div className="user-detail">
         <div className="user-detail-chart">
-          <Line data={lineChartData} options={options} />
+          {/* <Line data={lineChartData} options={options} /> */}
+          <Graph />
         </div>
         <div className='doughnut'>
-          <Doughnut data={doughnutData} options={pieOptions} height={200} />
+          {/* <Doughnut data={doughnutData} options={pieOptions} height={200} /> */}
         </div>
         <div className='user-data-tables'>
           <Orders />
