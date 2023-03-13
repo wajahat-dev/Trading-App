@@ -83,6 +83,10 @@ FROM TBL_USERS a INNER JOIN TBL_USERINFO b ON a.UserId = b.UserId AND a.UserNumb
             {
                 reponse.griddata = user;
             }
+            else
+            {
+                reponse.griddata = new DataTable();
+            }
 
 
             return reponse;

@@ -29,6 +29,7 @@ import AdminPanel from "./AdminPanel";
 import DisableUserPage from "./DisableUserPage";
 import UserContext from "./ContextApi.js/UserContext";
 import Referral from "./Referral";
+import { BasePage } from "./Routes/BasePage";
 
 const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePositionAndGet, updateWatchedStockAndGet }) => {
   const dispatch = useDispatch();
@@ -156,67 +157,8 @@ const PositionSidebar = ({ positions, formVisible, watchedStocks, updatePosition
 
       <CNavbar page={'positionsidebar'} />
       Login as {userData?.isAdmin ? 'Admin' : 'User'}
+      <BasePage />
 
-      <Switch>
-        <Route
-          path="/position/:id"
-          render={(props) => <PositionDetail {...props} />}
-        />
-        <Route
-          path="/stock/:stockSymbol"
-          render={(props) => <StockDetail {...props} />}
-        />
-
-        <Route
-          path="/profile"
-          render={(props) => <Profile />}
-        />
-        <Route
-          path="/jazzcash"
-          render={(props) => <JazzCashCheckout />}
-        />
-        <Route
-          path="/binancepay"
-          render={(props) => <BinancePayCheckout />}
-        />
-        <Route
-          path="/visamaster"
-          render={(props) => <VisaMaster />}
-        />
-        <Route
-          path="/kycc"
-          render={(props) => <Kyc />}
-        />
-         <Route
-          path="/referral"
-          render={(props) => <Referral />}
-        />
-
-        {/* Starts Admin Routes */}
-        <Route
-          needLogin={true}
-
-          path="/admin"
-          render={(props) => <AdminPanel />}
-        />
-        <Route
-          needLogin={true}
-
-          path="/disable"
-          render={(props) => <DisableUserPage />}
-        />
-        {/* Ends Admin Routes */}
-
-
-
-
-
-        <Route exact={true} path="/" component={UserDetail} />
-        <Route component={PositionSidebar} />
-      </Switch>
-
-      {/* <Graph />
-      <DataTable /> */}
       <CFooter />
 
 
