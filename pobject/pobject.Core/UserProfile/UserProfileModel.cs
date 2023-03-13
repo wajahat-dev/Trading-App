@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,4 +29,11 @@ public class Internal_JWT_Request
     public string Email { get; set; }
     public string Phone { get; set; }
     public string UserId { get; set; }
+
+
+}
+public class UserFinanceData
+{
+    public DataTable griddata { get; set; }
+
 }

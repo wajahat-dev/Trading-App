@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Microsoft.Net.Http.Headers;
+using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Net.Http.Headers;
 
 namespace pobject.Core.CommonHelper
 {
@@ -19,5 +22,14 @@ namespace pobject.Core.CommonHelper
 
             return referralCode;
         }
+
+        public static string DecodeToken(string _bearer_token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jwtDecoded = handler.ReadToken(_bearer_token) as JwtSecurityToken;
+            var email = jwtDecoded.Claims.FirstOrDefault(j => j.Type.EndsWith("email")).Value ?? "";
+            return email;
+        }
+
     }
 }

@@ -191,6 +191,33 @@ namespace pobject.Core.DatabaseEnvironment
         }
 
 
+
+        public Boolean UpdateUserAmount(Signup_Request request, String userid) {
+
+
+
+            try
+            {
+                String Query = string.Empty;
+
+
+                DataTable userdate = SqlView($@"select * from tbl_useramountdetails where EmailOrUsername = '{request.UserNameOrEmail}'");
+                if (userdate.Rows.Count == 0)
+                {
+                    Query = $@"INSERT INTO tbl_useramountdetails (EmailOrUsername, UserId, TotalAmount)
+VALUES('{request.UserNameOrEmail}', '{userid}', 0)";
+
+                    DataTable result1 = SqlView(Query);
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+            return false;
+        }
+
         public Signup_Response CreateNewUser(Signup_Request request,string RoleCodeIfLoggedInAsAdmin)
         {
             Signup_Response response = new Signup_Response();
@@ -286,8 +313,16 @@ select UserNumber,EmailOrUsername,UserId,InActiveDate,createdOn,RoleCode from tb
 
                         if (User.Rows.Count > 0)
                         {
+                            // add amount
+                            Boolean isInserted = UpdateUserAmount(request, User.Rows[0]["UserId"].ToString());
+                            if (isInserted)
+                            {
 
-                            if (!String.IsNullOrEmpty(request.referral_code) && request.referral_code != "N") // add refferal code
+                            }
+
+
+                            // add refferal code
+                            if (!String.IsNullOrEmpty(request.referral_code) && request.referral_code != "N") 
                             {
                                 Boolean isRegistered = RegisterReferral(request, User.Rows[0]["UserId"].ToString());
                                 if (!isRegistered)
