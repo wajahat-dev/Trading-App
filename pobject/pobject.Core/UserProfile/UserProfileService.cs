@@ -8,6 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using pobject.Core.Signup;
+using Microsoft.Net.Http.Headers;
+using System.Collections;
+using pobject.Core.CommonHelper;
 
 namespace pobject.Core.UserProfile
 {
@@ -70,6 +73,25 @@ FROM TBL_USERS a INNER JOIN TBL_USERINFO b ON a.UserId = b.UserId AND a.UserNumb
         }
 
       
+        public UserFinanceData UserGridData(string _bearer_token)
+        {
+            UserFinanceData reponse = new UserFinanceData();
+            string email = globalfunctions.DecodeToken(_bearer_token);
+            DataTable user = _database.SqlView($"select * from tbl_useramountdetails where EmailOrUsername =  '{email}' ");
+            DataTable sums = _database.SqlView($"select sum(TotalAmount) from tbl_useramountdetails where EmailOrUsername =  '{email}' ");
+            if (user.Rows.Count > 0)
+            {
+                reponse.griddata = user;
+            }
+            else
+            {
+                reponse.griddata = new DataTable();
+            }
+
+
+            return reponse;
+        }
+
 
         public UserProfile_Response StoreUserProfile(UserProfile_Request request, Internal_JWT_Request jwt = null)
         {

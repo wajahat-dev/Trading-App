@@ -9,14 +9,14 @@ import { getPositions } from "./store/actions/positions";
 import NewsFeed from './NewsFeed';
 import TopMovers from './TopMovers';
 import TopLosers from './TopLosers';
-import { Graph } from './Graph';
+import Graph from './Graph';
 
 import DataTable from "./DataTable";
 import PendingRequestTable from './PendingRequestTable';
 import UserContext from './ContextApi.js/UserContext';
 
 
-const UserDetail = ({ getHistoricalData, ledger, positions, getPositions }) => {
+const UserDetail = React.memo(({ getHistoricalData, ledger, positions, getPositions }) => {
   const [stockChartXValues, setstockChartXValues] = useState([]);
   const [stockChartYValues, setstockChartYValues] = useState([]);
   const trades = useSelector(state => state.trades);
@@ -164,12 +164,16 @@ const UserDetail = ({ getHistoricalData, ledger, positions, getPositions }) => {
         <Deposits />
 
       </div>
+      <div>
+        <Graph />
+      </div>
       <div className="user-detail">
         <div className="user-detail-chart">
-          <Line data={lineChartData} options={options} />
+          {/* <Line data={lineChartData} options={options} /> */}
+          {/* <Graph /> */}
         </div>
         <div className='doughnut'>
-          <Doughnut data={doughnutData} options={pieOptions} height={200} />
+          {/* <Doughnut data={doughnutData} options={pieOptions} height={200} /> */}
         </div>
         <div className='user-data-tables'>
           <Orders />
@@ -187,7 +191,7 @@ const UserDetail = ({ getHistoricalData, ledger, positions, getPositions }) => {
     </div>
   );
 
-};
+})
 
 
 
@@ -206,4 +210,4 @@ const UserDetailContainer = () => {
   );
 };
 
-export default UserDetailContainer;
+export default React.memo(UserDetailContainer);

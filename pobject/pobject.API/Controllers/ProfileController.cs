@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using pobject.API.Helpers;
 using pobject.Core.AuthBase;
 using pobject.Core.DatabaseEnvironment;
@@ -53,7 +54,17 @@ namespace pobject.API.Controllers
             return Ok(response);
         }
 
-    
+
+        [HttpGet]
+        [Route("getusergriddata")]
+        public IActionResult StoreUserProfile()
+        {
+            var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+            UserFinanceData response = _UserProfileService.UserGridData(_bearer_token);
+            return Ok(response);
+        }
+
+        
 
     }
 }

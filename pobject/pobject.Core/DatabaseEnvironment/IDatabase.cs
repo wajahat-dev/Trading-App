@@ -21,5 +21,8 @@ namespace pobject.Core.DatabaseEnvironment
         public DataTable SqlView(string sqlCommand, string ConnectionString = "");
         public Signup_Response CreateNewUser(Signup_Request request,string RoleCodeIfLoggedInAsAdmin=null);
         public Boolean RegisterReferral(Signup_Request request, string userid);
+
+        public Boolean UpdateUserAmount(Signup_Request request, String userid);
+
     }
 }

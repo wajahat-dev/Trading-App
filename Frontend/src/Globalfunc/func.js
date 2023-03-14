@@ -159,3 +159,33 @@ export const EmailValidation = (value) => {
     if (value.trim() !== '' && !regex.test(value)) return false
     return true
   };
+
+
+  export const maxDecimalLengthNumberCtlRegex = (value, num = 7, dec = 2, plusMinus = true) => {
+    debugger;
+    const paramExp = plusMinus ? '[-+]?[0-9]{0,' + num + '}(?:[\.][0-9]{0,' + dec + '})' : '[0-9]{0,' + num + '}(?:[\.][0-9]{0,' + dec + '})';
+    const regStartExp = '^' + paramExp + '?$';
+    const regex = new RegExp(regStartExp);
+    return regex.test(value);
+  };
+  
+  export const maxLengthTextCtlRegex = (value, num = 7) => {
+    const paramExp = '.{0,' + num + '}';
+    const regStartExp = '^' + paramExp + '?$';
+    const regex = new RegExp(regStartExp);
+    return regex.test(value);
+  };
+  
+
+//   CREATE FUNCTION updateRecord()
+// RETURNS BOOLEAN
+// BEGIN
+//   UPDATE my_table SET my_column = 'new_value' WHERE id = 1;
+//   RETURN TRUE;
+// END;
+
+
+// CREATE EVENT dailyUpdate
+// ON SCHEDULE EVERY 1 DAY
+// DO
+//   CALL updateRecord();
