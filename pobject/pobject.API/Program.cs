@@ -9,6 +9,7 @@ using pobject.Core.UserProfile;
 using pobject.API.Middlewares;
 using pobject.Core.Roles;
 using pobject.Core.OtherServices;
+using pobject.Core.Transactions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,8 @@ builder.Services.AddTransient<ISignup_Service, Signup_Service>();
 builder.Services.AddTransient<IUserProfileService, UserProfileService>();
 builder.Services.AddTransient<IRoles_Services, Roles_Services>();
 builder.Services.AddTransient<IJazzCash_Services, JazzCash_Services>();
+builder.Services.AddTransient<ITransactionsService, TransactionsService>();
+
 builder.Services.AddTransient<IAdminAndUserServices, AdminAndUserServices>();
 //builder.Services.AddTransient<IExpenseService, ExpenseService>();
 //builder.Services.AddSingleton<IEmailService, EmailService>();
@@ -114,9 +117,6 @@ builder.Services
             //ClockSkew = TimeSpan.Zero,
         };
     });
-
-
-
 
 
 
