@@ -31,5 +31,17 @@ namespace pobject.API.Controllers
             var response = _TransactionsService.Withdrawl(request);
             return Ok(response);
         }
+
+
+        [HttpPost]
+        [HttpPost("depositamount")]
+
+        public StoreCode depositAmount(Transaction_Deposit request)
+        {
+            StoreCode response = _TransactionsService.deposit(request);
+            return response;
+        }
+
+
     }
 }

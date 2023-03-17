@@ -11,5 +11,8 @@ namespace pobject.Core.Transactions
     {
         public StoreCode Withdrawl(Transaction_Withdrawl request);
 
+        public StoreCode deposit(Transaction_Deposit request);
+
+
     }
 }

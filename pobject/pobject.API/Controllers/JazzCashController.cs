@@ -12,11 +12,12 @@ using System;
 using System.Data;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
+using System.Text.Json;
 
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Net.Http;
-using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace pobject.API.Controllers
 {
@@ -77,7 +78,7 @@ namespace pobject.API.Controllers
         
         [HttpPost]
         [Route("jc_wallet")]
-        //public async Task<IActionResult> jc_wallet([FromBody] dynamic data)
+
         public async Task<IActionResult> jc_wallet(JazzRequest request)
         {
             HttpResponseMessage result = new HttpResponseMessage();
@@ -107,60 +108,27 @@ namespace pobject.API.Controllers
                 pp_SecureHash = "",
             };
 
-            //paymentData.pp_SecureHash = JazzHelper.GenerateSecureHash(JazzHelper.ObjectToDictionary(paymentData), "8scc0yux1z");
-
-
             try
             {
-
-                //                var payload = new Dictionary<string, string>
-                //{
-                //    { "pp_Version", "1.1" },
-                //    { "pp_TxnType", "MWALLET" },
-                //    { "pp_Language", "EN" },
-                //    { "pp_MerchantID", "" },
-                //    { "pp_SubMerchantID", "" },
-                //    { "pp_Password", "" },
-                //    { "pp_BankID", "" },
-                //    { "pp_ProductID", "" },
-                //    { "pp_TxnRefNo", "" },
-                //    { "pp_Amount", "" },
-                //    { "pp_TxnCurrency", "PKR" },
-                //    { "pp_TxnDateTime", "" },
-                //    { "pp_BillReference", "billref" },
-                //    { "pp_Description", "Description of transaction" },
-                //    { "pp_TxnExpiryDateTime", "" },
-                //    { "pp_ReturnURL", "https://wajahatali.vercel.app/" },
-                //    { "ppmpf_1", "" },
-                //    { "ppmpf_2", "" },
-                //    { "ppmpf_3", "" },
-                //    { "ppmpf_4", "" },
-                //    { "ppmpf_5", "" }
-                //};
-                //payload["pp_MerchantID"] = "MC53678";
-                //payload["pp_Password"] = "808ww559vu";
-                //payload["pp_TxnRefNo"] = "T" + JazzHelper.GetTransactionDateTime();
-                //payload["pp_TxnDateTime"] = JazzHelper.GetTransactionDateTime();
-                //payload["pp_TxnExpiryDateTime"] = JazzHelper.GetTransactionExpiry(30);
-                //payload["pp_SecureHash"] = JazzHelper.GenerateSecureHash(payload, "8scc0yux1z");
-
-                ////JObject json = JsonConvert.DeserializeObject<JObject>(data.ToString());
-
-                //payload["ppmpf_1"] = request.phoneNumber;
-                //payload["pp_Amount"] = request.amount;
-                string json = JsonSerializer.Serialize(paymentData);
+                string json = System.Text.Json.JsonSerializer.Serialize(paymentData);
 
                 #region A Way
+                
                 Uri baseAddress = new Uri($"https://sandbox.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction");
-
-                //var json = $@"{JsonSerializer.Serialize(payload)}";
                 var httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-
-
                 HttpClient client = new HttpClient();
-                //HttpResponseMessage response = await client.PostAsync(baseAddress, new StringContent(data.ToString(), System.Text.Encoding.UTF8, "application/json"));
                 HttpResponseMessage response = await client.PostAsync(baseAddress, httpContent);
-                return Content(await response.Content.ReadAsStringAsync(), "application/json");
+                //return Content(await response.Content.ReadAsStringAsync(), "application/json");
+                //IActionResult iaction =  Content(await response.Content.ReadAsStringAsync(), "application/json");
+                dynamic responseResult = JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync());
+                string responseMsg = responseResult["pp_ResponseMessage"];
+                string responseStatusCode = responseResult["pp_ResponseCode"];
+                if (responseStatusCode == "000") { 
+
+                }
+
+
+
                 #endregion
 
                 #region Another AWay
@@ -187,7 +155,7 @@ namespace pobject.API.Controllers
                 //    }
                 //}
                 #endregion
-
+                return responseResult;
             }
             catch (Exception e)
             {

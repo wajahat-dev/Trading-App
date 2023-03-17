@@ -45,5 +45,38 @@ namespace pobject.Core.Transactions
             response.Success = true;
             return response;
         }
+
+        public StoreCode deposit(Transaction_Deposit request)
+        {
+            StoreCode response = new StoreCode();
+            try
+            {
+                string existuserquery = $"select * from tbl_useramountdetails where User_Id = '{request.Referral_UserId}'";
+                DataTable userExist = _database.SqlView(existuserquery);
+         
+                if (userExist.Rows.Count > 0)
+                {
+                    string useruserquery = $@"UPDATE tbl_useramountdetails SET 
+EmailOrUsername = '{userExist.Rows[0]["EmailOrUsername"]}', 
+UserId ='{userExist.Rows[0]["UserId"]}',TotalAmount= TotalAmount + '{userExist.Rows[0]["TotalAmount"]}', 
+Date = '{DateTime.Now}' +
+                        WHERE User_Id = '{request.Referral_UserId}'";
+                }
+                else
+                {
+                    response.MessageBox = "No User Found";
+                    response.Success = false;
+                }
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.MessageBox = "Exception due to " + e;
+                return response;
+            }
+            response.Success = true;
+            return response;
+        }
+
     }
 }

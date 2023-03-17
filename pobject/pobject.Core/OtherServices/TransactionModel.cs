@@ -17,4 +17,12 @@ namespace pobject.Core.OtherServices
         public string ReferralUsername { get; set; }
         public string ReferralCNIC { get; set; }
     }
+
+    public class Transaction_Deposit
+    {
+        public string Referral_UserId { get; set; }
+        
+        public float amount { get; set; }
+    }
+
 }
