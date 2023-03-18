@@ -200,27 +200,37 @@ namespace pobject.Core.DatabaseEnvironment
             {
                 String Query = string.Empty;
 
+                 
 
-                DataTable userdate = SqlView($@"select * from tbl_useramountdetails where EmailOrUsername = '{request.UserNameOrEmail}'");
-    
-                    Query = $@"INSERT INTO tbl_useramountdetails (EmailOrUsername, UserId, TotalAmount)
-VALUES('{request.UserNameOrEmail}', '{userid}', 0)";
+
+
+                    Query = $@"INSERT INTO tbl_useramountdetails (EmailOrUsername, UserId, TotalAmount, Date,Investment)
+VALUES('{request.UserNameOrEmail}', '{userid}', 0, '{DateTime.Now}',0)";
 
                     DataTable result1 = SqlView(Query);
 
 
 
 
-                string seniorRefererIDQuery = $"select * from tbl_Referrals where ReferrerUserId = '{userid}'";
+                string seniorRefererIDQuery = $" SELECT * FROM tbl_users JOIN tbl_useramountdetails ON tbl_users.userid = tbl_useramountdetails.UserId WHERE tbl_users.referral_code =  '{request.referral_code}'";
                 DataTable userFound = SqlView(seniorRefererIDQuery);
+
+
+
                 if (userFound.Rows.Count > 0)
                 {
+                  
+                    //if (userFound1.Rows[0]["TotalAmount"] > 0)
+                    if (Convert.ToInt32(userFound.Rows[0]["TotalAmount"]) > 0)
+                        {
+                        // senior user
+                        string senioruserquery = $@"UPDATE tbl_useramountdetails SET 
+                TotalAmount= TotalAmount + (TotalAmount * 0.1) 
 
-                    // senior user
-                    string senioruserquery = $@"UPDATE tbl_useramountdetails SET 
-                TotalAmount= TotalAmount + (TotalAmount * 0.1), 
+                                       WHERE UserId = '{userFound.Rows[0]["userid"]}'";
+                        SqlView(senioruserquery);
+                    }
 
-                                       WHERE UserId = '{userid}'";
                 }
 
 

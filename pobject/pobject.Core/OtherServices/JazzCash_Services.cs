@@ -54,7 +54,7 @@ namespace pobject.Core.OtherServices
                 param.Add(new SqlParameter("@phoneNumber", request.phoneNumber));
 
 
-                string query = $@"insert into tbl_PendingRequests(UsernameOrEmail,UserId,[desc],amount,cnic,phoneNumber) values(@UsernameOrEmail,@UserId,@desc,@amount,@cnic,@phoneNumber)";
+                string query = $@"insert into tbl_PendingRequests(UsernameOrEmail,UserId,[desc],amount,cnic,phoneNumber,payload) values(@UsernameOrEmail,@UserId,@desc,@amount,@cnic,@phoneNumber, '')";
                 int affected = _database.ExecuteNonQuery(query,param);
                 if (affected > 0)
                 {
