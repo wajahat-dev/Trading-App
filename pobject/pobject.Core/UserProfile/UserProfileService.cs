@@ -47,22 +47,19 @@ WHERE a.EmailOrUsername = @UsernameOrEmail AND a.USERID = @UserId",param);
 
         public DataTable GetAllUserProfile()
         {
-            DataTable user;
+           
             try
             {
-                List<SqlParameter> param = new List<SqlParameter>();
-               // old query for getting all record
-//                user = _database.SqlView($@"
-//SELECT a.inActivedate, a.inActivedate, a.UserId, a.EmailOrUsername,a.USERID,b.CNIC,EMAIL,DISPLAYNAME,PHONE,COUNTRY,DOB,b.CREATEDON 
-//FROM TBL_USERS a INNER JOIN TBL_USERINFO b ON a.UserId = b.UserId AND a.UserNumber = b.UserNumber");
 
-                user = _database.SqlView($@"
-SELECT COALESCE(c.TotalAmount, 0) AS TotalAmount, a.inActivedate, a.inActivedate, a.UserId, a.EmailOrUsername, a.USERID, b.CNIC, b.EMAIL, b.DISPLAYNAME, b.PHONE, b.COUNTRY, b.DOB, b.CREATEDON
+              
+                DataTable user = _database.SqlView($@"
+                 
+  SELECT COALESCE(c.TotalAmount, 0) AS TotalAmount, a.inActivedate, a.inActivedate, a.UserId, a.EmailOrUsername, a.USERID, b.CNIC, b.EMAIL, b.DISPLAYNAME, b.PHONE, b.COUNTRY, b.DOB, b.CREATEDON
+                FROM TBL_USERS a
+                INNER JOIN TBL_USERINFO b ON a.UserId = b.UserId AND a.UserNumber = b.UserNumber
+                LEFT JOIN tbl_useramountdetails c ON a.UserId = c.UserId
 
-FROM TBL_USERS a 
-INNER JOIN TBL_USERINFO b ON a.UserId = b.UserId AND a.UserNumber = b.UserNumber
-LEFT JOIN tbl_useramountdetails c ON a.UserId = c.UserId
-");
+                    ");
 
 
 

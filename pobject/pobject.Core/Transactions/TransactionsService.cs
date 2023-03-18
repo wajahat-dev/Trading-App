@@ -51,22 +51,50 @@ namespace pobject.Core.Transactions
             StoreCode response = new StoreCode();
             try
             {
-                string existuserquery = $"select * from tbl_useramountdetails where User_Id = '{request.Referral_UserId}'";
+                string existuserquery = $"select * from tbl_useramountdetails where UserId = '{request.Referral_UserId}'";
                 DataTable userExist = _database.SqlView(existuserquery);
          
                 if (userExist.Rows.Count > 0)
                 {
+
+
+                    // existing user
                     string useruserquery = $@"UPDATE tbl_useramountdetails SET 
 EmailOrUsername = '{userExist.Rows[0]["EmailOrUsername"]}', 
-UserId ='{userExist.Rows[0]["UserId"]}',TotalAmount= TotalAmount + '{userExist.Rows[0]["TotalAmount"]}', 
-Date = '{DateTime.Now}' +
-                        WHERE User_Id = '{request.Referral_UserId}'";
+UserId ='{userExist.Rows[0]["UserId"]}',TotalAmount= TotalAmount + '{request.amount}', 
+Date = '{DateTime.Now}' 
+                        WHERE UserId = '{request.Referral_UserId}'";
+
+                    _database.SqlView(useruserquery);
+
+                    response.MessageBox = "Updated User Data";
+                    response.Success = true;
+                    return response;
+
+                    //                   string seniorRefererIDQuery = $"select * from tbl_Referrals where ReferrerUserId = '{request.Referral_UserId}'";
+                    //                   DataTable userFound = _database.SqlView(seniorRefererIDQuery);
+                    //                   if (userFound.Rows.Count > 0)
+                    //                   {
+
+
+
+
+
+
+                    //                       // senior user
+                    //                       string senioruserquery = $@"UPDATE tbl_useramountdetails SET 
+                    //TotalAmount= TotalAmount + '{request.amount}', 
+
+                    //                       WHERE UserId = '{userFound.Rows[0]["ReferredUserId"]}'";
+
+
+
+
+                    //                   }
+
+
                 }
-                else
-                {
-                    response.MessageBox = "No User Found";
-                    response.Success = false;
-                }
+
             }
             catch (Exception e)
             {
@@ -74,7 +102,8 @@ Date = '{DateTime.Now}' +
                 response.MessageBox = "Exception due to " + e;
                 return response;
             }
-            response.Success = true;
+            response.MessageBox = "No User Found";
+            response.Success = false;
             return response;
         }
 

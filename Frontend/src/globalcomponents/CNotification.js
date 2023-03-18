@@ -18,7 +18,7 @@ export default function CNotification({ isOpen, message, setOpen,varient='info' 
         setOpenLocal(false);
     };
     return (
-        <div>
+        <div className={{zIndex: 100000}}>
             <Snackbar
                 open={openLocal}
                 autoHideDuration={3000}

@@ -11,6 +11,7 @@
     "@material-ui/data-grid": "^4.0.0-alpha.10",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.57",
+    "@mui/codemod": "^5.11.12",
     "@mui/icons-material": "^5.11.0",
     "@mui/joy": "^5.0.0-alpha.67",
     "@mui/material": "^5.11.2",

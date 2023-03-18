@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using pobject.API.Helpers;
@@ -11,6 +12,7 @@ using pobject.Core.Transactions;
 
 namespace pobject.API.Controllers
 {
+    [EnableCors("AllowSpecificOrigin")]
     [Route("api/transaction")]
     [ApiController]
     public class TransactionController : Auth_Controller
@@ -36,10 +38,10 @@ namespace pobject.API.Controllers
         [HttpPost]
         [HttpPost("depositamount")]
 
-        public StoreCode depositAmount(Transaction_Deposit request)
+        public IActionResult depositAmount(Transaction_Deposit request)
         {
             StoreCode response = _TransactionsService.deposit(request);
-            return response;
+            return Ok(response);
         }
 
 

@@ -10,6 +10,8 @@ import CHeader from './globalcomponents/CHeader';
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 
 import ModalDialog from '@mui/joy/ModalDialog';
+import StoreAmountModal from './Modal/StoreAmountModal';
+import CNotification from './globalcomponents/CNotification';
 
 
 
@@ -42,7 +44,8 @@ export default function DataTable() {
     modal: false,
     selectedRow: { ...selectedRow },
     openmodal: false,
-    amount: 0
+    amount: 0,
+    open: false,
   })
   const columns = [
     { field: 'emailOrUsername', headerName: 'User Name', width: 150, },
@@ -112,7 +115,7 @@ export default function DataTable() {
       },
 
     },
-    { field: 'TotalAmount', headerName: 'Amount', },
+    { field: 'totalAmount', headerName: 'Amount', },
   ]
 
   const getData = async () => {
@@ -132,7 +135,7 @@ export default function DataTable() {
       });
       if (response.ok) {
         const data = await response.json();
-        setGridData(data)
+        setGridData(data.map((e,i) => ({...e, grid_id: 1000+i})))
       }
 
     } catch (error) {
@@ -152,7 +155,7 @@ export default function DataTable() {
     try {
       const response = await fetch(`https://localhost:7000/api/suspend-user`, {
         method: "post",
-        "accept": '*/*',
+       
         body: JSON.stringify({
           "userId": globalState.selectedRow.userId,
           "adminID": "string",
@@ -160,6 +163,7 @@ export default function DataTable() {
         }),
         headers: {
           "Content-Type": "application/json",
+          "accept": '*/*',
           Authorization: `Bearer ${localStorage.getItem('TOKEN_KEY')
             ? localStorage.getItem('TOKEN_KEY')
             : ''
@@ -180,17 +184,23 @@ export default function DataTable() {
   }
 
 
-  const storeAmount = async (isSuspendAction) => {
+  const storeAmount = async () => {
+
+    if(+globalState.amount <= 0) {
+      setGlobalState(p => ({ ...p,  open: true, message: 'Amount Can nott zero or less'}))
+      return
+    }
+
     setLoader(true)
 
     try {
-      const response = await fetch(`https://localhost:7000/api/depositamount`, {
+      const response = await fetch(`https://localhost:7000/api/transaction/depositamount`, {
         method: "post",
         "accept": '*/*',
         body: JSON.stringify({
-          "userId": globalState.selectedRow.userId,
-          "amount": globalState.amount,
-     
+          "Referral_UserId": globalState.selectedRow.userId,
+          "amount": +globalState.amount,
+
         }),
         headers: {
           "Content-Type": "application/json",
@@ -200,10 +210,16 @@ export default function DataTable() {
             }`,
         },
       });
-      if (response.ok) {
-        // getData()
+      var body = await response.json();
+
+      if (body.success) {
+        getData()
+        setGlobalState(p => ({ ...p,  open: true, message: body.messageBox}))
+      }else{
+        setGlobalState(p => ({ ...p,  open: true, message: body.messageBox}))
+
       }
-      setGlobalState(p => ({ ...p, openmodal: false }))
+      setGlobalState(p => ({ ...p, openmodal: false, amount: 0 }))
 
     } catch (error) {
       console.log(error)
@@ -230,6 +246,8 @@ export default function DataTable() {
 
     <>
       <CLoader enabled={loader} />
+<CNotification isOpen={globalState.open} setOpen={e => setGlobalState(p => ({ ...p, open: e }))} message={globalState.message} />
+
       <CModal open={globalState.modal}
         labels={{ one: 'Suspend User', two: 'Un Suspend User' }}
         onClose={() => onClickModal(false)}
@@ -241,7 +259,8 @@ export default function DataTable() {
         <DataGrid
           rows={gridData}
           columns={columns}
-          getRowId={(row) => row.emailOrUsername + row.email}
+          // getRowId={(row) => row.emailOrUsername + row.email}
+          getRowId={(row) => row.grid_id}
           pageSize={5}
           rowsPerPageOptions={[5]}
           autoHeight autoWidth
@@ -249,47 +268,12 @@ export default function DataTable() {
       </div>
 
 
-
-
-      <Modal open={globalState.openmodal} onClose={handleCancelClick} size="md">
-        <ModalDialog
-          variant="outlined"
-          role="alertdialog"
-          aria-labelledby="alert-dialog-modal-title"
-          aria-describedby="alert-dialog-modal-description"
-        >
-          <Typography
-            id="alert-dialog-modal-title"
-            component="h2"
-            startDecorator={<WarningRoundedIcon />}
-          >
-            Deposit Amount
-          </Typography>
-          <Divider />
-
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, pt: 2 }}>
-            <TextField
-              label="Enter amount in dollars"
-              type="number"
-              value={globalState.amount}
-              onChange={handleAmountChange}
-            />
-            <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
-
-              <Button variant="outlined" color="danger" onClick={storeAmount}>
-                Store
-              </Button>
-              <Button variant="outlined" color="neutral" onClick={handleCancelClick}>
-
-                Cancel
-
-              </Button>
-            </Box>
-          </Box>
-        </ModalDialog>
-      </Modal>
-
-
+      <StoreAmountModal
+        amount={globalState.amount}
+        handleCancelClick={handleCancelClick}
+        storeAmount={storeAmount}
+        handleAmountChange={handleAmountChange}
+        open={globalState.openmodal} onClose={handleCancelClick} />
     </>
 
   );

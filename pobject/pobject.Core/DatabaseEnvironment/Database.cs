@@ -202,23 +202,30 @@ namespace pobject.Core.DatabaseEnvironment
 
 
                 DataTable userdate = SqlView($@"select * from tbl_useramountdetails where EmailOrUsername = '{request.UserNameOrEmail}'");
-                if (userdate.Rows.Count == 0)
-                {
-                
+    
                     Query = $@"INSERT INTO tbl_useramountdetails (EmailOrUsername, UserId, TotalAmount)
 VALUES('{request.UserNameOrEmail}', '{userid}', 0)";
 
                     DataTable result1 = SqlView(Query);
-                    return true;
-                }
-                else
-                {
-                    //    int totalamount = userdate.Rows[0]["TotalAmount"];
-                    //    if (totalamount <= 0 )
-                    //    {
 
-                    //    }
+
+
+
+                string seniorRefererIDQuery = $"select * from tbl_Referrals where ReferrerUserId = '{userid}'";
+                DataTable userFound = SqlView(seniorRefererIDQuery);
+                if (userFound.Rows.Count > 0)
+                {
+
+                    // senior user
+                    string senioruserquery = $@"UPDATE tbl_useramountdetails SET 
+                TotalAmount= TotalAmount + (TotalAmount * 0.1), 
+
+                                       WHERE UserId = '{userid}'";
                 }
+
+
+                return true;
+
             }
             catch (Exception e)
             {
