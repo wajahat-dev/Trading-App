@@ -9,6 +9,7 @@ const TopLosers = () => {
     //  financial modeling prep fetch---------------------------------------------------
   useEffect(() => {
     
+   try{
     const fetchCompanyInfo = async () =>{
       const API_Key = process.env.REACT_APP_FMP_API_KEY;
       let API_CALL = `https://financialmodelingprep.com/api/v3/losers?limit=10&apikey=${API_Key}`;
@@ -29,7 +30,10 @@ const TopLosers = () => {
           }
       )
     }
-    fetchCompanyInfo();  
+    // fetchCompanyInfo();  
+   }catch(e){
+    console.log(e)
+   }
     //setinterval would go here return the clear interval
     //return ()=> clearInterval
   }, []);

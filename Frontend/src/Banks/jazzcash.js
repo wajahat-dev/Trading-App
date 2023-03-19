@@ -138,7 +138,13 @@ function JazzCashCheckout() {
                         history.push('/kycc')
                     }, 2000);
                 }else{
-                    setGlobalState(p => ({ ...p, varient: 'success', message: data.messageBox, open: true }))
+                    if( data.messageBox.includes("Your Amuont is greater than balance")){
+                        setGlobalState(p => ({ ...p, varient: 'info', message: data.messageBox, open: true }))
+                    }else{
+                        setGlobalState(p => ({ ...p, varient: 'info', message: data.messageBox, open: true }))
+
+                    }
+
 
                 }
             }

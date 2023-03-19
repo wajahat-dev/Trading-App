@@ -98,7 +98,7 @@ const CNavbar = ({ page }) => {
         </Box>
     );
 
-    const admin = userData?.isAdmin ? (page ===  'positionsidebar' ? true : false) : false
+    const admin = userData?.isAdmin ? (page === 'positionsidebar' ? true : false) : false
 
     return (
         <>
@@ -106,22 +106,15 @@ const CNavbar = ({ page }) => {
                 <AppBar position="static">
                     <Toolbar>
                         {admin && <>
-                            {/* {true && <>  */}
-                            {/* {trades.userDetails.isAdmin && <> */}
-
-
                             < IconButton
                                 color="inherit"
                                 aria-label="open drawer"
                                 onClick={handleDrawerOpen}
                                 edge="start"
-                            // className={classes.menuButton}
                             >
                                 <MenuIcon />
                             </IconButton>
-
                             <React.Fragment key={'left'}>
-                                {/* <Button onClick={toggleDrawer('left', true)}>{'left'}</Button> */}
                                 <Drawer
                                     anchor={'left'}
                                     open={drawerOpen}
@@ -130,41 +123,19 @@ const CNavbar = ({ page }) => {
                                     {list('left')}
                                 </Drawer>
                             </React.Fragment>
-                        </>
-                        }
-
-                        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                            {/* <Typography
-                                variant="h6"
-                                noWrap
-                                onClick={() => history.push("/")}
-                                sx={{
-                                    display: { xs: 'none', sm: 'block' },
-                                    transition: 'color 0.2s ease-in-out',
-                                    '&:hover': {
-                                        color: 'primary.main',
-                                        cursor: 'pointer'
-                                    }
-                                }}
-                            >
-                                Forex Marketing
-                            </Typography> */}
-                            {/* <Link to="/" style={{ textDecoration: 'none' }}> */}
+                        </>}
+                        <Box sx={{ flexGrow: 1, display: {  md: 'flex' } }}>
                             <Button color={'#fafafa'}
                                 style={{ color: 'white' }}
                                 to="/"
                                 component={RouterLink} >
                                 Forex Marketing
                             </Button>
-                            {/* </Link> */}
                         </Box>
                         <Box sx={{ flexGrow: 1 }} />
-                        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                        <Box sx={{ display: {  sm: 'block' } }}>
                             {pageType(page, handleClick)}
                         </Box>
-
-
-
                     </Toolbar>
                 </AppBar>
 

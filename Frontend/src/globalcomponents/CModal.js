@@ -7,7 +7,7 @@ import ModalDialog from '@mui/joy/ModalDialog';
 import Typography from '@mui/joy/Typography';
 import * as React from 'react';
 
-export default function CModal({ open, onClick, onClose, header, message, labels={ one: 'Ok', two: 'Cancel' } }) {
+export default function CModal({ open, unsuspend,onClick, onClose, header, message, labels={ one: 'Ok', two: 'Cancel' } }) {
     return (
         <React.Fragment>
             <Modal open={open} onClose={onClose}  size="md">
@@ -29,7 +29,7 @@ export default function CModal({ open, onClick, onClose, header, message, labels
                         {message}
                     </Typography>
                     <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end', pt: 2 }}>
-                        <Button variant="outlined" color="neutral" onClick={onClose}>
+                        <Button variant="outlined" color="neutral" onClick={unsuspend}>
                             {labels.two}
                         </Button>
                         <Button variant="outlined" color="danger" onClick={onClick}>

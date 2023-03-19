@@ -42,6 +42,16 @@ namespace pobject.API.Controllers
             {
                 return Ok(response);
             }
-        } 
+        }
+
+        [HttpGet]
+        [Route("signupfieldsdata")]
+        public IActionResult GetSignUpData()
+        {
+            Signup_filds_data response = _database.GetSignUpData();
+            return Ok(response);
+        }
+
     }
+
 }

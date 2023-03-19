@@ -12,6 +12,7 @@ import trades from './reducers/trades';
 import currentWatchedStock from './reducers/current-watched-stock'
 // const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 import storage from 'redux-persist/lib/storage';
+import Trading from './TradingReducer';
 import { combineReducers } from 'redux';
 import {
     persistReducer,
@@ -37,6 +38,7 @@ const reducers = combineReducers({ authentication,
   watchedStocks,
   currentWatchedStock,
   ledger,
+  Trading,
   trades });
   const persistedReducer = persistReducer(persistConfig, reducers);
 // const reducer = combineReducers({

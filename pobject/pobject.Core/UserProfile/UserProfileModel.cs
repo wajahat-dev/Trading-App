@@ -35,5 +35,5 @@ public class Internal_JWT_Request
 public class UserFinanceData
 {
     public DataTable griddata { get; set; }
-
+    public float totalamount { get; set; }
 }

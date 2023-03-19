@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid , GridToolbar} from '@mui/x-data-grid';
 import CLoader from './globalcomponents/CLoader';
 import { useState } from "react";
 import { Button, Card, Icon, Modal } from "@material-ui/core";
@@ -159,6 +159,9 @@ export default function PendingRequestTable() {
                 <CHeader header='Transaction to be Approved:'/>
                 <DataGrid
                     rows={gridData}
+                    components={{
+                        Toolbar: GridToolbar,
+                      }}
                     columns={columns}
                     getRowId={(row) => row.id_Pk + row.userId}
                     pageSize={5}

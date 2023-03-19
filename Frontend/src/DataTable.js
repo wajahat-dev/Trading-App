@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import CLoader from './globalcomponents/CLoader';
 import { useState } from "react";
 import { Button, Card, Icon, Box, Divider, TextField, Modal, Typography } from "@material-ui/core";
@@ -46,6 +46,7 @@ export default function DataTable() {
     openmodal: false,
     amount: 0,
     open: false,
+    suspendModal: false
   })
   const columns = [
     { field: 'emailOrUsername', headerName: 'User Name', width: 150, },
@@ -117,6 +118,7 @@ export default function DataTable() {
     },
     { field: 'totalAmount', headerName: 'Amount', },
   ]
+  const [firstApi, setFirstApi] = useState(true)
 
   const getData = async () => {
     debugger
@@ -135,17 +137,21 @@ export default function DataTable() {
       });
       if (response.ok) {
         const data = await response.json();
-        setGridData(data.map((e,i) => ({...e, grid_id: 1000+i})))
+        setGridData(data.map((e, i) => ({ ...e, grid_id: 1000 + i })))
       }
 
     } catch (error) {
       console.log(error)
     } finally {
       setLoader(false)
+
+
     }
   };
 
+
   React.useEffect(() => {
+    debugger
     getData()
   }, [])
 
@@ -155,7 +161,7 @@ export default function DataTable() {
     try {
       const response = await fetch(`https://localhost:7000/api/suspend-user`, {
         method: "post",
-       
+
         body: JSON.stringify({
           "userId": globalState.selectedRow.userId,
           "adminID": "string",
@@ -186,8 +192,8 @@ export default function DataTable() {
 
   const storeAmount = async () => {
 
-    if(+globalState.amount <= 0) {
-      setGlobalState(p => ({ ...p,  open: true, message: 'Amount Can nott zero or less'}))
+    if (+globalState.amount <= 0) {
+      setGlobalState(p => ({ ...p, open: true, message: 'Amount Can nott zero or less' }))
       return
     }
 
@@ -214,9 +220,9 @@ export default function DataTable() {
 
       if (body.success) {
         getData()
-        setGlobalState(p => ({ ...p,  open: true, message: body.messageBox}))
-      }else{
-        setGlobalState(p => ({ ...p,  open: true, message: body.messageBox}))
+        setGlobalState(p => ({ ...p, open: true, message: body.messageBox }))
+      } else {
+        setGlobalState(p => ({ ...p, open: true, message: body.messageBox }))
 
       }
       setGlobalState(p => ({ ...p, openmodal: false, amount: 0 }))
@@ -246,19 +252,16 @@ export default function DataTable() {
 
     <>
       <CLoader enabled={loader} />
-<CNotification isOpen={globalState.open} setOpen={e => setGlobalState(p => ({ ...p, open: e }))} message={globalState.message} />
-
-      <CModal open={globalState.modal}
-        labels={{ one: 'Suspend User', two: 'Un Suspend User' }}
-        onClose={() => onClickModal(false)}
-        onClick={() => onClickModal(true)}
-        header={globalState.header} message={globalState.message} />
+      <CNotification isOpen={globalState.open} setOpen={e => setGlobalState(p => ({ ...p, open: e }))} message={globalState.message} />
 
       <div style={{ width: '100%', marginTop: 10 }}>
         <CHeader header='Accounts Status' />
         <DataGrid
           rows={gridData}
           columns={columns}
+          components={{
+            Toolbar: GridToolbar,
+          }}
           // getRowId={(row) => row.emailOrUsername + row.email}
           getRowId={(row) => row.grid_id}
           pageSize={5}
@@ -266,6 +269,14 @@ export default function DataTable() {
           autoHeight autoWidth
         />
       </div>
+
+      <CModal open={globalState.modal}
+        labels={{ one: 'Suspend User', two: 'Un Suspend User' }}
+        // onClose={() => onClickModal(false)}
+        onClose={() => setGlobalState(p => ({ ...p, modal: false }))}
+        onClick={() => onClickModal(true)}
+        unsuspend={() => onClickModal(false)}
+        header={globalState.header} message={globalState.message} />
 
 
       <StoreAmountModal

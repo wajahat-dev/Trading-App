@@ -7,6 +7,7 @@ import { getHistoricalData } from '../store/actions/ledger';
 import { useSelector, useDispatch } from "react-redux";
 import { createInstance } from "../store/actions/ledger";
 import { Button } from '@material-ui/core';
+import CLoader from '../globalcomponents/CLoader';
 
 
 
@@ -24,6 +25,9 @@ export function Deposits({ getHistoricalData, ledger }) {
   const date = new Date().getDate()
   const dispatch = useDispatch();
   const [accumulation, setAccumulation] = useState(0)
+
+  const Trading = useSelector((state) => state.Trading);
+
 
   useEffect(() => {
     if (!ledger)
@@ -61,15 +65,56 @@ export function Deposits({ getHistoricalData, ledger }) {
     };
     await dispatch(createInstance(payload));
   }
+  const [loader, setLoader] = React.useState(false)
 
+  const [globalState, setGlobalState] = useState({
+    header: '',
+    message: '',
+    modal: false,
+  })
+
+  const onClickModal = async (isSuspendAction) => {
+    setLoader(true)
+
+    try {
+      const response = await fetch(`https://localhost:7000/api/suspend-user`, {
+        method: "post",
+
+        body: JSON.stringify({
+          "userId": globalState.selectedRow.userId,
+          "adminID": "string",
+          "isSuspendAction": isSuspendAction
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          "accept": '*/*',
+          Authorization: `Bearer ${localStorage.getItem('TOKEN_KEY')
+            ? localStorage.getItem('TOKEN_KEY')
+            : ''
+            }`,
+
+        },
+      });
+      
+      setGlobalState(p => ({ ...p, modal: false }))
+
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoader(false)
+    }
+  }
 
 
   return (
     <React.Fragment>
+      <CLoader enabled={loader} />
+
       <div className='userHeader'>
         <Title>Portfolio Value</Title>
         <Typography component="p" variant="h4">
-          $<CountUp start={0} decimals={2} end={accumulation} duration={1.00} separator="," />
+          {/* $<CountUp start={0} decimals={2} end={accumulation} duration={1.00} separator="," /> */}
+          ${(Trading.totalamount || 0 ).toFixed(2)}
         </Typography>
         <Typography color="textSecondary" className={classes.depositContext}>
           on {month + '/' + date + '/' + year}

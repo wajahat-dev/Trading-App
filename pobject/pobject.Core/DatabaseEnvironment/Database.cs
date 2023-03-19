@@ -219,6 +219,21 @@ namespace pobject.Core.DatabaseEnvironment
             return false;
         }
 
+        public Signup_filds_data GetSignUpData()
+        {
+            Signup_filds_data respone = new Signup_filds_data();
+            try
+            {
+                DataTable countries = SqlView($@"select * from tbl_countries");
+                respone.countries = countries;
+            }
+            catch (Exception e)
+            {
+
+            }
+            return respone;
+        }
+
 
         public Boolean UpdateUserAmount(Signup_Request request, String userid)
         {

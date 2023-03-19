@@ -8,23 +8,27 @@ const TopMovers = () => {
 
   useEffect(() => {
 
-    const fetchCompanyInfo = async () => {
-      const API_Key = process.env.REACT_APP_FMP_API_KEY;
-      let API_CALL = `https://financialmodelingprep.com/api/v3/gainers?apikey=${API_Key}`;
-      fetch(API_CALL)
-        .then(
-          function (response) {
-            return response.json()
-          }
-        )
-        .then(
-          function (data) {
-            setTimeout(function () { setIsLoading(false); }, 250);
-            setStories(data)
-          }
-        )
+    try{
+      const fetchCompanyInfo = async () => {
+        const API_Key = process.env.REACT_APP_FMP_API_KEY;
+        let API_CALL = `https://financialmodelingprep.com/api/v3/gainers?apikey=${API_Key}`;
+        fetch(API_CALL)
+          .then(
+            function (response) {
+              return response.json()
+            }
+          )
+          .then(
+            function (data) {
+              setTimeout(function () { setIsLoading(false); }, 250);
+              setStories(data)
+            }
+          )
+      }
+      fetchCompanyInfo();
+    }catch(e){
+      console.log(e)
     }
-    fetchCompanyInfo();
   }, []);
 
 

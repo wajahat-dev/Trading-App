@@ -53,11 +53,10 @@ WHERE a.EmailOrUsername = @UsernameOrEmail AND a.USERID = @UserId",param);
 
               
                 DataTable user = _database.SqlView($@"
-                 
-  SELECT COALESCE(c.TotalAmount, 0) AS TotalAmount, a.inActivedate, a.inActivedate, a.UserId, a.EmailOrUsername, a.USERID, b.CNIC, b.EMAIL, b.DISPLAYNAME, b.PHONE, b.COUNTRY, b.DOB, b.CREATEDON
+SELECT COALESCE(c.TotalAmount, 0) AS TotalAmount,a.RoleCode, a.inActivedate, a.inActivedate, a.UserId, a.EmailOrUsername, a.USERID, b.CNIC, b.EMAIL, b.DISPLAYNAME, b.PHONE, b.COUNTRY, b.DOB, b.CREATEDON
                 FROM TBL_USERS a
-                INNER JOIN TBL_USERINFO b ON a.UserId = b.UserId AND a.UserNumber = b.UserNumber
-                LEFT JOIN tbl_useramountdetails c ON a.UserId = c.UserId
+                INNER JOIN TBL_USERINFO b ON a.UserId = b.UserId AND a.UserNumber = b.UserNumber AND a.RoleCode = 'X'               
+                LEFT JOIN tbl_useramountdetails c ON a.UserId = c.UserId 
 
                     ");
 
@@ -80,16 +79,18 @@ WHERE a.EmailOrUsername = @UsernameOrEmail AND a.USERID = @UserId",param);
             return "";
         }
 
-      
+
+
+
         public UserFinanceData UserGridData(string _bearer_token)
         {
             UserFinanceData reponse = new UserFinanceData();
             string email = globalfunctions.DecodeToken(_bearer_token);
             DataTable user = _database.SqlView($"select * from tbl_useramountdetails where EmailOrUsername =  '{email}' ");
-            DataTable sums = _database.SqlView($"select sum(TotalAmount) from tbl_useramountdetails where EmailOrUsername =  '{email}' ");
             if (user.Rows.Count > 0)
             {
                 reponse.griddata = user;
+                reponse.totalamount = (float)Convert.ToDouble(user.Rows[0]["TotalAmount"]);
             }
             else
             {

@@ -38,13 +38,16 @@ const App = ({ loadToken }) => {
   }, [loadToken]);
   useEffect(() => {
 
-    maintainSession()
+    localStorage.getItem('TOKEN_KEY') && maintainSession()
 
 
 
   }, [])
 
   const maintainSession = async () => {
+
+
+
     setLoader(true)
 
     try {

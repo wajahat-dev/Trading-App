@@ -20,6 +20,6 @@ namespace pobject.Core.DatabaseEnvironment
 
         public Boolean addCommisionToSenior(String currentuserEmail, String Senior_ReferalCode, float pct);
 
-
+        public Signup_filds_data GetSignUpData();
     }
 }

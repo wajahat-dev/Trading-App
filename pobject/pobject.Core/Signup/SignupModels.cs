@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,12 @@ namespace pobject.Core.Signup
         public string referral_code { get; set; }
         public string cnic { get; set; }
         public string DisplayName { get; set; } //not for frontEnd Field, It will give to user internally
+    }
+
+    public class Signup_filds_data
+    {
+        public DataTable countries { get; set; }
+
     }
 
     public class Signup_Response

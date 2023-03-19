@@ -13,7 +13,7 @@ using pobject.Core.Transactions;
 using Quartz;
 using Quartz.Impl;
 using static Quartz.Logging.OperationName;
-
+using pobject.Core.Quartz;
 using Quartz.Spi;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -43,13 +43,41 @@ builder.Services.AddTransient<IAdminAndUserServices, AdminAndUserServices>();
 
 // schedular 
 // Add Quartz services
-builder.Services.AddQuartz(q =>
-{
-    q.UseMicrosoftDependencyInjectionScopedJobFactory();
-});
-builder.Services.AddTransient<ISchedulerFactory, StdSchedulerFactory>();
-builder.Services.AddSingleton<QuartzHostedService>();
-builder.Services.AddTransient<MyJob>();
+//builder.Services.AddQuartz(q =>
+//{
+//    q.UseMicrosoftDependencyInjectionScopedJobFactory();
+//});
+//builder.Services.AddTransient<ISchedulerFactory, StdSchedulerFactory>();
+//builder.Services.AddSingleton<QuartzHostedService>();
+//builder.Services.AddTransient<MyJob>();
+
+
+
+
+
+
+
+//builder.Services.AddQuartz(q =>
+//{
+//    q.UseMicrosoftDependencyInjectionJobFactory();
+
+//    var jobKey = new JobKey("my-job");
+//    q.AddJob<MyJob>(j => j.WithIdentity(jobKey));
+
+//    q.AddTrigger(t => t
+//        .WithIdentity("my-trigger")
+//        .ForJob(jobKey)
+//        .WithCronSchedule("0/5 * * * * ?"));
+//});
+
+//builder.Services.AddQuartzHostedService();
+
+
+
+
+
+
+
 
 //for sending Datatables Data, [not applicable for minimal API]
 builder.Services.AddControllersWithViews().AddJsonOptions(options =>
@@ -142,7 +170,7 @@ builder.Services
 var app = builder.Build();
 
 // Quartz
-app.UseQuartz();
+//app.UseQuartz();
 
 
 // Configure the HTTP request pipeline.
@@ -162,3 +190,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+
+//class MyJob: IJob
+//{
+//    public Task Execute(IJobExecutionContext context)
+//    {
+//        // Do the job here
+//        return Task.CompletedTask;
+//    }
+//};

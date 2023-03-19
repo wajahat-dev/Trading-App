@@ -63,6 +63,8 @@ import React, { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import CNotification from './globalcomponents/CNotification';
 import CLoader from './globalcomponents/CLoader';
+import { useDispatch } from 'react-redux';
+import { setData } from './store/TradingReducer';
 
 const data = [
   { day: '2022-03-01', profit: 200 },
@@ -93,6 +95,7 @@ const data = [
     griddata: []
   })
   const filteredData = view === 'week' ? globalState.griddata.slice(-7) : globalState.griddata;
+  const dispatch = useDispatch();
 
 
   useEffect(() => {
@@ -123,6 +126,7 @@ const data = [
 
       if(data && data.griddata){
         setGlobalState(p => ({...p, griddata: data.griddata}))
+        dispatch(setData({key: 'totalamount', value: data.totalamount}))
       }
       
     } catch (error) {

@@ -23,6 +23,7 @@ export default function CNotification({ isOpen, message, setOpen,varient='info' 
                 open={openLocal}
                 autoHideDuration={3000}
                 onClose={handleClose}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
             >
                 <Alert severity={varient}>{message}</Alert>
             </Snackbar>

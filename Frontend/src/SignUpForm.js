@@ -1,20 +1,16 @@
 import { Button, Grid } from '@material-ui/core';
+import { Autocomplete } from '@material-ui/lab';
 import { TextField } from "@mui/material";
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { EmailValidation } from './Globalfunc/func';
+import CFooter from './globalcomponents/CFooter';
 import CLoader from './globalcomponents/CLoader';
 import CNavbar from './globalcomponents/CNavbar';
 import CNotification from './globalcomponents/CNotification';
 import { CItem } from './globalcomponents/globalCss';
-import { TOKEN_KEY, setToken } from './store/actions/authentication';
 import leaf from './tradingImg.png';
-import CFooter from './globalcomponents/CFooter';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { CNICValidation, EmailValidation, PhoneValidation, maxDecimalLengthNumberCtlRegex } from './Globalfunc/func';
-import { Autocomplete } from '@material-ui/lab';
 
 
 
@@ -56,31 +52,30 @@ const SignUpForm = () => {
     // }
     // else if(name == 'phone'){
     //   PhoneValidation(value) &&  setGlobalState(p => ({ ...p, formData: { ...p.formData, [name]: value } }))
-      
+
     // } else if(name == 'cnic'){
     //   CNICValidation(value) &&  setGlobalState(p => ({ ...p, formData: { ...p.formData, [name]: value } }))
-      
+
     // }else if(name == 'email'){
     //   EmailValidation(value) &&  setGlobalState(p => ({ ...p, formData: { ...p.formData, [name]: value } }))
-      
+
     // }
     // else {
-
     // }
     setGlobalState(p => ({ ...p, formData: { ...p.formData, [name]: value } }))
 
   }
 
   const getcountryData = async () => {
-    // const response = await fetch("https://restcountries.com/v2/all", {
-    //   method: 'post',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     accept: '*/*',
-    //   },
-    // });
-    // response.data && setCountries(response.data)
-    setCountries(["pakistan", "india"])
+    const reponse = await fetch(`https://localhost:7000/api/signupfieldsdata`, {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const body = await reponse.json();
+    (body.countries && body.countries.length > 0) && setCountries(body.countries)
+
   }
 
   useEffect(() => {
@@ -160,8 +155,7 @@ const SignUpForm = () => {
               const apiTwodata = await response1.json();
               if (apiTwodata.goodResponse) {
                 setGlobalState(p => ({ ...p, formData: { ...INITIAL_USER }, message: apiOnedata.messageBox, open: true, varient: "success" }))
-                // window.localStorage.setItem(TOKEN_KEY, apiOnedata.token);
-                // dispatch(setToken(apiOnedata.token));
+               
               } else {
                 if (apiTwodata.messageBox) {
                   setGlobalState(p => ({ ...p, message: 'Email must be in correct format', open: true, varient: 'info' }))
@@ -264,7 +258,7 @@ const SignUpForm = () => {
 
             <Autocomplete
               options={countries}
-              // getOptionLabel={(country) => country.name}
+              getOptionLabel={(country) => country.name}
               label='Country'
               fullWidth
               renderInput={(params) => (
@@ -275,7 +269,14 @@ const SignUpForm = () => {
                 />
               )}
               value={globalState.formData.country}
-              onChange={(event, value) => handleChange("country",value)}
+              onChange={(event, value) => handleChange("country", value.name)}
+              getOptionSelected={(option, value) => option.name === value.name}
+              renderOption={(option) => (
+                <React.Fragment>
+                  <span>{option.name}</span>
+                  <span style={{ marginLeft: 8, color: '#999' }}>{option.iso}</span>
+                </React.Fragment>
+              )}
             />
 
 
