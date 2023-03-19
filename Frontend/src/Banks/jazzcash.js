@@ -119,9 +119,7 @@ function JazzCashCheckout() {
                     "emailOrUsername": "",
                     "userID": "",
                     "description": "",
-                    "payload": JSON.stringify({
-                        phoneNumber, cnicNumber, amount
-                    }),
+                    "payload": '',
                     phoneNumber: phoneNumber, cnic: cnicNumber, amount: amount
                 }),
             });
@@ -139,6 +137,9 @@ function JazzCashCheckout() {
                     setTimeout(()=>{
                         history.push('/kycc')
                     }, 2000);
+                }else{
+                    setGlobalState(p => ({ ...p, varient: 'success', message: data.messageBox, open: true }))
+
                 }
             }
 

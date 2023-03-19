@@ -13,7 +13,7 @@ namespace pobject.Core.Transactions
 
     public class TransactionsService : ITransactionsService
     {
-        private readonly IDatabase _database ;
+        private readonly IDatabase _database;
         public TransactionsService(IDatabase database)
         {
             _database = database;
@@ -23,7 +23,7 @@ namespace pobject.Core.Transactions
             StoreCode response = new StoreCode();
             try
             {
-                List<SqlParameter> param = new List<SqlParameter>(); 
+                List<SqlParameter> param = new List<SqlParameter>();
                 param.Add(new SqlParameter("@UserId", request.Referred_UserId));
                 string EdQuery = $"select UserNumber,EmailOrUsername,Referral_Code from tbl_users where User_Id = '{request.Referred_UserId}' and (InActiveDate == '' || InActiveDate is null)";
                 DataTable Referred = _database.SqlView(EdQuery, param);
@@ -34,67 +34,51 @@ namespace pobject.Core.Transactions
                 else
                 {
                     //Continue to Simple Withdrwal
-                }                
+                }
             }
             catch (Exception e)
             {
                 response.Success = false;
-                response.MessageBox = "Exception due to "+e;
+                response.MessageBox = "Exception due to " + e;
                 return response;
             }
             response.Success = true;
             return response;
         }
 
+        public Boolean updateamount(string Referral_UserId,int amount)
+        {
+            string existuserquery = $"select * from tbl_useramountdetails where UserId = '{Referral_UserId}'";
+            DataTable userExist = _database.SqlView(existuserquery);
+            if (userExist.Rows.Count > 0)
+            {
+                // give message if amount is less then zero
+                string useruserquery = $@"UPDATE tbl_useramountdetails SET 
+                        EmailOrUsername = '{userExist.Rows[0]["EmailOrUsername"]}', 
+                        UserId ='{userExist.Rows[0]["UserId"]}',TotalAmount= TotalAmount + '{amount}', 
+                        Date = '{DateTime.Now}'
+                        
+                        WHERE UserId = '{Referral_UserId}'";
+                _database.SqlView(useruserquery);
+
+                return true;
+            }
+            return false;
+        }
+
+
         public StoreCode deposit(Transaction_Deposit request)
         {
             StoreCode response = new StoreCode();
             try
             {
-                string existuserquery = $"select * from tbl_useramountdetails where UserId = '{request.Referral_UserId}'";
-                DataTable userExist = _database.SqlView(existuserquery);
-         
-                if (userExist.Rows.Count > 0)
+                Boolean isAdded = updateamount(request.Referral_UserId, request.amount);
+                if (isAdded)
                 {
-
-
-                    // existing user
-                    string useruserquery = $@"UPDATE tbl_useramountdetails SET 
-EmailOrUsername = '{userExist.Rows[0]["EmailOrUsername"]}', 
-UserId ='{userExist.Rows[0]["UserId"]}',TotalAmount= TotalAmount + '{request.amount}', 
-Date = '{DateTime.Now}' 
-                        WHERE UserId = '{request.Referral_UserId}'";
-
-                    _database.SqlView(useruserquery);
-
                     response.MessageBox = "Updated User Data";
                     response.Success = true;
                     return response;
-
-                    //                   string seniorRefererIDQuery = $"select * from tbl_Referrals where ReferrerUserId = '{request.Referral_UserId}'";
-                    //                   DataTable userFound = _database.SqlView(seniorRefererIDQuery);
-                    //                   if (userFound.Rows.Count > 0)
-                    //                   {
-
-
-
-
-
-
-                    //                       // senior user
-                    //                       string senioruserquery = $@"UPDATE tbl_useramountdetails SET 
-                    //TotalAmount= TotalAmount + '{request.amount}', 
-
-                    //                       WHERE UserId = '{userFound.Rows[0]["ReferredUserId"]}'";
-
-
-
-
-                    //                   }
-
-
                 }
-
             }
             catch (Exception e)
             {

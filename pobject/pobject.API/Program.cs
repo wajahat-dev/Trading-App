@@ -10,6 +10,16 @@ using pobject.API.Middlewares;
 using pobject.Core.Roles;
 using pobject.Core.OtherServices;
 using pobject.Core.Transactions;
+using Quartz;
+using Quartz.Impl;
+using static Quartz.Logging.OperationName;
+
+using Quartz.Spi;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+
+//using Quartz.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +41,15 @@ builder.Services.AddTransient<IAdminAndUserServices, AdminAndUserServices>();
 //builder.Services.AddTransient<IExpenseService, ExpenseService>();
 //builder.Services.AddSingleton<IEmailService, EmailService>();
 
-
+// schedular 
+// Add Quartz services
+builder.Services.AddQuartz(q =>
+{
+    q.UseMicrosoftDependencyInjectionScopedJobFactory();
+});
+builder.Services.AddTransient<ISchedulerFactory, StdSchedulerFactory>();
+builder.Services.AddSingleton<QuartzHostedService>();
+builder.Services.AddTransient<MyJob>();
 
 //for sending Datatables Data, [not applicable for minimal API]
 builder.Services.AddControllersWithViews().AddJsonOptions(options =>
@@ -122,6 +140,11 @@ builder.Services
 
 
 var app = builder.Build();
+
+// Quartz
+app.UseQuartz();
+
+
 // Configure the HTTP request pipeline.
 
 

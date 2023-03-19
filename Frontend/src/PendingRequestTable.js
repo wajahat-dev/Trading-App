@@ -9,7 +9,7 @@ import CHeader from './globalcomponents/CHeader';
 import CNotification from './globalcomponents/CNotification';
 
 const selectedRow = {
-    "id_pk": 0,
+    "id_Pk": 0,
     "usernameOrEmail": "",
     "userId": "",
     "payload": "",
@@ -37,7 +37,8 @@ export default function PendingRequestTable() {
 
     const columns = [
         { field: 'usernameOrEmail', headerName: 'User Name', width: 250, },
-        { field: 'amount', headerName: 'Amount', width: 150, },
+        { field: 'totalamount', headerName: 'Total Amount', width: 150, },
+        { field: 'withdrawal_amount', headerName: 'WithDrawal Amount', width: 150, },
 
         { field: 'desc', headerName: 'Desc', width: 150, },
         { field: 'createdOn', headerName: 'Created At', width: 150, },
@@ -109,15 +110,17 @@ export default function PendingRequestTable() {
             const response = await fetch(`https://localhost:7000/api/jc_wallet`, {
                 method: "post",
                 body: JSON.stringify({
-                              // "emailOrUsername": globalState.selectedRow.usernameOrEmail,
+                               "emailOrUsername": globalState.selectedRow.usernameOrEmail,
                     // "userID": globalState.selectedRow.userId,
                     // "description": "string",
                     // "payload": "string"
-                    phoneNumber: '03432589896',
-                    amount: '100',
-                    cnicNumber: ''
+                    phoneNumber: '',
+                    amount: '',
+                    cnicNumber: '',
+                    id_pk: `${globalState.selectedRow.id_Pk}`
                 }),
                 headers: {
+                    "accept": '*/*',
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${localStorage.getItem('TOKEN_KEY')
                         ? localStorage.getItem('TOKEN_KEY')
@@ -125,13 +128,15 @@ export default function PendingRequestTable() {
                         }`,
                 },
             });
+            
+
             if (response.ok) {
                 const data = await response.json();
-                if (data.pp_ResponseMessage) {
-                    setGlobalState(p => ({ ...p, message: data.pp_ResponseMessage, notificationToast: true }))
-
-                }else{
+                if(data.success){
                     getData()
+                    data.message && setGlobalState(p => ({ ...p,varient: 'success', message:   data.message, notificationToast: true }))
+                }else{
+                    data.message && setGlobalState(p => ({ ...p,varient: 'warning', message:   data.message, notificationToast: true }))
                 }
             }
             setGlobalState(p => ({ ...p, modal: false }))
@@ -155,7 +160,7 @@ export default function PendingRequestTable() {
                 <DataGrid
                     rows={gridData}
                     columns={columns}
-                    getRowId={(row) => row.id_pk}
+                    getRowId={(row) => row.id_Pk + row.userId}
                     pageSize={5}
                     rowsPerPageOptions={[5]}
                     autoHeight autoWidth

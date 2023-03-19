@@ -91,7 +91,7 @@ namespace pobject.Core.DatabaseEnvironment
             }
             return dt;
         }
-        public DataTable SqlView(string sqlCommand,List<SqlParameter> param)
+        public DataTable SqlView(string sqlCommand, List<SqlParameter> param)
         {
             DataTable dt = new DataTable();
             try
@@ -104,7 +104,7 @@ namespace pobject.Core.DatabaseEnvironment
                         foreach (SqlParameter item in param)
                         {
                             cmd.Parameters.Add(item);
-                        }                        
+                        }
                         using (SqlDataAdapter sda = new SqlDataAdapter(cmd))
                         {
                             sda.Fill(dt);
@@ -144,14 +144,14 @@ namespace pobject.Core.DatabaseEnvironment
             // return 
             return item;
         }
-        public void InitConnection(string UserId,string EmailOrUsername)
+        public void InitConnection(string UserId, string EmailOrUsername)
         {
             connectionString = _configuration["ConnectionStrings:DefaultConnection"];
             connection = new SqlConnection(connectionString);
-            List<SqlParameter> parameters= new List<SqlParameter>();
+            List<SqlParameter> parameters = new List<SqlParameter>();
             parameters.Add(new SqlParameter("@EmailOrUsername", EmailOrUsername));
             parameters.Add(new SqlParameter("@UserId", UserId));
-            DataTable ClientConfiguration = SqlView($"SELECT * FROM tbl_Users WHERE UserId = @UserId and  EmailOrUsername = @EmailOrUsername",parameters);
+            DataTable ClientConfiguration = SqlView($"SELECT * FROM tbl_Users WHERE UserId = @UserId and  EmailOrUsername = @EmailOrUsername", parameters);
 
             if (ClientConfiguration.Rows.Count > 0)
             {
@@ -167,21 +167,50 @@ namespace pobject.Core.DatabaseEnvironment
 
         public Boolean RegisterReferral(Signup_Request request, string userid)
         {
-            try {
+            try
+            {
                 String Query = string.Empty;
 
 
                 DataTable userdate = SqlView($@"select * from tbl_Users where referral_code = '{request.referral_code}'");
                 if (userdate.Rows.Count > 0)
                 {
-        
+
 
                     Query = $@"INSERT INTO tbl_Referrals(ReferralCode,ReferredUserId,ReferredEmail, ReferrerUserId,ReferralDate,ReferrerEmail,CommissionAmount) 
                 values('{request.referral_code}','{userdate.Rows[0]["UserId"]}', '{userdate.Rows[0]["EmailOrUsername"]}' , '{userid}', '{DateTime.Today}', '{request.UserNameOrEmail}' , 10)";
 
                     DataTable result1 = SqlView(Query);
                     return true;
-                } 
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+            return false;
+        }
+
+        public Boolean addCommisionToSenior( String currentuserEmail, String Senior_ReferalCode, float pct) {
+            try
+            {
+                DataTable senioruser = SqlView($@" SELECT * FROM tbl_users JOIN tbl_useramountdetails ON tbl_users.userid = tbl_useramountdetails.UserId WHERE tbl_users.referral_code =  '{Senior_ReferalCode}'");
+  
+                DataTable currentuser = SqlView($@"select * from tbl_useramountdetails where EmailOrUsername='{currentuserEmail}'");
+                if (currentuser.Rows.Count > 0 & senioruser.Rows.Count > 0)
+                {
+                    
+                    if (Convert.ToInt32(currentuser.Rows[0]["TotalAmount"]) > 0)
+                    {
+                        //float commissionvalue = (pct / 100) * (float)Convert.ToDouble(currentuser.Rows[0]["TotalAmount"]);
+                        //TotalAmount = TotalAmount + (TotalAmount * '{pct}')
+                        string senioruserquery = $@"UPDATE tbl_useramountdetails SET 
+                            TotalAmount = TotalAmount + (TotalAmount * '{pct}')
+                            WHERE UserId = '{senioruser.Rows[0]["userid"]}'";
+                        SqlView(senioruserquery);
+                        return true;
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -191,51 +220,19 @@ namespace pobject.Core.DatabaseEnvironment
         }
 
 
-
-        public Boolean UpdateUserAmount(Signup_Request request, String userid) {
-
-
-
+        public Boolean UpdateUserAmount(Signup_Request request, String userid)
+        {
             try
             {
                 String Query = string.Empty;
-
-                 
-
-
-
-                    Query = $@"INSERT INTO tbl_useramountdetails (EmailOrUsername, UserId, TotalAmount, Date,Investment)
-VALUES('{request.UserNameOrEmail}', '{userid}', 0, '{DateTime.Now}',0)";
-
-                    DataTable result1 = SqlView(Query);
-
-
-
-
-                string seniorRefererIDQuery = $" SELECT * FROM tbl_users JOIN tbl_useramountdetails ON tbl_users.userid = tbl_useramountdetails.UserId WHERE tbl_users.referral_code =  '{request.referral_code}'";
-                DataTable userFound = SqlView(seniorRefererIDQuery);
-
-
-
-                if (userFound.Rows.Count > 0)
+                Query = $@"INSERT INTO tbl_useramountdetails (EmailOrUsername, UserId, TotalAmount, Date,Investment)
+                    VALUES('{request.UserNameOrEmail}', '{userid}', 0, '{DateTime.Now}',0)";
+                DataTable result1 = SqlView(Query);
+                Boolean isGiveCommision = addCommisionToSenior(request.UserNameOrEmail, request.referral_code, 10);
+                if (isGiveCommision)
                 {
-                  
-                    //if (userFound1.Rows[0]["TotalAmount"] > 0)
-                    if (Convert.ToInt32(userFound.Rows[0]["TotalAmount"]) > 0)
-                        {
-                        // senior user
-                        string senioruserquery = $@"UPDATE tbl_useramountdetails SET 
-                TotalAmount= TotalAmount + (TotalAmount * 0.1) 
-
-                                       WHERE UserId = '{userFound.Rows[0]["userid"]}'";
-                        SqlView(senioruserquery);
-                    }
-
+                    return true;
                 }
-
-
-                return true;
-
             }
             catch (Exception e)
             {
@@ -244,7 +241,7 @@ VALUES('{request.UserNameOrEmail}', '{userid}', 0, '{DateTime.Now}',0)";
             return false;
         }
 
-        public Signup_Response CreateNewUser(Signup_Request request,string RoleCodeIfLoggedInAsAdmin)
+        public Signup_Response CreateNewUser(Signup_Request request, string RoleCodeIfLoggedInAsAdmin)
         {
             Signup_Response response = new Signup_Response();
             DataTable User = new DataTable();
@@ -261,7 +258,6 @@ VALUES('{request.UserNameOrEmail}', '{userid}', 0, '{DateTime.Now}',0)";
                     if (request.Password.Equals(request.ConfirmPassword))
                     {
 
-
                         string QueryForIdentification = $"select* from tbl_users where  EmailOrUsername = '{Username}'";
                         DataTable result1 = SqlView(QueryForIdentification);
                         if (result1.Rows.Count > 0)
@@ -271,7 +267,6 @@ VALUES('{request.UserNameOrEmail}', '{userid}', 0, '{DateTime.Now}',0)";
                             return response;
                         }
 
-
                         string QueryForCNIC = $"select * from tbl_userinfo where cnic = '{request.cnic}'";
                         DataTable result2 = SqlView(QueryForCNIC);
                         if (result2.Rows.Count > 0)
@@ -280,19 +275,6 @@ VALUES('{request.UserNameOrEmail}', '{userid}', 0, '{DateTime.Now}',0)";
                             response.Success = false;
                             return response;
                         }
-
-
-                        //string QueryForCNIC = $"select* from tbl_UserInfo where CNIC = '{request.CNIC}'";
-                        //DataTable result2 = _database.SqlView(QueryForCNIC);
-                        //if (result1.Rows.Count > 0)
-                        //{
-                        //    //DELETE FROM tbl_users WHERE EmailOrUsername = 'string'
-                        //    //string QueryForDeleteEmail = $"DELETE FROM tbl_users WHERE EmailOrUsername = '{request.CNIC}'";
-
-                        //    response.MessageBox = "CNIC must be unique";
-                        //    response.GoodResponse = false;
-                        //    return response;
-                        //}
 
                         string RoleCode = string.IsNullOrEmpty(RoleCodeIfLoggedInAsAdmin) ? "X" : RoleCodeIfLoggedInAsAdmin;
 
@@ -309,41 +291,29 @@ VALUES('{request.UserNameOrEmail}', '{userid}', 0, '{DateTime.Now}',0)";
                         }
                         #endregion
 
-
                         response.referral_code = globalfunctions.GenerateReferralCode();
 
                         string Query = $@"
-declare @UserNumber  as int = (select isnull((MAX(UserNumber)+1),1) from [tbl_users])
-insert into tbl_users(UserNumber,UserId,EmailOrUsername,Password,Password2,Salt,RoleCode, referral_code) 
-values(@UserNumber,NEWID(),@EmailOrUsername,@Password,@Password2,@salt,'{RoleCode}', '{response.referral_code}') 
-select UserNumber,EmailOrUsername,UserId,InActiveDate,createdOn,RoleCode from tbl_users where UserNumber = @UserNumber and EmailOrUsername = @EmailOrUsername";
-
-
-                       
-
-                        List<SqlParameter> param = new List<SqlParameter>(); 
+                        declare @UserNumber  as int = (select isnull((MAX(UserNumber)+1),1) from [tbl_users])
+                        insert into tbl_users(UserNumber,UserId,EmailOrUsername,Password,Password2,Salt,RoleCode, referral_code) 
+                        values(@UserNumber,NEWID(),@EmailOrUsername,@Password,@Password2,@salt,'{RoleCode}', '{response.referral_code}') 
+                        select UserNumber,EmailOrUsername,UserId,InActiveDate,createdOn,RoleCode from tbl_users where UserNumber = @UserNumber and EmailOrUsername = @EmailOrUsername";
+                        List<SqlParameter> param = new List<SqlParameter>();
                         param.Add(new SqlParameter("@EmailOrUsername", Username));
                         //param.Add(new SqlParameter("@Password",hash));
                         //param.Add(new SqlParameter("@Password2", hash));
                         param.Add(new SqlParameter("@Password", password));
                         param.Add(new SqlParameter("@Password2", password2));
-                        param.Add(new SqlParameter("@Salt",salt)); 
-                        User = SqlView(Query,param);
+                        param.Add(new SqlParameter("@Salt", salt));
+                        User = SqlView(Query, param);
 
-                     
 
                         if (User.Rows.Count > 0)
                         {
                             // add amount
                             Boolean isInserted = UpdateUserAmount(request, User.Rows[0]["UserId"].ToString());
-                            if (isInserted)
-                            {
-
-                            }
-
-
                             // add refferal code
-                            if (!String.IsNullOrEmpty(request.referral_code) && request.referral_code != "N") 
+                            if (!String.IsNullOrEmpty(request.referral_code) && request.referral_code != "N")
                             {
                                 Boolean isRegistered = RegisterReferral(request, User.Rows[0]["UserId"].ToString());
                                 if (!isRegistered)
@@ -352,7 +322,7 @@ select UserNumber,EmailOrUsername,UserId,InActiveDate,createdOn,RoleCode from tb
                                     response.Success = true;
                                     return response;
                                 }
-                               
+
                             }
 
                             response.User = SqlRow<CreatedUser>(User.Rows[0]);

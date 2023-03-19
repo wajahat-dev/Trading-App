@@ -51,9 +51,9 @@ const SignUpForm = () => {
 
   const handleChange = (name, value) => {
 
-    if (name == 'cashValue') {
-      maxDecimalLengthNumberCtlRegex(value, 7, 0, false) && setGlobalState(p => ({ ...p, formData: { ...p.formData, [name]: value } }))
-    }
+    // if (name == 'cashValue') {
+    //   maxDecimalLengthNumberCtlRegex(value, 7, 0, false) && setGlobalState(p => ({ ...p, formData: { ...p.formData, [name]: value } }))
+    // }
     // else if(name == 'phone'){
     //   PhoneValidation(value) &&  setGlobalState(p => ({ ...p, formData: { ...p.formData, [name]: value } }))
       
@@ -64,10 +64,11 @@ const SignUpForm = () => {
     //   EmailValidation(value) &&  setGlobalState(p => ({ ...p, formData: { ...p.formData, [name]: value } }))
       
     // }
-    else {
-      setGlobalState(p => ({ ...p, formData: { ...p.formData, [name]: value } }))
+    // else {
 
-    }
+    // }
+    setGlobalState(p => ({ ...p, formData: { ...p.formData, [name]: value } }))
+
   }
 
   const getcountryData = async () => {
@@ -318,7 +319,7 @@ const SignUpForm = () => {
 
 
 
-          <Grid item xs={8} style={{ marginTop: 7 }}>
+          {/* <Grid item xs={8} style={{ marginTop: 7 }}>
             <TextField
               fullWidth
               id="outlined-required"
@@ -330,7 +331,7 @@ const SignUpForm = () => {
               onChange={e => handleChange(e.target.name, e.target.value)}
 
             />
-          </Grid>
+          </Grid> */}
           <Grid item xs={8} style={{ marginTop: 7 }}>
             <TextField
               fullWidth

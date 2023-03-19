@@ -13,6 +13,7 @@ namespace pobject.Core.Transactions
 
         public StoreCode deposit(Transaction_Deposit request);
 
+        public Boolean updateamount(string Referral_UserId, int amount);
 
     }
 }

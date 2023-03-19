@@ -49,12 +49,24 @@ namespace pobject.Core.OtherServices
 
    
 
-                param.Add(new SqlParameter("@amount", request.amount));
+                //param.Add(new SqlParameter("@amount", 0));
                 param.Add(new SqlParameter("@cnic", request.cnic));
                 param.Add(new SqlParameter("@phoneNumber", request.phoneNumber));
 
 
-                string query = $@"insert into tbl_PendingRequests(UsernameOrEmail,UserId,[desc],amount,cnic,phoneNumber,payload) values(@UsernameOrEmail,@UserId,@desc,@amount,@cnic,@phoneNumber, '')";
+               
+                DataTable userAmount = _database.SqlView($@"select * from tbl_useramountdetails WHERE EmailOrUsername = '{request.EmailOrUsername}'");
+                if (userAmount.Rows.Count > 0)
+                {
+                    if (Convert.ToDouble(userAmount.Rows[0]["TotalAmount"]) < Convert.ToDouble(request.amount))
+                    {
+                        response.MessageBox = "Your Amuont is greater than balance";
+                        response.Success = false;
+                        return response;
+                    }
+                }
+
+                string query = $@"insert into tbl_PendingRequests(UsernameOrEmail,UserId,[desc],cnic,phoneNumber,payload,withdrawal_amount) values(@UsernameOrEmail,@UserId,@desc,@cnic,@phoneNumber, '','{request.amount}')";
                 int affected = _database.ExecuteNonQuery(query,param);
                 if (affected > 0)
                 {
@@ -79,7 +91,10 @@ namespace pobject.Core.OtherServices
             StoreCode response = new StoreCode();
             try
             { 
-                DataTable requests = _database.SqlView("select * from tbl_PendingRequests");
+                DataTable requests = _database.SqlView($@"
+				SELECT pr.id_Pk,pr.UsernameOrEmail,pr.UserId,pr.Payload,pr.Approved,pr.[desc],pr.CreatedOn,
+				pr.cnic,pr.phoneNumber,pr.[withdrawal_amount],uad.Totalamount FROM tbl_PendingRequests pr LEFT JOIN 
+				tbl_useramountdetails uad ON pr.UserId = uad.UserId;");
                 response.Information = (DataTable)requests;
             }
             catch (Exception e)

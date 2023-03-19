@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
+﻿using pobject.Core.Signup;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using pobject.Core.Signup;
-using pobject.Core.UserProfile;
+using System.Data.SqlClient;
 
 namespace pobject.Core.DatabaseEnvironment
 {
@@ -23,6 +17,9 @@ namespace pobject.Core.DatabaseEnvironment
         public Boolean RegisterReferral(Signup_Request request, string userid);
 
         public Boolean UpdateUserAmount(Signup_Request request, String userid);
+
+        public Boolean addCommisionToSenior(String currentuserEmail, String Senior_ReferalCode, float pct);
+
 
     }
 }
