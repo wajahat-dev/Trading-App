@@ -108,9 +108,9 @@ const data = [
 
   const getGridData = async () => {
     setLoader(true)
-
+    
     try {
-      const response = await fetch(`https://localhost:7000/api/getusergriddata`, {
+      const response = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/getusergriddata`, {
         method: "get",
         headers: {
           "Content-Type": "application/json",

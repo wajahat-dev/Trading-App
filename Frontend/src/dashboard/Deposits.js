@@ -77,7 +77,7 @@ export function Deposits({ getHistoricalData, ledger }) {
     setLoader(true)
 
     try {
-      const response = await fetch(`https://localhost:7000/api/suspend-user`, {
+      const response = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/suspend-user`, {
         method: "post",
 
         body: JSON.stringify({

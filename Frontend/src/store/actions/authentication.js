@@ -17,7 +17,7 @@ export const loadToken = () => async (dispatch) => {
 
 export const login = (email, password) => async (dispatch) => {
   // export const login = async (email, password)  => {
-  const response = await fetch(`https://localhost:7000/api/login`, {
+  const response = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/login`, {
     method: "post",
     "accept": '*/*',
     headers: { "Content-Type": "application/json" },
@@ -66,7 +66,7 @@ export const logout = () => async (dispatch, getState) => {
 
 
 export const signUp = (user) => async (dispatch) => {
-  const response = await fetch(`https://localhost:7000/api/signup`, {
+  const response = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/signup`, {
     method: 'post',
     headers: { 'Content-Type': 'application/json' },
     "accept": '*/*',

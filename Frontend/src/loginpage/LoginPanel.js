@@ -46,7 +46,7 @@ const LoginPanel = ({ setUserData }) => {
     
     setLoader(true)
     try {
-      const response = await fetch(`https://localhost:7000/api/login`, {
+      const response = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/login`, {
         method: "post",
         "accept": '*/*',
         headers: { "Content-Type": "application/json" },

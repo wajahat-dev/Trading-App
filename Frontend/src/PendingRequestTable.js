@@ -77,7 +77,7 @@ export default function PendingRequestTable() {
         debugger
         setLoader(true)
         try {
-            const response = await fetch(`https://localhost:7000/api/allpending-request`, {
+            const response = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/allpending-request`, {
                 method: "get",
                 headers: {
                     "Content-Type": "application/json",
@@ -107,7 +107,7 @@ export default function PendingRequestTable() {
 
         setLoader(true)
         try {
-            const response = await fetch(`https://localhost:7000/api/jc_wallet`, {
+            const response = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/jc_wallet`, {
                 method: "post",
                 body: JSON.stringify({
                                "emailOrUsername": globalState.selectedRow.usernameOrEmail,

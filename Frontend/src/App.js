@@ -27,6 +27,8 @@ const App = ({ loadToken }) => {
     open: false,
     varient: 'info'
   })
+
+
   const [loader, setLoader] = useState(false)
 
   // const needLogin = true;
@@ -51,7 +53,7 @@ const App = ({ loadToken }) => {
     setLoader(true)
 
     try {
-      const response = await fetch(`https://localhost:7000/api/getLoginInfo`, {
+      const response = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/getLoginInfo`, {
         method: "get",
         headers: {
           "Content-Type": "application/json",

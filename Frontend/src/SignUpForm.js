@@ -67,7 +67,7 @@ const SignUpForm = () => {
   }
 
   const getcountryData = async () => {
-    const reponse = await fetch(`https://localhost:7000/api/signupfieldsdata`, {
+    const reponse = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/signupfieldsdata`, {
       method: 'get',
       headers: {
         'Content-Type': 'application/json',
@@ -117,7 +117,7 @@ const SignUpForm = () => {
 
     setLoader(true)
     try {
-      const response = await fetch(`https://localhost:7000/api/signup?RoleCodeIfLoggedInAsAdmin=X&referralcode=${globalState.formData.referral_code || "N"}&cnic=${globalState.formData.cnic || ""}`, {
+      const response = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/signup?RoleCodeIfLoggedInAsAdmin=X&referralcode=${globalState.formData.referral_code || "N"}&cnic=${globalState.formData.cnic || ""}`, {
         method: 'post',
         headers: {
           'Content-Type': 'application/json',
@@ -136,7 +136,7 @@ const SignUpForm = () => {
           if (apiOnedata.messageBox.includes('successfully')) {
 
             // await storeProfileData(data, token)
-            const response1 = await fetch(`https://localhost:7000/api/store-userprofile`, {
+            const response1 = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/store-userprofile`, {
               method: 'post',
               headers: {
                 'Content-Type': 'application/json',

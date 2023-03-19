@@ -51,7 +51,7 @@ const Profile = (props) => {
     debugger
     setLoader(true)
     try {
-      const response = await fetch(`https://localhost:7000/api/userprofile`, {
+      const response = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/userprofile`, {
         method: "get",
         "accept": '*/*',
         headers: {
@@ -115,12 +115,7 @@ const Profile = (props) => {
                   <Typography variant="body1">Phone: {globalState.formData.phone}</Typography>
                   <Typography variant="body1">Country: {globalState.formData.country}</Typography>
                   <Typography variant="body1">Account Creation: {globalState.formData.createdon}</Typography>
-                  <Typography variant="body1">Referral Code:
-                    {/* <p onClick={handleClick} >
-                      {`${process.env.REACT_APP_BASEURL}/referral?code=${globalState.formData.referral_Code}`}
-                    </p> */}
-                    {globalState.formData.referral_Code}
-                  </Typography>
+                  <Typography variant="body1">Referral Code: {globalState.formData.referral_Code}</Typography>
                 </Typography>
               </CardContent>
             </Card>

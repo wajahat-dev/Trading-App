@@ -17,7 +17,9 @@ using pobject.Core.Quartz;
 using Quartz.Spi;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Quartz.DependencyInjection;
 
+using Quartz;
 
 //using Quartz.Extensions.DependencyInjection;
 
@@ -42,37 +44,26 @@ builder.Services.AddTransient<IAdminAndUserServices, AdminAndUserServices>();
 //builder.Services.AddSingleton<IEmailService, EmailService>();
 
 // schedular 
-// Add Quartz services
-//builder.Services.AddQuartz(q =>
-//{
-//    q.UseMicrosoftDependencyInjectionScopedJobFactory();
-//});
-//builder.Services.AddTransient<ISchedulerFactory, StdSchedulerFactory>();
-//builder.Services.AddSingleton<QuartzHostedService>();
-//builder.Services.AddTransient<MyJob>();
+
+builder.Services.AddQuartz(q =>
+{
+    q.UseMicrosoftDependencyInjectionJobFactory();
+
+    var jobKey = new JobKey("my-job");
+    q.AddJob<MyJob>(j => j.WithIdentity(jobKey));
+
+    q.AddTrigger(t => t
+        .WithIdentity("my-trigger")
+        .ForJob(jobKey)
+        //.WithCronSchedule("0/5 * * * * ?"));
+    .WithCronSchedule("5 0 0 * * ?"));   // 12:00:05 Am
+
+});
 
 
 
-
-
-
-
-//builder.Services.AddQuartz(q =>
-//{
-//    q.UseMicrosoftDependencyInjectionJobFactory();
-
-//    var jobKey = new JobKey("my-job");
-//    q.AddJob<MyJob>(j => j.WithIdentity(jobKey));
-
-//    q.AddTrigger(t => t
-//        .WithIdentity("my-trigger")
-//        .ForJob(jobKey)
-//        .WithCronSchedule("0/5 * * * * ?"));
-//});
-
-//builder.Services.AddQuartzHostedService();
-
-
+builder.Services.AddQuartzHostedService(
+    q => q.WaitForJobsToComplete = true);
 
 
 
@@ -191,11 +182,12 @@ app.UseAuthorization();
 app.MapControllers();
 app.Run();
 
-//class MyJob: IJob
+//class MyJob : IJob
 //{
 //    public Task Execute(IJobExecutionContext context)
 //    {
 //        // Do the job here
+//        Console.WriteLine("Nice");
 //        return Task.CompletedTask;
 //    }
 //};

@@ -124,7 +124,7 @@ export default function DataTable() {
     debugger
     setLoader(true)
     try {
-      const response = await fetch(`https://localhost:7000/api/userallprofile`, {
+      const response = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/userallprofile`, {
         method: "get",
         "accept": '*/*',
         headers: {
@@ -159,7 +159,7 @@ export default function DataTable() {
     setLoader(true)
 
     try {
-      const response = await fetch(`https://localhost:7000/api/suspend-user`, {
+      const response = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/suspend-user`, {
         method: "post",
 
         body: JSON.stringify({
@@ -200,7 +200,7 @@ export default function DataTable() {
     setLoader(true)
 
     try {
-      const response = await fetch(`https://localhost:7000/api/transaction/depositamount`, {
+      const response = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/transaction/depositamount`, {
         method: "post",
         "accept": '*/*',
         body: JSON.stringify({

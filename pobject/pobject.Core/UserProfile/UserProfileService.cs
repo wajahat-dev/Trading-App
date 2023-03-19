@@ -86,7 +86,7 @@ SELECT COALESCE(c.TotalAmount, 0) AS TotalAmount,a.RoleCode, a.inActivedate, a.i
         {
             UserFinanceData reponse = new UserFinanceData();
             string email = globalfunctions.DecodeToken(_bearer_token);
-            DataTable user = _database.SqlView($"select * from tbl_useramountdetails where EmailOrUsername =  '{email}' ");
+            DataTable user = _database.SqlView($"select * from tbl_useramountdetailshistory where EmailOrUsername =  '{email}'  ORDER BY date asc");
             if (user.Rows.Count > 0)
             {
                 reponse.griddata = user;

@@ -104,7 +104,7 @@ function JazzCashCheckout() {
         setLoader(true)
 
         try {
-            const response = await fetch(`https://localhost:7000/api/submit-jc_wallet-request`, {
+            const response = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/submit-jc_wallet-request`, {
                 method: "post",
                 headers: {
                     "Content-Type": "application/json",
