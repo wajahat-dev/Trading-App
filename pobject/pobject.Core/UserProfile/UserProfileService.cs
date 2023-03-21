@@ -86,11 +86,38 @@ SELECT COALESCE(c.TotalAmount, 0) AS TotalAmount,a.RoleCode, a.inActivedate, a.i
         {
             UserFinanceData reponse = new UserFinanceData();
             string email = globalfunctions.DecodeToken(_bearer_token);
-            DataTable user = _database.SqlView($"select * from tbl_useramountdetailshistory where EmailOrUsername =  '{email}'  ORDER BY date asc");
+            DataTable user = _database.SqlView($"select * from tbl_useramountdetails where EmailOrUsername =  '{email}'  ORDER BY date asc");
+            DataTable historydata = _database.SqlView($"select * from tbl_useramountdetailshistory where EmailOrUsername =  '{email}'  ORDER BY date asc");
             if (user.Rows.Count > 0)
             {
                 reponse.griddata = user;
                 reponse.totalamount = (float)Convert.ToDouble(user.Rows[0]["TotalAmount"]);
+            }
+            else
+            {
+                reponse.griddata = new DataTable();
+            }
+
+            if (historydata.Rows.Count > 0)
+            {
+                reponse.historydata = historydata;
+            }
+            else
+            {
+                reponse.historydata = new DataTable();
+            }
+
+            return reponse;
+        }
+
+        public UserFinanceData HistoryData(string _bearer_token)
+        {
+            UserFinanceData reponse = new UserFinanceData();
+            string email = globalfunctions.DecodeToken(_bearer_token);
+            DataTable user = _database.SqlView($"select * from tbl_useramountdetailshistory where EmailOrUsername =  '{email}'  ORDER BY date asc");
+            if (user.Rows.Count > 0)
+            {
+                reponse.griddata = user;
             }
             else
             {

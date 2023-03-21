@@ -1,17 +1,17 @@
-﻿using Microsoft.Net.Http.Headers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Net.Http.Headers;
+
+
 
 namespace pobject.Core.CommonHelper
 {
     internal class globalfunctions
     {
 
+        
         public static string GenerateReferralCode()
         {
             // Generate a random string of 10 characters
@@ -30,6 +30,9 @@ namespace pobject.Core.CommonHelper
             var email = jwtDecoded.Claims.FirstOrDefault(j => j.Type.EndsWith("email")).Value ?? "";
             return email;
         }
+
+
+
 
     }
 }

@@ -8,7 +8,7 @@ using pobject.Core.DatabaseEnvironment;
 using pobject.Core.DatabaseEnvironment;
 using pobject.Core.OtherServices;
 using pobject.Core.Bank.JassCash;
-using pobject.API.Helpers;
+
 using pobject.Core.UserProfile;
 using System;
 using System.Data;

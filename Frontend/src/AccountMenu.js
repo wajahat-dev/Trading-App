@@ -39,6 +39,14 @@ export default function AccountMenu({ logoutHandler }) {
                 <Button
                     color={'#fafafa'}
                     // component={RouterLink}
+                    onClick={() => history.push('/amount')}
+                    style={{ color: 'white' }}
+                >
+                    Amount Send
+                </Button>
+                <Button
+                    color={'#fafafa'}
+                    // component={RouterLink}
                     onClick={() => history.push('/kycc')}
                     style={{ color: 'white' }}
                 >

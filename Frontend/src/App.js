@@ -132,7 +132,6 @@ const App = ({ loadToken }) => {
             // component={() => <UserContext.Provider value={userData}><PositionSidebar /></UserContext.Provider >}
             needLogin={needLogin}
           />
-
         </Switch>
       </BrowserRouter>
 

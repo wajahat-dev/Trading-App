@@ -177,17 +177,17 @@ const UserDetail = React.memo(({ getHistoricalData, ledger, positions, getPositi
         <div className='doughnut'>
           {/* <Doughnut data={doughnutData} options={pieOptions} height={200} /> */}
         </div>
-        <div className='user-data-tables'>
+        {/* <div className='user-data-tables'>
           <Orders />
-        </div>
+        </div> */}
 
         {/* <div className='infoGrid__userNews'>
           <NewsFeed />
         </div> */}
-        <div className='infogrid__movers'>
+        {/* <div className='infogrid__movers'>
           <TopMovers />
           <TopLosers />
-        </div>
+        </div> */}
 
       </div>
     </div>

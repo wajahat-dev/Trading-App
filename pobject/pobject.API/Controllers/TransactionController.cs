@@ -36,11 +36,21 @@ namespace pobject.API.Controllers
 
 
         [HttpPost]
-        [HttpPost("depositamount")]
+        [Route("depositamount")]
 
         public IActionResult depositAmount(Transaction_Deposit request)
         {
             StoreCode response = _TransactionsService.deposit(request);
+            return Ok(response);
+        }
+
+        [HttpPost]
+        [Route("sentamounttoothers")]
+
+        public IActionResult sendamountother(SetAmount request)
+        {
+
+            StoreCode response = _TransactionsService.sentamount(request, _JwtHelper.Get_Email_FromToken());
             return Ok(response);
         }
 

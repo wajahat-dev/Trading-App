@@ -1,71 +1,12 @@
-// import React from 'react';
-// import { Line } from 'react-chartjs-2';
-// import * as Utils from './Globalfunc/Utils';
-
-
-// export function Graph() {
-
-//  const options = {
-//   responsive: true,
-//   interaction: {
-//     mode: 'index' ,
-//     intersect: false,
-//   },
-//   stacked: false,
-//   plugins: {
-//     title: {
-//       display: true,
-//       text: 'Chart.js Line Chart - Multi Axis',
-//     },
-//   },
-//   scales: {
-//     y: {
-//       type: 'linear' ,
-//       display: true,
-//       position: 'left' ,
-//     },
-//     y1: {
-//       type: 'linear' ,
-//       display: true,
-//       position: 'right' ,
-//       grid: {
-//         drawOnChartArea: false,
-//       },
-//     },
-//   },
-// };
-
-// // const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-
-
-// const labels = Utils.months({count: 12});
-// const data = {
-//   labels: labels,
-//   datasets: [{
-//     label: 'Profit',
-//     // data: [65, 59, 80, 81, 56, 55, 40],
-//     data: Utils.labels({min: 0, max: 1000}),
-//     fill: true,
-//     borderColor: 'rgb(75, 192, 192)',
-//     tension: 0.1
-//   }]
-// };
-
-
-//   return <Line options={options} data={data} />;
-
-// }
-
-
-
 import { Button } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, ReferenceLine, AreaChart } from 'recharts';
 import CNotification from './globalcomponents/CNotification';
 import CLoader from './globalcomponents/CLoader';
 import { useDispatch } from 'react-redux';
 import { setData } from './store/TradingReducer';
-
+import { Box } from '@material-ui/core';
+import { useMediaQuery, useTheme,Grid } from '@material-ui/core';
 const data = [
   { day: '2022-03-01', profit: 200 },
   { day: '2022-03-02', profit: 300 },
@@ -85,7 +26,7 @@ const data = [
   // add more data for the month
 ];
 
- const Graph = () => {
+const Graph = () => {
   const [view, setView] = useState('week');
   const [loader, setLoader] = useState(false)
   const [globalState, setGlobalState] = useState({
@@ -97,18 +38,37 @@ const data = [
   const filteredData = view === 'week' ? globalState.griddata.slice(-7) : globalState.griddata;
   const dispatch = useDispatch();
 
+  const theme = useTheme();
+
+  const isSmallerScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const xs = useMediaQuery(theme.breakpoints.down('xs'));
+  const sm = useMediaQuery(theme.breakpoints.down('sm'));
+  const md = useMediaQuery(theme.breakpoints.down('sm'));
+  const lg = useMediaQuery(theme.breakpoints.down('lg'));
+  var final = 400
+  if (xs) {
+    final = 300
+  } else if (sm) {
+    final = 600
+  } else {
+    final = 900
+
+  }
+
+
+
+
+
+
 
   useEffect(() => {
-
     getGridData()
-
-
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const getGridData = async () => {
     setLoader(true)
-    
+
     try {
       const response = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/getusergriddata`, {
         method: "get",
@@ -124,11 +84,12 @@ const data = [
       const data = await response.json()
       debugger
 
-      if(data && data.griddata){
-        setGlobalState(p => ({...p, griddata: data.griddata}))
-        dispatch(setData({key: 'totalamount', value: data.totalamount}))
+      if (data && data.griddata) {
+        setGlobalState(p => ({ ...p, griddata: data.historydata }))
+        dispatch(setData({ key: 'totalamount', value: data.totalamount }))
+        // dispatch(setData({ key: 'totalamount', }))
       }
-      
+
     } catch (error) {
       console.log(error)
     } finally {
@@ -139,56 +100,45 @@ const data = [
   }
 
 
+
+
   return (
     <>
 
 
-<CNotification isOpen={globalState.open} setOpen={e => setGlobalState(p => ({ ...p, open: e }))} message={globalState.message} />
+      <CNotification isOpen={globalState.open} setOpen={e => setGlobalState(p => ({ ...p, open: e }))} message={globalState.message} />
       <CLoader enabled={loader} />
+      <Grid container spacing={2}>
+        
+        {/* <ResponsiveContainer width={700} height="80%"> */}
+        <LineChart width={final} height={400} data={filteredData}
+          // <LineChart  data={filteredData}
+          margin={{
+            top: 30,
+            // right: 30,
+            // left: 20,
+            // bottom: 5,
+          }}
+        >
 
-      {/* <Button variant="outlined" color="neutral" onClick={() => setView('week')}
-        // onClick={onClose}
-        >
-          View Week
-        </Button>
-
-        <Button variant="outlined" color="neutral" onClick={() => setView('month')}
-        // onClick={onClose}
-        >
-          View Month
-        </Button> */}
-      {/* <ResponsiveContainer width="100%" height="100%"> */}
-      <LineChart width={800} height={600} data={filteredData}
-        //  margin={{
-        //   top: 5,
-        //   right: 30,
-        //   left: 20,
-        //   bottom: 5,
-        // }}
-        >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
-          <YAxis />
+          <XAxis dataKey="date" name="Date" />
+          <YAxis name="Profit" unit="$"/>
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey="totalAmount" stroke="#8884d8" />
+          <Line type="monotone" name="Profit Trend" dataKey="totalAmount" stroke="#2196f3" activeDot={{ r: 8 }} />
         </LineChart>
-      {/* </ResponsiveContainer> */}
+        </Grid>
+
+
 
       <div className="position-detail-lists">
-    
         <div className='stock-chart'>
-
           <div className='button-container'>
-            <Button variant="outlined" color="neutral" onClick={() => setView('week')}
-            // onClick={onClose}
-            >
+            <Button variant="outlined" color="neutral" onClick={() => setView('week')}>
               View Week
             </Button>
-
-            <Button variant="outlined" color="neutral" onClick={() => setView('month')}
-            // onClick={onClose}
-            >
+            <Button variant="outlined" color="neutral" onClick={() => setView('month')} >
               View Month
             </Button>
           </div>

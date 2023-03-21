@@ -4,9 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using pobject.Core.CommonHelper;
+using Microsoft.Net.Http.Headers;
+
 
 namespace pobject.Core.Transactions
 {
@@ -88,6 +92,49 @@ namespace pobject.Core.Transactions
             }
             response.MessageBox = "No User Found";
             response.Success = false;
+            return response;
+        }
+
+        public StoreCode sentamount(SetAmount request, string useremail)
+        {
+            StoreCode response = new StoreCode();
+            try
+            {
+                
+                
+                DataTable receiver = _database.SqlView($@"select * from tbl_useramountdetails where EmailOrUsername='{request.UserEmail}'"); // receiver
+                DataTable isSentToAdmin = _database.SqlView($@"select * from tbl_users where EmailOrUsername='{request.UserEmail}' AND RoleCode='A'"); // admin
+                if (receiver.Rows.Count == 0 || request.UserEmail == useremail || isSentToAdmin.Rows.Count > 0)
+                {
+                    response.MessageBox = "This user don\'t exists";
+                    response.Success = false;
+                    return response;
+                }
+
+                DataTable userdata = _database.SqlView($@"select * from tbl_useramountdetails where EmailOrUsername='{useremail}'");  // sender
+                if (userdata.Rows.Count > 0)
+                {
+                    if ( request.Amount > (float)Convert.ToDouble(userdata.Rows[0]["TotalAmount"]))
+                    {
+                        response.MessageBox = "You Don\'t have much balance";
+                        response.Success = false;
+                        return response;
+                    }
+
+                }
+                DataTable deductsender = _database.SqlView($@"UPDATE [dbo].[tbl_useramountdetails] SET [TotalAmount] = TotalAmount - {request.Amount} WHERE [EmailOrUsername] = '{useremail}'");
+                DataTable addreceiver = _database.SqlView($@"UPDATE [dbo].[tbl_useramountdetails] SET [TotalAmount] = TotalAmount + {request.Amount} WHERE [EmailOrUsername] = '{request.UserEmail}'");
+
+
+            }
+            catch (Exception e)
+            {
+                response.Success = false;
+                response.MessageBox = "Exception due to " + e;
+                return response;
+            }
+            response.MessageBox = $@"Send {request.Amount} to {request.UserEmail}";
+            response.Success = true;
             return response;
         }
 

@@ -12,12 +12,14 @@ import Referral from "../Referral";
 import StockDetail from '../StockDetail';
 import UserDetail from '../UserDetail';
 import Kyc from "../kyc";
+import Amount from "../Amount";
+import NotFound from "../NotFound";
 
 export const BasePage = (props) => {
 
   return (
     <>
-    
+
       <Switch>
         <Route
           path="/position/:id"
@@ -49,6 +51,10 @@ export const BasePage = (props) => {
           render={(props) => <Kyc />}
         />
         <Route
+          path="/amount"
+          render={(props) => <Amount />}
+        />
+        <Route
           path="/referral"
           render={(props) => <Referral />}
         />
@@ -64,8 +70,11 @@ export const BasePage = (props) => {
           path="/disable"
           render={(props) => <DisableUserPage />}
         />
-        <Route exact={true} path="/" component={UserDetail} />
+
+        <Route  path="/" component={UserDetail} />
         <Route component={PositionSidebar} />
+        <Route path='*' exact={true} component={<NotFound />} />
+
       </Switch>
 
     </>

@@ -1,9 +1,19 @@
-import React from 'react'
 
-const NotFound = props =>
-<h1>
-    Page not found
-</h1>
-;
+import React from 'react';
+import { Typography, Container } from '@material-ui/core';
 
-export default NotFound;
+
+const NotFound = () => {
+    return (
+      <Container>
+        <Typography variant="h4" component="h1">
+          Page Not Found
+        </Typography>
+        <Typography variant="subtitle1">
+          Sorry, the page you are looking for does not exist.
+        </Typography>
+      </Container>
+    );
+  };
+
+  export default NotFound;
