@@ -37,9 +37,12 @@ export default function PendingRequestTable() {
 
     const columns = [
         { field: 'usernameOrEmail', headerName: 'User Name', width: 250, },
-        { field: 'userId', headerName: 'User ID', width: 150, },
+        { field: 'amount', headerName: 'Amount', width: 150, },
+
         { field: 'desc', headerName: 'Desc', width: 150, },
         { field: 'createdOn', headerName: 'Created At', width: 150, },
+        { field: 'cnics', headerName: 'CNIC', width: 150, },
+        { field: 'phoneNumber', headerName: 'Phone', width: 150, },
         {
             field: 'action',
             headerName: 'Action',

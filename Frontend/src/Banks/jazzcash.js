@@ -121,7 +121,8 @@ function JazzCashCheckout() {
                     "description": "",
                     "payload": JSON.stringify({
                         phoneNumber, cnicNumber, amount
-                    })
+                    }),
+                    phoneNumber: phoneNumber, cnic: cnicNumber, amount: amount
                 }),
             });
 

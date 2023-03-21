@@ -32,15 +32,14 @@ export default function AccountMenu({ logoutHandler }) {
     }
 
 
-
     return (
         <React.Fragment>
             <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-                
+
                 <Button
                     color={'#fafafa'}
-                    to="/kycc"
-                    component={RouterLink}
+                    // component={RouterLink}
+                    onClick={() => history.push('/kycc')}
                     style={{ color: 'white' }}
                 >
                     Kyc

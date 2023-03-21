@@ -121,7 +121,7 @@ const data = [
       const data = await response.json()
       debugger
 
-      if(data && data.globalState){
+      if(data && data.griddata){
         setGlobalState(p => ({...p, griddata: data.griddata}))
       }
       

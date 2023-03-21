@@ -14,6 +14,7 @@ import Graph from './Graph';
 import DataTable from "./DataTable";
 import PendingRequestTable from './PendingRequestTable';
 import UserContext from './ContextApi.js/UserContext';
+import InvestTable from './InvestTable';
 
 
 const UserDetail = React.memo(({ getHistoricalData, ledger, positions, getPositions }) => {
@@ -164,6 +165,7 @@ const UserDetail = React.memo(({ getHistoricalData, ledger, positions, getPositi
         <Deposits />
 
       </div>
+      <InvestTable />
       <div>
         <Graph />
       </div>

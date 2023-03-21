@@ -1,4 +1,5 @@
-﻿using pobject.Core.DatabaseEnvironment;
+﻿using Newtonsoft.Json;
+using pobject.Core.DatabaseEnvironment;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -14,6 +15,9 @@ namespace pobject.Core.OtherServices
         public string EmailOrUsername { get; set; }
         public string UserID { get; set; }
         public string Description { get; set; }
+        public string amount { get; set; }
+        public string cnic { get; set; }
+        public string phoneNumber { get; set; }
         public dynamic Payload { get; set; } // compelete Json.stringyfy payload
     }
     
@@ -42,7 +46,15 @@ namespace pobject.Core.OtherServices
                 param.Add(new SqlParameter("@UserId", request.UserID));
                 param.Add(new SqlParameter("@Payload", payloadContent));
                 param.Add(new SqlParameter("@desc", request.Description));
-                string query = $@"insert into tbl_PendingRequests(UsernameOrEmail,UserId,Payload,[desc]) values(@UsernameOrEmail,@UserId,@Payload,@desc)";
+
+   
+
+                param.Add(new SqlParameter("@amount", request.amount));
+                param.Add(new SqlParameter("@cnic", request.cnic));
+                param.Add(new SqlParameter("@phoneNumber", request.phoneNumber));
+
+
+                string query = $@"insert into tbl_PendingRequests(UsernameOrEmail,UserId,[desc],amount,cnic,phoneNumber) values(@UsernameOrEmail,@UserId,@desc,@amount,@cnic,@phoneNumber)";
                 int affected = _database.ExecuteNonQuery(query,param);
                 if (affected > 0)
                 {
