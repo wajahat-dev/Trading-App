@@ -6,6 +6,8 @@ using pobject.API.Helpers;
 using pobject.Core.AuthBase;
 using pobject.Core.Login;
 using Microsoft.Net.Http.Headers;
+using Microsoft.AspNetCore.Identity;
+using System.Data;
 
 namespace pobject.API.Controllers
 {
@@ -85,6 +87,14 @@ namespace pobject.API.Controllers
             Login_Response result = _LoginService.GetLoginInfo("");
 
             return Ok(result);
+        }
+
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword( ResetPasswordRequest request)
+        {
+            Login_Response  response = _LoginService.resetpassword(request);
+            return Ok(response);
         }
 
     }

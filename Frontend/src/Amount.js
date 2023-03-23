@@ -163,8 +163,8 @@ function Amount() {
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
                                 <TextField
-                                    id="phone-number"
-                                    label="Phone Number"
+                                    id="email"
+                                    label="Email"
                                     variant="outlined"
                                     fullWidth
                                     className={classes.input}

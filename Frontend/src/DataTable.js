@@ -107,9 +107,12 @@ export default function DataTable() {
         };
         return <Button
           variant="outlined"
-          color="danger"
+          // color="white"
+          // color="danger"
           endDecorator={<DeleteForever />}
+
           onClick={onClick}
+          style={{backgroundColor: '#5dbfa6', color: 'white'}}
         >
           Deposit Amount
         </Button>

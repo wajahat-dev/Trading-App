@@ -36,4 +36,9 @@ namespace pobject.Core.Login
         public string EmailOrUsername { get; set; }
         public string token { get; set; }
     }
+
+    public class ResetPasswordRequest
+    {
+        public string Email { get; set; }
+    }
 }

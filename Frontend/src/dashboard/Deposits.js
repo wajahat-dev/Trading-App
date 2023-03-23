@@ -111,7 +111,7 @@ export function Deposits({ getHistoricalData, ledger }) {
       <CLoader enabled={loader} />
 
       <div className='userHeader'>
-        <Title>Portfolio Value</Title>
+        <Title>Profit Value (Bitcoin)</Title>
         <Typography component="p" variant="h4">
           {/* $<CountUp start={0} decimals={2} end={accumulation} duration={1.00} separator="," /> */}
           ${(Trading.totalamount || 0 ).toFixed(2)}

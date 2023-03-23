@@ -60,7 +60,8 @@ namespace pobject.Core.Transactions
                 string useruserquery = $@"UPDATE tbl_useramountdetails SET 
                         EmailOrUsername = '{userExist.Rows[0]["EmailOrUsername"]}', 
                         UserId ='{userExist.Rows[0]["UserId"]}',TotalAmount= TotalAmount + '{amount}', 
-                        Date = '{DateTime.Now}'
+                        Date = '{DateTime.Now}',
+                        Investment=Investment + '{amount}'
                         
                         WHERE UserId = '{Referral_UserId}'";
                 _database.SqlView(useruserquery);
@@ -120,10 +121,15 @@ namespace pobject.Core.Transactions
                         response.Success = false;
                         return response;
                     }
-
+                    if (request.Amount > (float)Convert.ToDouble(userdata.Rows[0]["Investment"]))
+                    {
+                        response.MessageBox = "Your Profit amount is less than you current amount";
+                        response.Success = false;
+                        return response;
+                    }
                 }
                 DataTable deductsender = _database.SqlView($@"UPDATE [dbo].[tbl_useramountdetails] SET [TotalAmount] = TotalAmount - {request.Amount} WHERE [EmailOrUsername] = '{useremail}'");
-                DataTable addreceiver = _database.SqlView($@"UPDATE [dbo].[tbl_useramountdetails] SET [TotalAmount] = TotalAmount + {request.Amount} WHERE [EmailOrUsername] = '{request.UserEmail}'");
+                DataTable addreceiver = _database.SqlView($@"UPDATE [dbo].[tbl_useramountdetails] SET [TotalAmount] = TotalAmount + {request.Amount}, Investment = Investment + '{request.Amount}' WHERE [EmailOrUsername] = '{request.UserEmail}'");
 
 
             }

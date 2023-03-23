@@ -20,6 +20,9 @@ function createData(invest, profit) {
 
 const rows = [
   createData('$5', '3%'),
+  createData('$10', '3%'),
+  createData('$20', '3%'),
+  createData('$50', '3%'),
   createData('$100', '3%'),
   createData('$200', '4%'),
   createData('$500', '5%'),
@@ -36,7 +39,7 @@ export default function InvestTable() {
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell align="center" >Invest</TableCell>
+            <TableCell align="center" >Depoist</TableCell>
             <TableCell align="center">Daily profit</TableCell>
           </TableRow>
         </TableHead>

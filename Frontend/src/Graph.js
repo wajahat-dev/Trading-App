@@ -1,12 +1,12 @@
-import { Button } from '@material-ui/core';
+import { Button, Paper, styled } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, ReferenceLine, AreaChart } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, ReferenceLine, AreaChart, Brush } from 'recharts';
 import CNotification from './globalcomponents/CNotification';
 import CLoader from './globalcomponents/CLoader';
 import { useDispatch } from 'react-redux';
 import { setData } from './store/TradingReducer';
 import { Box } from '@material-ui/core';
-import { useMediaQuery, useTheme,Grid } from '@material-ui/core';
+import { useMediaQuery, useTheme, Grid } from '@material-ui/core';
 const data = [
   { day: '2022-03-01', profit: 200 },
   { day: '2022-03-02', profit: 300 },
@@ -25,6 +25,43 @@ const data = [
 
   // add more data for the month
 ];
+
+class CustomizedLabel extends React.PureComponent {
+  render() {
+    const { x, y, stroke, value } = this.props;
+
+    return (
+      <text x={x} y={y} dy={-4} fill={stroke} fontSize={10}
+        textAnchor="middle">
+        {value}$
+      </text>
+    );
+  }
+}
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
+
+
+class CustomizedAxisTick extends React.PureComponent {
+  render() {
+    const { x, y, stroke, payload } = this.props;
+
+    return (
+      <g transform={`translate(${x},${y})`}>
+        {/* <text height={600} x={10} y={10} dy={16} textAnchor="end" fill="#666" transform="rotate(-35)"> */}
+        <text x={0} y={0} dy={16} textAnchor="end" fill="#666" transform="rotate(-35)" >
+          {payload.value}
+        </text>
+      </g>
+    );
+  }
+}
 
 const Graph = () => {
   const [view, setView] = useState('week');
@@ -109,41 +146,116 @@ const Graph = () => {
       <CNotification isOpen={globalState.open} setOpen={e => setGlobalState(p => ({ ...p, open: e }))} message={globalState.message} />
       <CLoader enabled={loader} />
       <Grid container spacing={2}>
-        
-        {/* <ResponsiveContainer width={700} height="80%"> */}
-        <LineChart width={final} height={400} data={filteredData}
-          // <LineChart  data={filteredData}
-          margin={{
-            top: 30,
-            // right: 30,
-            // left: 20,
-            // bottom: 5,
-          }}
-        >
 
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" name="Date" />
-          <YAxis name="Profit" unit="$"/>
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" name="Profit Trend" dataKey="totalAmount" stroke="#2196f3" activeDot={{ r: 8 }} />
-        </LineChart>
+
+      </Grid>
+
+
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={12} >
+          <Item>
+            <h4>Daily Profit Data</h4>
+            <div style={{ width: "100%", height: 500 }}>
+              <ResponsiveContainer>
+
+                <LineChart
+                  // width={final} height={400} 
+                  data={filteredData}
+                  // <LineChart  data={filteredData}
+                  margin={{
+                    top: 30,
+                    right: 30,
+                    left: 80,
+                    bottom: 100,
+                  }}
+                >
+
+                  <CartesianGrid
+                  offset={333}
+                  fill={"#2196f3"}
+
+                  strokeDasharray="3 3" 
+                  // strokeDasharray="" 
+                  />
+                  {/* <XAxis dataKey="date" name="Date" /> */}
+                  <XAxis dataKey="date" name="Date" 
+                  // tick={<CustomizedAxisTick />}
+                  angle={-45}
+                  dy={45}
+                  
+                  />
+                  <YAxis name="Profit" unit="$"
+                  //  width={300}
+                  label={{
+                    value: `Profit`,
+                    style: { textAnchor: 'middle' },
+                    angle: -45,
+                    position: 'left',
+                    offset: 0,
+                  }}
+                    allo />
+                  <Tooltip />
+                  {/* <Line label={<CustomizedLabel />} type="monotone" name="Profit Trend" dataKey="totalAmount" stroke="#2196f3" activeDot={{ r: 8 }} strokeWidth={3} /> */}
+                  <Line label={<CustomizedLabel />}
+                  
+                  type="monotone" name="" dataKey="totalAmount" stroke="#FF0000" activeDot={{ r: 8 }} strokeWidth={2} />
+                  <Brush y={450}/>
+                  {/* <Legend /> */}
+
+                </LineChart>
+              </ResponsiveContainer>
+
+            </div>
+            {/* <AreaChart
+             width={final} height={400} data={filteredData}
+            syncId="anyId"
+            margin={{
+              top: 10,
+              right: 30,
+              left: 0,
+              bottom: 0,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" name="Date" />
+          <YAxis name="Profit" unit="$" label={{
+              value: `Profit`,
+              style: { textAnchor: 'middle' },
+              angle: -45,
+              position: 'left',
+              offset: 0,
+            }}
+            allo/>
+            <Tooltip />
+            <Area type="monotone" name="Profit Trend" dataKey="totalAmount" stroke="#2196f3" activeDot={{ r: 8 }} />
+          </AreaChart> */}
+
+
+          </Item>
         </Grid>
+        <Grid item xs={12} md={12} >
+
+          <Item><div className="position-detail-lists">
+
+            <div className='stock-chart'>
+              <div className='button-container'>
+                <Button variant="outlined" color="neutral" onClick={() => setView('week')}>
+                  View Week
+                </Button>
+                <Button variant="outlined" color="neutral" onClick={() => setView('month')} >
+                  View Month
+                </Button>
+              </div>
+            </div>
+          </div></Item>
+        </Grid>
+      </Grid>
 
 
 
-      <div className="position-detail-lists">
-        <div className='stock-chart'>
-          <div className='button-container'>
-            <Button variant="outlined" color="neutral" onClick={() => setView('week')}>
-              View Week
-            </Button>
-            <Button variant="outlined" color="neutral" onClick={() => setView('month')} >
-              View Month
-            </Button>
-          </div>
-        </div>
-      </div>
+
+
+
     </>
   );
 };

@@ -64,6 +64,13 @@ namespace pobject.Core.OtherServices
                         response.Success = false;
                         return response;
                     }
+                    Double investment = userAmount.Rows[0]["Investment"] != DBNull.Value ? Convert.ToDouble(userAmount.Rows[0]["Investment"]) : 0.0;
+                    if (investment < Convert.ToDouble(request.amount))
+                    {
+                        response.MessageBox = "Your Profit amount is less than you current amount";
+                        response.Success = false;
+                        return response;
+                    }
                 }
 
                 string query = $@"insert into tbl_PendingRequests(UsernameOrEmail,UserId,[desc],cnic,phoneNumber,payload,withdrawal_amount) values(@UsernameOrEmail,@UserId,@desc,@cnic,@phoneNumber, '','{request.amount}')";

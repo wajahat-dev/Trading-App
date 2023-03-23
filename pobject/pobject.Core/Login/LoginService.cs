@@ -15,8 +15,8 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-
-
+using System.Net.Mail;
+using System.Net;
 
 namespace pobject.Core.Login
 {
@@ -161,7 +161,49 @@ namespace pobject.Core.Login
             return response;
         }
 
-     
+        public Login_Response resetpassword(ResetPasswordRequest request) {
+            Login_Response response = new Login_Response();
+
+            DataTable user = _database.SqlView($@"select * from tbl_users Where EmailOrUsername = '{request.Email}' ");
+            if (user.Rows.Count == 0)
+            {
+                response.Success = false;
+                response.MessageBox = "This User Don't Exist";
+                return response;
+            }
+
+
+            var smtpClient = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential("yourgmailusername@gmail.com", "yourgmailpassword"),
+                EnableSsl = true,
+            };
+
+            var mailMessage = new MailMessage
+            {
+                From = new MailAddress("yourgmailusername@gmail.com"),
+                To = { request.Email },
+                Subject = "Password Reset",
+                Body = $"Dear User,<br><br>Please click on the following link to reset your password: {passwordResetUrl}"
+            };
+            mailMessage.IsBodyHtml = true;
+
+            try
+            {
+                smtpClient.Send(mailMessage);
+                response.Success = true;
+                response.MessageBox = "Password was reset";
+                return response;
+            }
+            catch (Exception ex)
+            {
+                // handle exception
+            }
+            response.Success = false;
+            response.MessageBox = "Can't Reset your password";
+            return response;
+        }
 
 
         public Login_Response GetLoginInfo(string _bearer_token)
