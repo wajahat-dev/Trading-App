@@ -1,4 +1,4 @@
-import { Button, Grid } from '@material-ui/core';
+import { Button, MenuItem, Select, Input, InputLabel, Grid, FormControl } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import { TextField } from "@mui/material";
 import React, { useEffect, useState } from 'react';
@@ -11,6 +11,7 @@ import CNavbar from './globalcomponents/CNavbar';
 import CNotification from './globalcomponents/CNotification';
 import { CItem } from './globalcomponents/globalCss';
 import leaf from './tradingImg.png';
+import CenterDivTemplate from './globalcomponents/CenterDivTemplate';
 
 
 
@@ -155,7 +156,7 @@ const SignUpForm = () => {
               const apiTwodata = await response1.json();
               if (apiTwodata.goodResponse) {
                 setGlobalState(p => ({ ...p, formData: { ...INITIAL_USER }, message: apiOnedata.messageBox, open: true, varient: "success" }))
-               
+
               } else {
                 if (apiTwodata.messageBox) {
                   setGlobalState(p => ({ ...p, message: 'Email must be in correct format', open: true, varient: 'info' }))
@@ -185,81 +186,84 @@ const SignUpForm = () => {
       <CLoader enabled={loader1} />
       <CNotification varient={globalState.varient} isOpen={globalState.open} setOpen={e => setGlobalState(p => ({ ...p, open: e }))} message={globalState.message} />
       <CNavbar page={'signup'} />
-      {/* <form onSubmit={handleSubmit}> */}
-      <Grid container spacing={3} style={{ marginTop: 7 }}>
-        <Grid item xs={7}>
-          <CItem>
-            <img className='leaf-rotate' src={leaf} alt="img" />
-          </CItem>
-        </Grid>
-        <Grid item xs={5}>
-          <Grid item xs={8}>
-            <TextField
+
+
+
+
+
+
+
+
+
+
+      <CenterDivTemplate header={"Create your Account"}>
+
+        <form style={{
+          display: 'flex',
+          flexDirection: 'column',
+        }}>
+
+
+          <FormControl margin="normal">
+            <InputLabel htmlFor="fullName">Full Name</InputLabel>
+            <Input
+              required
               fullWidth
               id="outlined-required"
-              label='Full Name'
-              name={'name'}
-              value={globalState.formData.name}
+              label="Full Name"
               onChange={e => {
                 // debugger
                 handleChange(e.target.name, e.target.value)
               }}
-              required
-
+              value={globalState.formData.name}
+              name={"name"}
             />
-          </Grid>
-          <Grid item xs={8} style={{ marginTop: 7 }}>
-            <TextField
+          </FormControl>
+          <FormControl margin="normal">
+            <InputLabel htmlFor="email">Email</InputLabel>
+            <Input
+              required
               fullWidth
               id="outlined-required"
-              name={'email'}
-              type='email'
-              label='Email'
+              label="Email"
+              onChange={e => handleChange(e.target.name, e.target.value)}
               value={globalState.formData.email}
-              onChange={e => handleChange(e.target.name, e.target.value)}
-              required
-            />
-          </Grid>
-          <Grid item xs={8} style={{ marginTop: 7 }}>
-            <TextField
-              fullWidth
-              id="outlined-required"
-              name={'cnic'}
-              type='cnic'
-              label='Cnic'
-              value={globalState.formData.cnic}
-              onChange={e => handleChange(e.target.name, e.target.value)}
-              required
-            />
-          </Grid>
-          <Grid item xs={8} style={{ marginTop: 7 }}>
-            <TextField
-              fullWidth
-              id="outlined-required"
-              name={'phone'}
-              type='phone'
-              label='Phone'
-              value={globalState.formData.phone}
-              onChange={e => handleChange(e.target.name, e.target.value)}
-              required
-            />
-          </Grid>
-          <Grid item xs={8} style={{ marginTop: 7 }}>
-            {/* <TextField
-              fullWidth
-              id="outlined-required"
-              name={'country'}
-              type='text'
-              label='Country'
-              value={globalState.formData.country}
-              onChange={e => handleChange(e.target.name, e.target.value)}
-              required
-            /> */}
+              type='email'
+              name={"email"}
 
-            <Autocomplete
+            />
+          </FormControl>
+          <FormControl margin="normal">
+            <InputLabel htmlFor="cnic">CNIC</InputLabel>
+            <Input
+              required
+              fullWidth
+              id="outlined-required"
+              label="CNIC"
+              onChange={e => handleChange(e.target.name, e.target.value)}
+              value={globalState.formData.cnic}
+              // type='text'
+              name={"cnic"}
+
+            />
+          </FormControl>
+          <FormControl margin="normal">
+            <InputLabel htmlFor="phone">Phone</InputLabel>
+            <Input
+              required
+              fullWidth
+              id="outlined-required"
+              label="Phone"
+              onChange={e => handleChange(e.target.name, e.target.value)}
+              value={globalState.formData.phone}
+              name='phone'
+            />
+          </FormControl>
+          <FormControl margin="normal">
+            {/* <Autocomplete
               options={countries}
-              getOptionLabel={(country) => country.name}
               label='Country'
+              getOptionLabel={(country) => country.name}
               fullWidth
               renderInput={(params) => (
                 <TextField
@@ -267,125 +271,91 @@ const SignUpForm = () => {
                   label="Select a country"
                   variant="outlined"
                 />
+
               )}
               value={globalState.formData.country}
               onChange={(event, value) => handleChange("country", value.name)}
-              getOptionSelected={(option, value) => option.name === value.name}
+              // getOptionSelected={(option, value) => option.name === value.name}
+              getOptionSelected={(option, value) => option.name === value}
               renderOption={(option) => (
                 <React.Fragment>
                   <span>{option.name}</span>
                   <span style={{ marginLeft: 8, color: '#999' }}>{option.iso}</span>
                 </React.Fragment>
               )}
-            />
-
-
-          </Grid><Grid item xs={8} style={{ marginTop: 7 }}>
-            {/* <TextField
-              fullWidth
-              id="outlined-required"
-              name={'dob'}
-              type='dob'
-              label='Dob'
-              value={globalState.formData.dob}
-              onChange={e => handleChange(e.target.name, e.target.value)}
-              required
             /> */}
-            {/* <DesktopDatePicker
-              label="For desktop"
-              value={globalState.formData.dob}
-
-              // onChange={e => handleChange(e.target.name, e.target.value)}
-
-              renderInput={(params) => <TextField {...params} />}
-            /> */}
-            {/* <DatePicker
-        mask="____/__/__"
-        // value={value}
-        // onChange={(newValue) => setValue(newValue)}
-        renderInput={(params) => <TextField {...params} />}
-      /> */}
-          </Grid>
+            <InputLabel htmlFor="Country">Country</InputLabel>
+            <Select
+              // labelId="demo-simple-select-label"
+              // id="demo-simple-select"
+              value={globalState.formData.country}
+              label="Country"
+              onChange={(event) => handleChange("country", event.target.value)}
+            >
+              {countries && countries.map((data) => {
+                return <MenuItem key={data.iso} value={data.name}>{data.name}</MenuItem>
+              })}
+            </Select>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-          {/* <Grid item xs={8} style={{ marginTop: 7 }}>
-            <TextField
+          </FormControl>
+          <FormControl margin="normal">
+            <InputLabel htmlFor="password">Password</InputLabel>
+            <Input
+              required
               fullWidth
               id="outlined-required"
-              name={'cashValue'}
-              type="text"
-              label="Deposit Amount"
-              required
-              value={globalState.formData.cashValue}
+              label="Password"
               onChange={e => handleChange(e.target.name, e.target.value)}
-
-            />
-          </Grid> */}
-          <Grid item xs={8} style={{ marginTop: 7 }}>
-            <TextField
-              fullWidth
-              id="outlined-required"
-              name={'password'}
-              type='password'
-              required
-
-              label='Password'
               value={globalState.formData.password}
-              onChange={e => handleChange(e.target.name, e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={8} style={{ marginTop: 7 }}>
-            <TextField
-              fullWidth
-              id="outlined-required"
-              name={'confirmPassword'}
               type='password'
-              required
-
-              label='Confirm Password'
-              value={globalState.formData.confirmPassword}
-              onChange={e => handleChange(e.target.name, e.target.value)}
-
+              name={'password'}
             />
-          </Grid>
-          <Grid item xs={8} style={{ marginTop: 7 }}>
-            <TextField
+          </FormControl>
+          <FormControl margin="normal">
+            <InputLabel htmlFor="confirmPassword">Confirm Password</InputLabel>
+            <Input
+              required
               fullWidth
               id="outlined-required"
-              name={'referral_code'}
-              type='text'
-              label='Referral Code'
-              value={globalState.formData.referral_code}
+              label="Confirm Password"
               onChange={e => handleChange(e.target.name, e.target.value)}
+              value={globalState.formData.confirmPassword}
+              type='password'
+              name={'confirmPassword'}
 
             />
-          </Grid>
+          </FormControl>
+          <FormControl margin="normal">
+            <InputLabel htmlFor="referralCode">Referral Code</InputLabel>
+            <Input
+              fullWidth
+              id="outlined-required"
+              label="Referral Code"
+              onChange={e => handleChange(e.target.name, e.target.value)}
+              value={globalState.formData.referral_code}
+              name={'referral_code'}
 
-          <div style={{ marginTop: 7 }}>
-            <Button variant="outlined" color="neutral" onClick={handleSubmit}>Sign Up</Button>
-            {/* <Button type='submit'>Sign Up</Button> */}
-            <Link to="/login" style={{ textDecoration: 'none' }}>
-              <Button variant="outlined" color="neutral">
-                Log in
-              </Button>
-            </Link>
-          </div>
+            />
+          </FormControl>
+          <FormControl margin="normal">
+            <Button
+              variant="contained" color="primary"
+              onClick={handleSubmit}>Sign Up</Button>
+            {/* <Link to="/login" style={{ textDecoration: 'none' }}> */}
+            <Button component={(props) => <Link to="/login" {...props} />}
+            // variant="outlined" color="neutral"
+            >
+              Log in
+            </Button>
+            {/* </Link> */}
+          </FormControl>
+        </form>
 
-        </Grid>
-      </Grid>
-      {/* </form> */}
+      </CenterDivTemplate>
+
+
+
       <CFooter />
 
     </>
@@ -396,3 +366,209 @@ const SignUpForm = () => {
 
 
 export default SignUpForm;
+
+
+
+
+//    {/* <form onSubmit={handleSubmit}> */}
+//    <Grid container spacing={3} style={{ marginTop: 7 }}>
+//    <Grid item xs={7}>
+//      <CItem>
+//        <img className='leaf-rotate' src={leaf} alt="img" />
+//      </CItem>
+//    </Grid>
+//    <Grid item xs={5}>
+//      <Grid item xs={8}>
+//        <TextField
+//          fullWidth
+//          id="outlined-required"
+//          label='Full Name'
+//          name={'name'}
+//          value={globalState.formData.name}
+//          onChange={e => {
+//            // debugger
+//            handleChange(e.target.name, e.target.value)
+//          }}
+//          required
+
+//        />
+//      </Grid>
+//      <Grid item xs={8} style={{ marginTop: 7 }}>
+//        <TextField
+//          fullWidth
+//          id="outlined-required"
+//          name={'email'}
+//          type='email'
+//          label='Email'
+//          value={globalState.formData.email}
+//          onChange={e => handleChange(e.target.name, e.target.value)}
+//          required
+//        />
+//      </Grid>
+//      <Grid item xs={8} style={{ marginTop: 7 }}>
+//        <TextField
+//          fullWidth
+//          id="outlined-required"
+//          name={'cnic'}
+//          type='cnic'
+//          label='Cnic'
+//          value={globalState.formData.cnic}
+//          onChange={e => handleChange(e.target.name, e.target.value)}
+//          required
+//        />
+//      </Grid>
+//      <Grid item xs={8} style={{ marginTop: 7 }}>
+//        <TextField
+//          fullWidth
+//          id="outlined-required"
+//          name={'phone'}
+//          type='phone'
+//          label='Phone'
+//          value={globalState.formData.phone}
+//          onChange={e => handleChange(e.target.name, e.target.value)}
+//          required
+//        />
+//      </Grid>
+//      <Grid item xs={8} style={{ marginTop: 7 }}>
+//        {/* <TextField
+//          fullWidth
+//          id="outlined-required"
+//          name={'country'}
+//          type='text'
+//          label='Country'
+//          value={globalState.formData.country}
+//          onChange={e => handleChange(e.target.name, e.target.value)}
+//          required
+//        /> */}
+
+//        <Autocomplete
+//          options={countries}
+//          getOptionLabel={(country) => country.name}
+//          label='Country'
+//          fullWidth
+//          renderInput={(params) => (
+//            <TextField
+//              {...params}
+//              label="Select a country"
+//              variant="outlined"
+//            />
+//          )}
+//          value={globalState.formData.country}
+//          onChange={(event, value) => handleChange("country", value.name)}
+//          getOptionSelected={(option, value) => option.name === value.name}
+//          renderOption={(option) => (
+//            <React.Fragment>
+//              <span>{option.name}</span>
+//              <span style={{ marginLeft: 8, color: '#999' }}>{option.iso}</span>
+//            </React.Fragment>
+//          )}
+//        />
+
+
+//      </Grid><Grid item xs={8} style={{ marginTop: 7 }}>
+//        {/* <TextField
+//          fullWidth
+//          id="outlined-required"
+//          name={'dob'}
+//          type='dob'
+//          label='Dob'
+//          value={globalState.formData.dob}
+//          onChange={e => handleChange(e.target.name, e.target.value)}
+//          required
+//        /> */}
+//        {/* <DesktopDatePicker
+//          label="For desktop"
+//          value={globalState.formData.dob}
+
+//          // onChange={e => handleChange(e.target.name, e.target.value)}
+
+//          renderInput={(params) => <TextField {...params} />}
+//        /> */}
+//        {/* <DatePicker
+//    mask="____/__/__"
+//    // value={value}
+//    // onChange={(newValue) => setValue(newValue)}
+//    renderInput={(params) => <TextField {...params} />}
+//  /> */}
+//      </Grid>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//      {/* <Grid item xs={8} style={{ marginTop: 7 }}>
+//        <TextField
+//          fullWidth
+//          id="outlined-required"
+//          name={'cashValue'}
+//          type="text"
+//          label="Deposit Amount"
+//          required
+//          value={globalState.formData.cashValue}
+//          onChange={e => handleChange(e.target.name, e.target.value)}
+
+//        />
+//      </Grid> */}
+//      <Grid item xs={8} style={{ marginTop: 7 }}>
+//        <TextField
+//          fullWidth
+//          id="outlined-required"
+//          name={'password'}
+//          type='password'
+//          required
+
+//          label='Password'
+//          value={globalState.formData.password}
+//          onChange={e => handleChange(e.target.name, e.target.value)}
+//        />
+//      </Grid>
+//      <Grid item xs={8} style={{ marginTop: 7 }}>
+//        <TextField
+//          fullWidth
+//          id="outlined-required"
+//          name={'confirmPassword'}
+//          type='password'
+//          required
+
+//          label='Confirm Password'
+//          value={globalState.formData.confirmPassword}
+//          onChange={e => handleChange(e.target.name, e.target.value)}
+
+//        />
+//      </Grid>
+//      <Grid item xs={8} style={{ marginTop: 7 }}>
+//        <TextField
+//          fullWidth
+//          id="outlined-required"
+//          name={'referral_code'}
+//          type='text'
+//          label='Referral Code'
+//          value={globalState.formData.referral_code}
+//          onChange={e => handleChange(e.target.name, e.target.value)}
+
+//        />
+//      </Grid>
+
+//      <div style={{ marginTop: 7 }}>
+//        <Button variant="outlined" color="neutral" onClick={handleSubmit}>Sign Up</Button>
+//        {/* <Button type='submit'>Sign Up</Button> */}
+//        <Link to="/login" style={{ textDecoration: 'none' }}>
+//          <Button variant="outlined" color="neutral">
+//            Log in
+//          </Button>
+//        </Link>
+//      </div>
+
+//    </Grid>
+//  </Grid>
+//  {/* </form> */}
+

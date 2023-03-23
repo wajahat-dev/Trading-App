@@ -172,20 +172,28 @@ namespace pobject.Core.Login
                 return response;
             }
 
+            string smtpuser = _configuration["ApplicationSettings:smtpuser"];
+            string smptpassword = _configuration["ApplicationSettings:smptpassword"];
+            string token = Guid.NewGuid().ToString();
+            string baseurl = _configuration["ApplicationSettings:React_APP_BASEURLPARTIAL"] + $@"?token={token}";
+
+
+
+            DataTable savetoken = _database.SqlView($@"INSERT INTO tbl_ResetPassword ([UsernameOrEmail] ,[UserId] ,[Token] ,[ExpirationDate]) VALUES ('{request.Email}','','{token}', DATEADD(day, 2, GETDATE())) ");
 
             var smtpClient = new SmtpClient("smtp.gmail.com")
             {
                 Port = 587,
-                Credentials = new NetworkCredential("yourgmailusername@gmail.com", "yourgmailpassword"),
+                Credentials = new NetworkCredential(smtpuser, smptpassword),
                 EnableSsl = true,
             };
 
             var mailMessage = new MailMessage
             {
-                From = new MailAddress("yourgmailusername@gmail.com"),
+                From = new MailAddress(smtpuser),
                 To = { request.Email },
                 Subject = "Password Reset",
-                Body = $"Dear User,<br><br>Please click on the following link to reset your password: {passwordResetUrl}"
+                Body = $"Dear User,<br><br>Please click on the following link to reset your password: {baseurl}"
             };
             mailMessage.IsBodyHtml = true;
 

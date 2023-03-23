@@ -97,5 +97,22 @@ namespace pobject.API.Controllers
             return Ok(response);
         }
 
+
+        [HttpGet]
+        [Route("resetpassword")]
+        public async Task<IActionResult> VerifyResetLink(string token)
+        {
+            // Check the database to verify that the token is valid and has not expired
+
+            //if (validToken)
+            //{
+            //    return Ok();
+            //}
+            //else
+            //{
+            //    return BadRequest();
+            //}
+        }
+
     }
 }

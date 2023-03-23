@@ -1,18 +1,15 @@
-import { Button, Grid, Paper, styled } from "@material-ui/core";
-import { TextField } from "@mui/material";
+import { Button, FormControl, Grid, Input, InputLabel } from "@material-ui/core";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useHistory } from 'react-router-dom';
+import { CheckemptyDate, EmailValidation, ToDatabaseFormat } from "../Globalfunc/func";
+import CFooter from "../globalcomponents/CFooter";
 import CLoader from "../globalcomponents/CLoader";
 import CNavbar from "../globalcomponents/CNavbar";
 import CNotification from "../globalcomponents/CNotification";
+import CenterDivTemplate from "../globalcomponents/CenterDivTemplate";
+import TypographyWithLink from "../globalcomponents/TypographyWithLink";
 import { TOKEN_KEY, setToken } from "../store/actions/authentication";
-import leaf from '../tradingImg.png';
-import { CItem } from "../globalcomponents/globalCss";
-import CFooter from "../globalcomponents/CFooter";
-import { setUserDetails } from "../store/reducers/trades";
-import { CheckemptyDate, EmailValidation, ToDatabaseFormat } from "../Globalfunc/func";
-// import { login } from "../services/Services";
 
 
 const LoginPanel = ({ setUserData }) => {
@@ -30,20 +27,20 @@ const LoginPanel = ({ setUserData }) => {
     debugger
     e.preventDefault()
     let existCon = false
-    if(!email){
+    if (!email) {
       setGlobalState(p => ({ ...p, message: 'Email Can not be blank', open: true, varient: 'info' }))
       existCon = true
 
-    }else if(!password){
+    } else if (!password) {
       setGlobalState(p => ({ ...p, message: 'Password Can not be blank', open: true, varient: 'info' }))
       existCon = true
 
-    }else if(EmailValidation(email)){
+    } else if (EmailValidation(email)) {
       setGlobalState(p => ({ ...p, message: 'Email must be in correct format', open: true, varient: 'info' }))
       existCon = true
     }
-    if(existCon) return 
-    
+    if (existCon) return
+
     setLoader(true)
     try {
       const response = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/login`, {
@@ -56,14 +53,6 @@ const LoginPanel = ({ setUserData }) => {
           "clientid": 0
         }),
       });
-
-      // const response = await login({
-      //   "username": email,
-      //   "password": password,
-      //   "clientid": 0
-      // })
-
-
       if (response.ok) {
         const data = await response.json();
         if (data.messageBox) {
@@ -72,7 +61,6 @@ const LoginPanel = ({ setUserData }) => {
               setGlobalState(p => ({ ...p, message: data.messageBox, open: true }))
               window.localStorage.setItem(TOKEN_KEY, data.token);
               dispatch(setToken(data.token));
-              // dispatch(setUserDetails(data.user))
               setUserData(data.user)
               history.push("/");
 
@@ -107,58 +95,62 @@ const LoginPanel = ({ setUserData }) => {
       <CNotification isOpen={globalState.open} setOpen={e => setGlobalState(p => ({ ...p, open: e }))} message={globalState.message} />
       <CLoader enabled={loader} />
       <CNavbar page={'login'} />
-      <form>
 
-        <Grid container spacing={3} style={{ marginTop: 7 }}>
-          <Grid item xs={7}>
-            <CItem>
-              <img className='leaf-rotate' src={leaf} alt="img" />
-            </CItem>
+      <CenterDivTemplate header={"Login"}>
+
+        <form style={{
+          display: 'flex',
+          flexDirection: 'column',
+        }}>
+          <FormControl margin="normal">
+            <InputLabel htmlFor="Email">Email</InputLabel>
+            <Input
+              id="Email"
+              type="email"
+              value={email}
+              fullWidth={true}
+              onChange={updateEmail}
+            />
+          </FormControl>
+          <FormControl margin="normal">
+            <InputLabel htmlFor="Password">Password</InputLabel>
+            <Input
+              required
+              fullWidth
+              id="outlined-required"
+              label="Password"
+              onChange={updatePassword}
+              value={password}
+              type='password'
+            />
+          </FormControl>
+
+
+          <Grid item md={12} style={{ marginTop: 5 }}>
+
+            <TypographyWithLink to={"/resetpassword"}>
+              <span>Forget Password?</span>
+            </TypographyWithLink>
           </Grid>
-          <Grid item xs={5}>
+          <Grid item md={12}>
 
-            <Grid item xs={8}>
-              <TextField
-                required
-                fullWidth
-                id="outlined-required"
-                label="Email"
-                onChange={updateEmail}
-                value={email}
+            <Button
+              component={(props) => <Link to="/" {...props} />}
+              fullWidth
+              variant="contained" color="primary"
+              onClick={handleSubmit} >
+              Log in</Button>
 
-              />
-            </Grid>
-            <Grid item xs={8} style={{ marginTop: 7 }}>
-              <TextField
-                required
-                fullWidth
-                id="outlined-required"
-                label="Password"
-                onChange={updatePassword}
-                value={password}
-                type='password'
-              />
-            </Grid>
-            <div>
-            </div>
-            <div style={{ marginTop: 7 }}>
-              <Link to="/" style={{ textDecoration: 'none' }}
-              >
-                <Button
-                  variant="outlined" color="neutral"
-                  onClick={handleSubmit}
-                // type='submit'
-                >Log in</Button>
-              </Link>
-              <Link to="/signup" style={{ textDecoration: 'none' }}>
-                <Button type="button" variant="outlined" color="neutral" >
-                  Sign Up
-                </Button>
-              </Link>
-            </div>
           </Grid>
-        </Grid>
-      </form>
+          <Grid item md={12}>
+            <Button
+              component={(props) => <Link to="/signup" {...props} />}
+              fullWidth type="button"    >
+              Sign Up
+            </Button>
+          </Grid>
+        </form>
+      </CenterDivTemplate>
       <CFooter />
     </>
   );

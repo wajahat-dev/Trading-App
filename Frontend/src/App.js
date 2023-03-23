@@ -15,6 +15,7 @@ import UserContext from "./ContextApi.js/UserContext";
 import { userDetails } from "./contants";
 import CNotification from "./globalcomponents/CNotification";
 import CLoader from "./globalcomponents/CLoader";
+import PasswordResetPage from "./PasswordReset";
 
 
 const App = ({ loadToken }) => {
@@ -110,7 +111,13 @@ const App = ({ loadToken }) => {
             needLogin={needLogin}
             component={SignUpForm}
           />
-
+          <ProtectedRoute
+           
+            path="/resetpassword"
+            exact={true}
+            needLogin={needLogin}
+            component={PasswordResetPage}
+          />
 
           <ProtectedRoute
             path="/homepage"
