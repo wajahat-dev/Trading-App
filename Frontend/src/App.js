@@ -29,11 +29,9 @@ const App = ({ loadToken }) => {
     open: false,
     varient: 'info'
   })
-  let match = useRouteMatch();
 
 
   const [loader, setLoader] = useState(false)
-console.log('wwwwwwwww',match)
   // const needLogin = true;
 
   useEffect(() => {
@@ -42,7 +40,6 @@ console.log('wwwwwwwww',match)
 
   }, [loadToken]);
   useEffect(() => {
-    // alert(match)
     localStorage.getItem('TOKEN_KEY') && maintainSession()
 
 
