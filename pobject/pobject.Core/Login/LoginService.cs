@@ -18,7 +18,6 @@ using System.Threading.Tasks;
 using System.Net.Mail;
 using System.Net;
 using System.Data.SqlTypes;
-using pobject.Core.CommonHelper;
 
 namespace pobject.Core.Login
 {
@@ -41,7 +40,7 @@ namespace pobject.Core.Login
                 if (request != null)
                 {
                     string username = request.Username;
-                    string pass = request.Password; 
+                    string pass = request.Password;
                     string Query = $@"select * from tbl_Users 
                                       Where username = '{username}' and password = '{pass}' ";
                     DataTable result = _database.SqlView(Query);
@@ -77,34 +76,35 @@ namespace pobject.Core.Login
             try
             {
                 string connectionString = _configuration["ConnectionStrings:DefaultConnection"];
-
-
                 string username = request.Username;
+                string password = request.Password.Trim();
 
-                //string Query = $@"select * from tbl_users Where EmailOrUsername = '{username}' and password = '{password}' and password2='{password}' ";
-                //DataTable result = _database.SqlView($@"select * from tbl_users Where EmailOrUsername = '{username}'", connectionString);
-
-                string Query = $@"select * from tbl_users Where EmailOrUsername = '{username}' ";
+                string Query = $@"select * from tbl_users Where EmailOrUsername = '{username}' and password = '{password}' and password2='{password}' ";
 
 
                 DataTable result = _database.SqlView(Query, connectionString);
-
-
-
-
                 if (result.Rows.Count > 0)
                 {
-                    byte[] byteArray = ((string) result.Rows[0]["Salt"]).Split(',')
-    .Select(byteValue => byte.Parse(byteValue.Trim()))
-    .ToArray();
-
-                    Boolean isMatch = globalfunctions.VerifyPassword(request.Password.Trim(), Encoding.UTF8.GetBytes((string)result.Rows[0]["Salt"]) , (string)result.Rows[0]["password"]);
-               
-
-
 
 
                     bool IsFound = false;
+                    #region SECUTITY
+                    // Retrieve the salt and hash from the database and compare to the entered password
+                    //byte[] retrievedSalt = (byte[])result.Rows[0]["salt"];
+                    //byte[] retrievedHash = (byte[])result.Rows[0]["hash"];
+                    //using (var sha256 = SHA256.Create())
+                    //{
+                    //    byte[] enteredHash = sha256.ComputeHash(mycrpto.Combine(retrievedSalt, Encoding.UTF8.GetBytes(password)));
+                    //    if (mycrpto.Compare(enteredHash, retrievedHash))
+                    //    {
+                    //        IsFound = true;     //Password is correct.
+                    //    }
+                    //    else
+                    //    {
+                    //        IsFound = false;        //Password is Incorrect.
+                    //    }
+                    //}
+                    #endregion
                     IsFound = true;
                     if (IsFound)
                     {
@@ -123,12 +123,12 @@ namespace pobject.Core.Login
                         else
                         {
                             //End User
-                            response.User.IsEndUser = true;   
+                            response.User.IsEndUser = true;
                         }
 
                         response.User.User_ID = Convert.ToString(result.Rows[0]["UserId"]);
                         response.User.DisplayName = response.User.EmailOrUsername.Length > 5 ? response.User.EmailOrUsername.Substring(0, 5) : response.User.EmailOrUsername;
-                        if (response.User.InActiveDate==DateTime.MinValue || response.User.InActiveDate.Year == 1900)
+                        if (response.User.InActiveDate == DateTime.MinValue || response.User.InActiveDate.Year == 1900)
                         {
                             response.IsActiveUser = true;
                         }
@@ -144,7 +144,7 @@ namespace pobject.Core.Login
                         response.User = null;
                         response.Success = false;
                         response.MessageBox = "Incorrect password.";
-                    }  
+                    }
                 }
                 else
                 {
@@ -162,7 +162,8 @@ namespace pobject.Core.Login
             return response;
         }
 
-        public Login_Response resetpassword(ResetPasswordRequest request) {
+        public Login_Response resetpassword(ResetPasswordRequest request)
+        {
             Login_Response response = new Login_Response();
 
             DataTable user = _database.SqlView($@"select * from tbl_users Where EmailOrUsername = '{request.Email}' ");
@@ -216,16 +217,16 @@ namespace pobject.Core.Login
 
         public Login_Response verifyResetLink(string token, ResetPasswordVerfiyRequest request)
         {
-                Login_Response response = new Login_Response();
+            Login_Response response = new Login_Response();
 
             try
             {
-                if  (String.IsNullOrEmpty(request.password) || String.IsNullOrEmpty(request.confirmpassword) || request.password != request.confirmpassword ) {
+                if (String.IsNullOrEmpty(request.password) || String.IsNullOrEmpty(request.confirmpassword) || request.password != request.confirmpassword)
+                {
                     response.Success = false;
                     response.MessageBox = ""; // password not match
                     return response;
                 }
-
                 DataTable identifyuser = _database.SqlView($@"select * from tbl_ResetPassword where Token = '{token}' ");
                 if (identifyuser.Rows.Count == 0)
                 {
@@ -252,12 +253,15 @@ namespace pobject.Core.Login
                     return response;
                 }
 
-
-                Tuple <byte[], string> saltAndhash =  globalfunctions.GenerateSaltAndHash(request.password);
-
-
-
-
+                // Check the database to verify that the token is valid and has not expired
+                //if (validToken)
+                //{
+                //    return Ok();
+                //}
+                //else
+                //{
+                //    return BadRequest();
+                //}
                 response.Success = true;
                 response.MessageBox = "Password was reset";
                 return response;
@@ -275,7 +279,7 @@ namespace pobject.Core.Login
         public Login_Response GetLoginInfo(string _bearer_token)
         {
             Login_Response response = new Login_Response();
-           
+
             try
             {
                 var handler = new JwtSecurityTokenHandler();
@@ -334,7 +338,7 @@ namespace pobject.Core.Login
             }
             catch (Exception ex)
             {
-                
+
             }
 
             return response;
@@ -358,7 +362,7 @@ namespace pobject.Core.Login
         {
             // go through each column
             foreach (DataColumn c in row.Table.Columns)
-            { 
+            {
                 PropertyInfo p = item.GetType().GetProperty(c.ColumnName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
 
                 // if exists, set the value

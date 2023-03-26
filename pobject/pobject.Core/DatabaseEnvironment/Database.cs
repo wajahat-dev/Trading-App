@@ -191,15 +191,16 @@ namespace pobject.Core.DatabaseEnvironment
             return false;
         }
 
-        public Boolean addCommisionToSenior( String currentuserEmail, String Senior_ReferalCode, float pct) {
+        public Boolean addCommisionToSenior(String currentuserEmail, String Senior_ReferalCode, float pct)
+        {
             try
             {
                 DataTable senioruser = SqlView($@" SELECT * FROM tbl_users JOIN tbl_useramountdetails ON tbl_users.userid = tbl_useramountdetails.UserId WHERE tbl_users.referral_code =  '{Senior_ReferalCode}'");
-  
+
                 DataTable currentuser = SqlView($@"select * from tbl_useramountdetails where EmailOrUsername='{currentuserEmail}'");
                 if (currentuser.Rows.Count > 0 & senioruser.Rows.Count > 0)
                 {
-                    
+
                     if (Convert.ToInt32(currentuser.Rows[0]["TotalAmount"]) > 0)
                     {
                         //float commissionvalue = (pct / 100) * (float)Convert.ToDouble(currentuser.Rows[0]["TotalAmount"]);
@@ -294,20 +295,17 @@ namespace pobject.Core.DatabaseEnvironment
                         string RoleCode = string.IsNullOrEmpty(RoleCodeIfLoggedInAsAdmin) ? "X" : RoleCodeIfLoggedInAsAdmin;
 
                         #region SECURITY
-                        //Hash the password using SHA256
-                        //string pass = password; //always compare with first password, 
-                        //byte[] salt;
-                        //byte[] hash;
-                        //using (var sha256 = SHA256.Create())
-                        //{
-                        //    salt = mycrpto.GenerateSalt();
-                        //    hash = sha256.ComputeHash(mycrpto.Combine(salt, Encoding.UTF8.GetBytes(password)));
-                        //    //now hash is the password
-                        //}
+                        // Hash the password using SHA256
+                        string pass = password; //always compare with first password, 
+                        byte[] salt;
+                        byte[] hash;
+                        using (var sha256 = SHA256.Create())
+                        {
+                            salt = mycrpto.GenerateSalt();
+                            hash = sha256.ComputeHash(mycrpto.Combine(salt, Encoding.UTF8.GetBytes(password)));
+                            //now hash is the password
+                        }
                         #endregion
-
-                        Tuple<byte[], byte[]> saltAndHash = globalfunctions.SaltAndHash(password);
-                  
 
                         response.referral_code = globalfunctions.GenerateReferralCode();
 
@@ -320,9 +318,9 @@ namespace pobject.Core.DatabaseEnvironment
                         param.Add(new SqlParameter("@EmailOrUsername", Username));
                         //param.Add(new SqlParameter("@Password",hash));
                         //param.Add(new SqlParameter("@Password2", hash));
-                        param.Add(new SqlParameter("@Password", saltAndHash.Item2));
-                        param.Add(new SqlParameter("@Password2", saltAndHash.Item2));
-                        param.Add(new SqlParameter("@Salt", saltAndHash.Item1));
+                        param.Add(new SqlParameter("@Password", password));
+                        param.Add(new SqlParameter("@Password2", password2));
+                        param.Add(new SqlParameter("@Salt", salt));
                         User = SqlView(Query, param);
 
 
