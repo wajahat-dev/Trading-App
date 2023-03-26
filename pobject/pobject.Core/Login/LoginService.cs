@@ -17,6 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Mail;
 using System.Net;
+using System.Data.SqlTypes;
 
 namespace pobject.Core.Login
 {
@@ -200,6 +201,61 @@ namespace pobject.Core.Login
             try
             {
                 smtpClient.Send(mailMessage);
+                response.Success = true;
+                response.MessageBox = "Password was reset";
+                return response;
+            }
+            catch (Exception ex)
+            {
+                // handle exception
+            }
+            response.Success = false;
+            response.MessageBox = "Can't Reset your password";
+            return response;
+        }
+
+        public Login_Response verifyResetLink(string token)
+        {
+                Login_Response response = new Login_Response();
+
+            try
+            {
+
+                DataTable identifyuser = _database.SqlView($@"select * from tbl_ResetPassword where Token = '{token}' ");
+                if (identifyuser.Rows.Count == 0)
+                {
+                    response.Success = false;
+                    response.MessageBox = "User not found";
+                    return response;
+                }
+
+                int result = DateTime.Compare(DateTime.Now, (DateTime)identifyuser.Rows[0]["ExpirationDate"]);
+
+                if (result < 0)
+                {
+                    //Console.WriteLine("SQL date is later than current time.");
+                }
+                //else if (result == 0)
+                //{
+                //   // Console.WriteLine("SQL date is the same as current time.");
+                //}
+                else
+                {
+                    // Console.WriteLine("SQL date is earlier than current time.");
+                    response.Success = false;
+                    response.MessageBox = "Token has been expired";
+                    return response;
+                }
+
+                // Check the database to verify that the token is valid and has not expired
+                //if (validToken)
+                //{
+                //    return Ok();
+                //}
+                //else
+                //{
+                //    return BadRequest();
+                //}
                 response.Success = true;
                 response.MessageBox = "Password was reset";
                 return response;

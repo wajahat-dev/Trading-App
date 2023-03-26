@@ -9,6 +9,8 @@ import { RouteComponentProps, Link } from 'react-router-dom';
 import { FormControl, Divider, InputLabel, Input, Button, Typography, Snackbar, Box, Paper } from '@material-ui/core';
 import CenterDivTemplate from './globalcomponents/CenterDivTemplate';
 import TypographyWithLink from './globalcomponents/TypographyWithLink';
+import CLoader from './globalcomponents/CLoader';
+import CNotification from './globalcomponents/CNotification';
 
 
 // function PasswordResetPage() {
@@ -127,84 +129,156 @@ const PasswordResetPage = (e) => {
     // const classes = useStyles();
     const [snackbarMessage, setSnackbarMessage] = ("");
     const [error, setError] = ("");
+    const [password, setPassword] = useState('');
+    const [confirmpassword, setConfirmPassword] = useState('');
     const [email, setEmail] = useState('');
     const [newPassword, setNewPassword] = useState('');
+    const [loader, setLoader] = React.useState(false)
+    const [globalState, setGlobalState] = useState({
+        header: '',
+        message: '',
+        modal: false,
+        notificationToast: false
+    })
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const token = searchParams.get('token');
+
+    useEffect(() => {
+        // token
+        // alert(token)
+        if (token) {
+            verifytoken()
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [token])
+
+
+    const verifytoken = async () => {
+
+
+        setLoader(true)
+        try {
+            const response = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/verifyresetlink?token=${token}`, {
+                method: "post",
+                body: JSON.stringify({
+                    Email: email,
+                }),
+                headers: {
+                    "accept": '*/*',
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem('TOKEN_KEY')
+                        ? localStorage.getItem('TOKEN_KEY')
+                        : ''
+                        }`,
+                },
+            });
+
+            // if (response.ok) {
+            //     const data = await response.json();
+            //     if(data.success){
+            //         getData()
+            //         data.message && setGlobalState(p => ({ ...p,varient: 'success', message:   data.message, notificationToast: true }))
+            //     }else{
+            //         data.message && setGlobalState(p => ({ ...p,varient: 'warning', message:   data.message, notificationToast: true }))
+            //     }
+            // }
+            // setGlobalState(p => ({ ...p, modal: false }))
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoader(false)
+        }
+    };
+
+
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        // setError(null);
-        // setSnackbarMessage(null);
-        // const token = match.params.token;
-        // try {
-        //     // If no tokens send email to user
-        //     // if (!token) {
-        //     //     await accountsGraphQL.sendResetPasswordEmail(email);
-        //     //     setSnackbarMessage('Email sent');
-        //     // } else {
-        //     //     // If token try to change user password
-        //     //     await accountsGraphQL.resetPassword(token, newPassword);
-        //     //     setSnackbarMessage('Your password has been reset successfully');
-        //     // }
-        // } catch (err) {
-        //     setError(err.message);
-        //     setSnackbarMessage(null);
-        // }
+        setLoader(true)
+        try {
+            const response = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/reset-password`, {
+                method: "post",
+                body: JSON.stringify({
+                    Email: email,
+                }),
+                headers: {
+                    "accept": '*/*',
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem('TOKEN_KEY')
+                        ? localStorage.getItem('TOKEN_KEY')
+                        : ''
+                        }`,
+                },
+            });
+
+            // if (response.ok) {
+            //     const data = await response.json();
+            //     if(data.success){
+            //         getData()
+            //         data.message && setGlobalState(p => ({ ...p,varient: 'success', message:   data.message, notificationToast: true }))
+            //     }else{
+            //         data.message && setGlobalState(p => ({ ...p,varient: 'warning', message:   data.message, notificationToast: true }))
+            //     }
+            // }
+            // setGlobalState(p => ({ ...p, modal: false }))
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoader(false)
+        }
     };
+
 
     return (
         <>
+            <CLoader enabled={loader} />
+            <CNotification isOpen={globalState.notificationToast} setOpen={e => setGlobalState(p => ({ ...p, notificationToast: e }))} message={globalState.message} />
             <CNavbar page={'login'} />
-
-
-            <CenterDivTemplate header={"Forgot password"}>
-                <form onSubmit={onSubmit} style={{
+            <CenterDivTemplate header={token ? "Reset Password" : "Forgot password"}>
+                <form style={{
                     display: 'flex',
                     flexDirection: 'column',
                 }}>
-
                     <Typography to={"/resetpassword"}>
-                        <span>Lost your password? Please enter your username or email address. You will receive a link to create a new password via email</span>
+                        <span>Lost your password? Please enter your email address. You will receive a link to create a new password via email</span>
                     </Typography>
-                    <FormControl margin="normal">
-                        <InputLabel htmlFor="email">Email</InputLabel>
-                        <Input id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                    </FormControl>
+                    {token ? <>
+                        <FormControl margin="normal">
+                            <InputLabel htmlFor="password">Password</InputLabel>
+                            <Input id="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                        </FormControl>
+                        <FormControl margin="normal">
+                            <InputLabel htmlFor="confirmpassword">Confirm Password</InputLabel>
+                            <Input id="confirmpassword" value={confirmpassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                        </FormControl>
+                        <Divider style={{ marginTop: 50, marginBottom: 10 }} />
+                        
+                        <Button variant="contained" color="primary" type="submit ">
+                            Reset Password
+                        </Button>
+                    </> : <>
 
+                        <FormControl margin="normal">
+                            <InputLabel htmlFor="email">Email</InputLabel>
+                            <Input id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                        </FormControl>
 
-                    {/* <FormControl margin="normal">
-                        <InputLabel htmlFor="new-password">New Password</InputLabel>
-                        <Input
-                            id="new-password"
-                            type="password"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                        />
-                    </FormControl> */}
-                    {/* <Divider  /> */}
-                    <Divider  style={{marginTop: 50, marginBottom: 10}}/>
+                        <Divider style={{ marginTop: 50, marginBottom: 10 }} />
 
-                    <Button variant="contained" color="primary" type="submit">
-                        Reset Password
-                    </Button>
-                    <Button component={LogInLink}>Log In</Button>
-                    <Snackbar
-                        anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
-                        open={!!snackbarMessage}
-                        autoHideDuration={4000}
-                        onClose={() => setSnackbarMessage(null)}
-                        message={<span>{snackbarMessage}</span>}
-                    />
+                        <Button variant="contained" color="primary" type="submit "
+                        onClick={onSubmit}
+                        >
+                            Reset Password
+                        </Button>
+                        <Button component={LogInLink}>Log In</Button></>}
                 </form>
-
             </CenterDivTemplate>
-
             <CFooter />
-
         </>
     );
 };
+
+
 
 export default PasswordResetPage;

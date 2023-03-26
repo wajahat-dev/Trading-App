@@ -89,8 +89,8 @@ namespace pobject.API.Controllers
             return Ok(result);
         }
 
-
-        [HttpPost("reset-password")]
+        [HttpPost]
+        [Route("reset-password")]
         public async Task<IActionResult> ResetPassword( ResetPasswordRequest request)
         {
             Login_Response  response = _LoginService.resetpassword(request);
@@ -99,19 +99,12 @@ namespace pobject.API.Controllers
 
 
         [HttpGet]
-        [Route("resetpassword")]
+        [Route("verifyresetlink")]
         public async Task<IActionResult> VerifyResetLink(string token)
         {
-            // Check the database to verify that the token is valid and has not expired
-
-            //if (validToken)
-            //{
-            //    return Ok();
-            //}
-            //else
-            //{
-            //    return BadRequest();
-            //}
+            Login_Response response = _LoginService.verifyResetLink(token);
+            
+            return Ok(response);
         }
 
     }

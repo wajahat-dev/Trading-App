@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { BrowserRouter, Switch } from "react-router-dom";
+import { BrowserRouter, useRouteMatch, Switch } from "react-router-dom";
 
 import { TOKEN_KEY, loadToken } from "./store/actions/authentication";
 import { ProtectedRoute, PrivateRoute } from "./util/route-util";
 import LoginPanel from "./loginpage/LoginPanel";
 import PositionSidebar from "./PositionSidebar";
 import SignUpForm from './SignUpForm';
+import { Redirect, Route } from "react-router-dom";
 
 import HomePage from "./homepage/HomePage";
 import Profile from "./Profile";
@@ -28,10 +29,11 @@ const App = ({ loadToken }) => {
     open: false,
     varient: 'info'
   })
+  let match = useRouteMatch();
 
 
   const [loader, setLoader] = useState(false)
-
+console.log('wwwwwwwww',match)
   // const needLogin = true;
 
   useEffect(() => {
@@ -40,7 +42,7 @@ const App = ({ loadToken }) => {
 
   }, [loadToken]);
   useEffect(() => {
-
+    // alert(match)
     localStorage.getItem('TOKEN_KEY') && maintainSession()
 
 
@@ -89,7 +91,6 @@ const App = ({ loadToken }) => {
 
 
 
-
   return (
     <>
       <CNotification isOpen={globalState.open} setOpen={e => setGlobalState(p => ({ ...p, open: e }))} message={globalState.message} />
@@ -111,14 +112,24 @@ const App = ({ loadToken }) => {
             needLogin={needLogin}
             component={SignUpForm}
           />
-          <ProtectedRoute
-           
-            path="/resetpassword"
+          {/* <ProtectedRoute
+
+            // path="/resetpassword"
+            path="/resetpassword/:topicId"
+            // path="/resetpassword/:guid([0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})"
             exact={true}
             needLogin={needLogin}
             component={PasswordResetPage}
-          />
+          /> */}
+          <Route
+             path="/resetpassword"
+            // path="/resetpassword/:guid([0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})"
 
+            // path="/resetpassword/:guid([0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})"
+            exact={true}
+            render={(props) => <PasswordResetPage {...props} />}
+
+          />
           <ProtectedRoute
             path="/homepage"
             exact={true}

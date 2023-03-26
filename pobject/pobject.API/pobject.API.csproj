@@ -22,4 +22,8 @@
     <ProjectReference Include="..\pobject.Core\pobject.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Properties\PublishProfiles\" />
+  </ItemGroup>
+
 </Project>
