@@ -76,36 +76,35 @@ namespace pobject.Core.Login
             Login_Response response = new Login_Response();
             try
             {
-                string connectionString = _configuration["ConnectionStrings:DefaultConnection"];  
+                string connectionString = _configuration["ConnectionStrings:DefaultConnection"];
+
+
                 string username = request.Username;
-                string password = request.Password.Trim();
-                
-                string Query = $@"select * from tbl_users Where EmailOrUsername = '{username}' and password = '{password}' and password2='{password}' ";
-                
-                
+
+                //string Query = $@"select * from tbl_users Where EmailOrUsername = '{username}' and password = '{password}' and password2='{password}' ";
+                //DataTable result = _database.SqlView($@"select * from tbl_users Where EmailOrUsername = '{username}'", connectionString);
+
+                string Query = $@"select * from tbl_users Where EmailOrUsername = '{username}' ";
+
+
                 DataTable result = _database.SqlView(Query, connectionString);
+
+
+
+
                 if (result.Rows.Count > 0)
                 {
+                    byte[] byteArray = ((string) result.Rows[0]["Salt"]).Split(',')
+    .Select(byteValue => byte.Parse(byteValue.Trim()))
+    .ToArray();
+
+                    Boolean isMatch = globalfunctions.VerifyPassword(request.Password.Trim(), Encoding.UTF8.GetBytes((string)result.Rows[0]["Salt"]) , (string)result.Rows[0]["password"]);
                
 
-                bool IsFound = false;
-                    #region SECUTITY
-                    // Retrieve the salt and hash from the database and compare to the entered password
-                    //byte[] retrievedSalt = (byte[])result.Rows[0]["salt"];
-                    //byte[] retrievedHash = (byte[])result.Rows[0]["hash"];
-                    //using (var sha256 = SHA256.Create())
-                    //{
-                    //    byte[] enteredHash = sha256.ComputeHash(mycrpto.Combine(retrievedSalt, Encoding.UTF8.GetBytes(password)));
-                    //    if (mycrpto.Compare(enteredHash, retrievedHash))
-                    //    {
-                    //        IsFound = true;     //Password is correct.
-                    //    }
-                    //    else
-                    //    {
-                    //        IsFound = false;        //Password is Incorrect.
-                    //    }
-                    //}
-                    #endregion
+
+
+
+                    bool IsFound = false;
                     IsFound = true;
                     if (IsFound)
                     {
@@ -255,6 +254,9 @@ namespace pobject.Core.Login
 
 
                 Tuple <byte[], string> saltAndhash =  globalfunctions.GenerateSaltAndHash(request.password);
+
+
+
 
                 response.Success = true;
                 response.MessageBox = "Password was reset";

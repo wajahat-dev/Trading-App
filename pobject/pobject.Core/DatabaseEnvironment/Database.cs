@@ -294,20 +294,20 @@ namespace pobject.Core.DatabaseEnvironment
                         string RoleCode = string.IsNullOrEmpty(RoleCodeIfLoggedInAsAdmin) ? "X" : RoleCodeIfLoggedInAsAdmin;
 
                         #region SECURITY
-                        Hash the password using SHA256
-                        string pass = password; //always compare with first password, 
-                        byte[] salt;
-                        byte[] hash;
-                        using (var sha256 = SHA256.Create())
-                        {
-                            salt = mycrpto.GenerateSalt();
-                            hash = sha256.ComputeHash(mycrpto.Combine(salt, Encoding.UTF8.GetBytes(password)));
-                            now hash is the password
-                        }
+                        //Hash the password using SHA256
+                        //string pass = password; //always compare with first password, 
+                        //byte[] salt;
+                        //byte[] hash;
+                        //using (var sha256 = SHA256.Create())
+                        //{
+                        //    salt = mycrpto.GenerateSalt();
+                        //    hash = sha256.ComputeHash(mycrpto.Combine(salt, Encoding.UTF8.GetBytes(password)));
+                        //    //now hash is the password
+                        //}
                         #endregion
 
-                        Tuple<byte[], string> saltAndhash = globalfunctions.GenerateSaltAndHash(password);
-
+                        Tuple<byte[], byte[]> saltAndHash = globalfunctions.SaltAndHash(password);
+                  
 
                         response.referral_code = globalfunctions.GenerateReferralCode();
 
@@ -320,9 +320,9 @@ namespace pobject.Core.DatabaseEnvironment
                         param.Add(new SqlParameter("@EmailOrUsername", Username));
                         //param.Add(new SqlParameter("@Password",hash));
                         //param.Add(new SqlParameter("@Password2", hash));
-                        param.Add(new SqlParameter("@Password", password));
-                        param.Add(new SqlParameter("@Password2", password2));
-                        param.Add(new SqlParameter("@Salt", salt));
+                        param.Add(new SqlParameter("@Password", saltAndHash.Item2));
+                        param.Add(new SqlParameter("@Password2", saltAndHash.Item2));
+                        param.Add(new SqlParameter("@Salt", saltAndHash.Item1));
                         User = SqlView(Query, param);
 
 
