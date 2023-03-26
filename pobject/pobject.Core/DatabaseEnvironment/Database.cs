@@ -294,7 +294,7 @@ namespace pobject.Core.DatabaseEnvironment
                         string RoleCode = string.IsNullOrEmpty(RoleCodeIfLoggedInAsAdmin) ? "X" : RoleCodeIfLoggedInAsAdmin;
 
                         #region SECURITY
-                        // Hash the password using SHA256
+                        Hash the password using SHA256
                         string pass = password; //always compare with first password, 
                         byte[] salt;
                         byte[] hash;
@@ -302,9 +302,12 @@ namespace pobject.Core.DatabaseEnvironment
                         {
                             salt = mycrpto.GenerateSalt();
                             hash = sha256.ComputeHash(mycrpto.Combine(salt, Encoding.UTF8.GetBytes(password)));
-                            //now hash is the password
+                            now hash is the password
                         }
                         #endregion
+
+                        Tuple<byte[], string> saltAndhash = globalfunctions.GenerateSaltAndHash(password);
+
 
                         response.referral_code = globalfunctions.GenerateReferralCode();
 

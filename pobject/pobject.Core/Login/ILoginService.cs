@@ -13,6 +13,6 @@ namespace pobject.Core.Login
         Login_Response GetLoginInfo(string token);
         public Login_Response resetpassword(ResetPasswordRequest request);
 
-        public Login_Response verifyResetLink(string token);
+        public Login_Response verifyResetLink(string token, ResetPasswordVerfiyRequest request);
     }
 }

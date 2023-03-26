@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
-
+using System.Security.Cryptography;
 
 
 namespace pobject.Core.CommonHelper
@@ -31,7 +32,30 @@ namespace pobject.Core.CommonHelper
             return email;
         }
 
+        public static Tuple<byte[], string> GenerateSaltAndHash(string password)
+        {
+            // Generate a random salt value
+            byte[] salt = new byte[32];
+            using (var rng = new RNGCryptoServiceProvider())
+            {
+                rng.GetBytes(salt);
+            }
 
+            // Combine the password and salt
+            byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
+            byte[] combinedBytes = new byte[passwordBytes.Length + salt.Length];
+            Buffer.BlockCopy(passwordBytes, 0, combinedBytes, 0, passwordBytes.Length);
+            Buffer.BlockCopy(salt, 0, combinedBytes, passwordBytes.Length, salt.Length);
+
+            // Hash the combined bytes using SHA-256 algorithm
+            using (var sha256 = SHA256.Create())
+            {
+                byte[] hashedBytes = sha256.ComputeHash(combinedBytes);
+                string hashedPassword = Convert.ToBase64String(hashedBytes);
+
+                return Tuple.Create(salt, hashedPassword);
+            }
+        }
 
 
     }

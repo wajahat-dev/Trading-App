@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using System.Net.Mail;
 using System.Net;
 using System.Data.SqlTypes;
+using pobject.Core.CommonHelper;
 
 namespace pobject.Core.Login
 {
@@ -214,12 +215,17 @@ namespace pobject.Core.Login
             return response;
         }
 
-        public Login_Response verifyResetLink(string token)
+        public Login_Response verifyResetLink(string token, ResetPasswordVerfiyRequest request)
         {
                 Login_Response response = new Login_Response();
 
             try
             {
+                if  (String.IsNullOrEmpty(request.password) || String.IsNullOrEmpty(request.confirmpassword) || request.password != request.confirmpassword ) {
+                    response.Success = false;
+                    response.MessageBox = ""; // password not match
+                    return response;
+                }
 
                 DataTable identifyuser = _database.SqlView($@"select * from tbl_ResetPassword where Token = '{token}' ");
                 if (identifyuser.Rows.Count == 0)
@@ -247,15 +253,9 @@ namespace pobject.Core.Login
                     return response;
                 }
 
-                // Check the database to verify that the token is valid and has not expired
-                //if (validToken)
-                //{
-                //    return Ok();
-                //}
-                //else
-                //{
-                //    return BadRequest();
-                //}
+
+                Tuple <byte[], string> saltAndhash =  globalfunctions.GenerateSaltAndHash(request.password);
+
                 response.Success = true;
                 response.MessageBox = "Password was reset";
                 return response;

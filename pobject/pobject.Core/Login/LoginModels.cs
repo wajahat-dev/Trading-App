@@ -41,4 +41,9 @@ namespace pobject.Core.Login
     {
         public string Email { get; set; }
     }
+    public class ResetPasswordVerfiyRequest
+    {
+        public string password { get; set; }
+        public string confirmpassword { get; set; }
+    }
 }

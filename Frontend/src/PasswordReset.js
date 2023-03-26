@@ -148,13 +148,25 @@ const PasswordResetPage = (e) => {
         // token
         // alert(token)
         if (token) {
-            verifytoken()
+
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token])
 
 
-    const verifytoken = async () => {
+    const verifytoken = async (e) => {
+        debugger
+        if (!password) {
+            setGlobalState(p => ({ ...p, message: 'Password Can not be blank', notificationToast: true, varient: 'info' }))
+            return
+        } else if (!confirmpassword) {
+            setGlobalState(p => ({ ...p, message: 'Confirm Password Can not be blank', notificationToast: true, varient: 'info' }))
+            return
+        } else if (password !== confirmpassword) {
+            setGlobalState(p => ({ ...p, message: 'Passwords Must Match', notificationToast: true, varient: 'info' }))
+            return
+        }
+
 
 
         setLoader(true)
@@ -162,7 +174,8 @@ const PasswordResetPage = (e) => {
             const response = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/verifyresetlink?token=${token}`, {
                 method: "post",
                 body: JSON.stringify({
-                    Email: email,
+                    password: password,
+                    confirmpassword: confirmpassword,
                 }),
                 headers: {
                     "accept": '*/*',
@@ -210,6 +223,7 @@ const PasswordResetPage = (e) => {
                         : ''
                         }`,
                 },
+                
             });
 
             // if (response.ok) {
@@ -253,8 +267,8 @@ const PasswordResetPage = (e) => {
                             <Input id="confirmpassword" value={confirmpassword} onChange={(e) => setConfirmPassword(e.target.value)} />
                         </FormControl>
                         <Divider style={{ marginTop: 50, marginBottom: 10 }} />
-                        
-                        <Button variant="contained" color="primary" type="submit ">
+
+                        <Button variant="contained" color="primary"  onClick={verifytoken}>
                             Reset Password
                         </Button>
                     </> : <>
@@ -266,8 +280,8 @@ const PasswordResetPage = (e) => {
 
                         <Divider style={{ marginTop: 50, marginBottom: 10 }} />
 
-                        <Button variant="contained" color="primary" type="submit "
-                        onClick={onSubmit}
+                        <Button variant="contained" color="primary" 
+                            onClick={onSubmit}
                         >
                             Reset Password
                         </Button>

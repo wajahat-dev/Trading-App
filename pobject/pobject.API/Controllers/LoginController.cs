@@ -98,11 +98,11 @@ namespace pobject.API.Controllers
         }
 
 
-        [HttpGet]
+        [HttpPost]
         [Route("verifyresetlink")]
-        public async Task<IActionResult> VerifyResetLink(string token)
+        public async Task<IActionResult> VerifyResetLink(string token, ResetPasswordVerfiyRequest request)
         {
-            Login_Response response = _LoginService.verifyResetLink(token);
+            Login_Response response = _LoginService.verifyResetLink(token, request);
             
             return Ok(response);
         }
