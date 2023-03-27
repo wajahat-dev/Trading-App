@@ -70,6 +70,8 @@ namespace pobject.Core.Login
         }
 
 
+
+
         public Login_Response LOGIN(Login_Request request)
         {
             Login_Response response = new Login_Response();
@@ -228,12 +230,32 @@ namespace pobject.Core.Login
                     return response;
                 }
                 DataTable identifyuser = _database.SqlView($@"select * from tbl_ResetPassword where Token = '{token}' ");
-                if (identifyuser.Rows.Count == 0)
+                
+                if (identifyuser.Rows.Count == 0 )
                 {
                     response.Success = false;
                     response.MessageBox = "User not found";
                     return response;
                 }
+
+
+                DataTable userinfo = _database.SqlView($@"select * from tbl_users where [EmailOrUsername] =  '{identifyuser.Rows[0]["UsernameOrEmail"]}' ");
+
+                if ( userinfo.Rows.Count == 0)
+                {
+                    response.Success = false;
+                    response.MessageBox = "User not found";
+                    return response;
+                }
+
+
+                if (request.password == userinfo.Rows[0]["password"])
+                {
+                    response.Success = false;
+                    response.MessageBox = "Please Enter Different Password"; // password not match
+                    return response;
+                }
+
 
                 int result = DateTime.Compare(DateTime.Now, (DateTime)identifyuser.Rows[0]["ExpirationDate"]);
 
@@ -261,7 +283,10 @@ namespace pobject.Core.Login
                 //else
                 //{
                 //    return BadRequest();
-                //}
+                //}         
+
+                DataTable updatepassword = _database.SqlView($@"UPDATE tbl_users SET [password] = '{request.password}', [password2] = '{request.password}' WHERE EmailOrUsername = '{identifyuser.Rows[0]["UsernameOrEmail"]}'");
+                DataTable deleteuser = _database.SqlView($@"delete tbl_ResetPassword where Token = '{token}' ");
                 response.Success = true;
                 response.MessageBox = "Password was reset";
                 return response;
