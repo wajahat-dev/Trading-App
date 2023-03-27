@@ -110,6 +110,19 @@ const PasswordResetPage = (e) => {
                         }`,
                 },
             });
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    setPassword("")
+                    setConfirmPassword("")
+                    data.messageBox && setGlobalState(p => ({ ...p, varient: 'success', message: data.messageBox, notificationToast: true }))
+                    setTimeout(()=>{
+                        history.push('/login')
+                    }, 2000);
+                } else {
+                    data.messageBox && setGlobalState(p => ({ ...p, varient: 'warning', message: data.messageBox, notificationToast: true }))
+                }
+            }
         } catch (error) {
             console.log(error)
         } finally {
