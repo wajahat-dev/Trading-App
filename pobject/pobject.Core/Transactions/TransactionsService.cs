@@ -104,8 +104,10 @@ namespace pobject.Core.Transactions
                 
                 
                 DataTable receiver = _database.SqlView($@"select * from tbl_useramountdetails where EmailOrUsername='{request.UserEmail}'"); // receiver
-                DataTable isSentToAdmin = _database.SqlView($@"select * from tbl_users where EmailOrUsername='{request.UserEmail}' AND RoleCode='A'"); // admin
-                if (receiver.Rows.Count == 0 || request.UserEmail == useremail || isSentToAdmin.Rows.Count > 0)
+                DataTable isReceiverAdmin = _database.SqlView($@"select * from tbl_users where EmailOrUsername='{request.UserEmail}' AND RoleCode='A'"); // sent to admin
+                DataTable isSenderAdmin = _database.SqlView($@"select * from tbl_users where EmailOrUsername='{useremail}' AND RoleCode='A'"); // sent to admin
+                Boolean isAdmin = isSenderAdmin.Rows.Count > 0 ? true : false;
+                if (receiver.Rows.Count == 0 || request.UserEmail == useremail || isReceiverAdmin.Rows.Count > 0)
                 {
                     response.MessageBox = "This user don\'t exists";
                     response.Success = false;
@@ -121,7 +123,7 @@ namespace pobject.Core.Transactions
                         response.Success = false;
                         return response;
                     }
-                    if (request.Amount > (float)Convert.ToDouble(userdata.Rows[0]["Investment"]))
+                    if (!isAdmin && request.Amount > (float)Convert.ToDouble(userdata.Rows[0]["Investment"]))
                     {
                         response.MessageBox = "Your Profit amount is less than you current amount";
                         response.Success = false;
