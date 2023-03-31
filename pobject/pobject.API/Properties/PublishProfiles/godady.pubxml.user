@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>ftp://50.63.92.122/getlive.club</_PublishTargetUrl>
+    <History>False|2023-04-02T04:09:38.7213199Z;True|2023-03-28T14:49:29.2546057+05:00;True|2023-03-28T13:41:50.2207718+05:00;False|2023-03-28T13:33:12.3079806+05:00;</History>
+    <LastFailureDetails />
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <EncryptedPassword />
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="appsettings.Development.json">
+      <publishTime>03/09/2023 11:44:00</publishTime>
+    </File>
+    <File Include="appsettings.json">
+      <publishTime>04/02/2023 08:57:15</publishTime>
+    </File>
+    <File Include="Microsoft.AspNetCore.Authentication.JwtBearer.dll">
+      <publishTime>12/01/2022 09:16:52</publishTime>
+    </File>
+    <File Include="Microsoft.Bcl.AsyncInterfaces.dll">
+      <publishTime>04/15/2020 03:39:12</publishTime>
+    </File>
+    <File Include="Microsoft.Bcl.HashCode.dll">
+      <publishTime>11/15/2019 13:38:50</publishTime>
+    </File>
+    <File Include="Microsoft.DotNet.PlatformAbstractions.dll">
+      <publishTime>05/16/2018 02:01:34</publishTime>
+    </File>
+    <File Include="Microsoft.EntityFrameworkCore.Abstractions.dll">
+      <publishTime>10/20/2020 22:16:30</publishTime>
+    </File>
+    <File Include="Microsoft.EntityFrameworkCore.Design.dll">
+      <publishTime>05/21/2020 07:31:20</publishTime>
+    </File>
+    <File Include="Microsoft.EntityFrameworkCore.dll">
+      <publishTime>10/20/2020 22:17:06</publishTime>
+    </File>
+    <File Include="Microsoft.EntityFrameworkCore.Relational.dll">
+      <publishTime>10/20/2020 22:17:10</publishTime>
+    </File>
+    <File Include="Microsoft.Extensions.Configuration.Abstractions.dll">
+      <publishTime>10/18/2022 21:19:14</publishTime>
+    </File>
+    <File Include="Microsoft.Extensions.DependencyModel.dll">
+      <publishTime>05/16/2018 02:01:34</publishTime>
+    </File>
+    <File Include="Microsoft.Extensions.Primitives.dll">
+      <publishTime>10/18/2022 21:19:10</publishTime>
+    </File>
+    <File Include="Microsoft.IdentityModel.JsonWebTokens.dll">
+      <publishTime>03/31/2021 00:40:56</publishTime>
+    </File>
+    <File Include="Microsoft.IdentityModel.Logging.dll">
+      <publishTime>03/31/2021 00:42:38</publishTime>
+    </File>
+    <File Include="Microsoft.IdentityModel.Protocols.dll">
+      <publishTime>03/31/2021 00:46:46</publishTime>
+    </File>
+    <File Include="Microsoft.IdentityModel.Protocols.OpenIdConnect.dll">
+      <publishTime>03/31/2021 00:58:02</publishTime>
+    </File>
+    <File Include="Microsoft.IdentityModel.Tokens.dll">
+      <publishTime>03/31/2021 00:52:10</publishTime>
+    </File>
+    <File Include="Microsoft.OpenApi.dll">
+      <publishTime>08/30/2020 01:14:12</publishTime>
+    </File>
+    <File Include="Microsoft.Win32.SystemEvents.dll">
+      <publishTime>10/23/2021 04:40:24</publishTime>
+    </File>
+    <File Include="Newtonsoft.Json.dll">
+      <publishTime>11/09/2019 05:56:44</publishTime>
+    </File>
+    <File Include="pobject.API.deps.json">
+      <publishTime>04/02/2023 09:07:56</publishTime>
+    </File>
+    <File Include="pobject.API.dll">
+      <publishTime>04/01/2023 20:38:46</publishTime>
+    </File>
+    <File Include="pobject.API.exe">
+      <publishTime>04/02/2023 09:07:54</publishTime>
+    </File>
+    <File Include="pobject.API.pdb">
+      <publishTime>04/02/2023 09:07:54</publishTime>
+    </File>
+    <File Include="pobject.API.runtimeconfig.json">
+      <publishTime>04/02/2023 09:07:56</publishTime>
+    </File>
+    <File Include="pobject.Core.dll">
+      <publishTime>03/31/2023 13:31:34</publishTime>
+    </File>
+    <File Include="pobject.Core.pdb">
+      <publishTime>04/02/2023 08:57:33</publishTime>
+    </File>
+    <File Include="Quartz.AspNetCore.dll">
+      <publishTime>02/25/2023 18:15:30</publishTime>
+    </File>
+    <File Include="Quartz.DependencyInjection.Microsoft.dll">
+      <publishTime>06/08/2018 20:29:00</publishTime>
+    </File>
+    <File Include="Quartz.dll">
+      <publishTime>02/25/2023 18:15:28</publishTime>
+    </File>
+    <File Include="Quartz.Extensions.DependencyInjection.dll">
+      <publishTime>02/25/2023 18:15:30</publishTime>
+    </File>
+    <File Include="Quartz.Extensions.Hosting.dll">
+      <publishTime>02/25/2023 18:15:30</publishTime>
+    </File>
+    <File Include="Quartz.Jobs.dll">
+      <publishTime>02/25/2023 18:15:30</publishTime>
+    </File>
+    <File Include="QuartzUI.Extension.AspNetCore.dll">
+      <publishTime>08/04/2022 10:11:04</publishTime>
+    </File>
+    <File Include="runtimes/unix/lib/net6.0/System.Drawing.Common.dll">
+      <publishTime>10/23/2021 04:51:42</publishTime>
+    </File>
+    <File Include="runtimes/unix/lib/netcoreapp2.1/System.Data.SqlClient.dll">
+      <publishTime>10/18/2022 04:26:02</publishTime>
+    </File>
+    <File Include="runtimes/win-arm64/native/sni.dll">
+      <publishTime>07/12/2017 16:24:24</publishTime>
+    </File>
+    <File Include="runtimes/win-x64/native/sni.dll">
+      <publishTime>07/12/2017 16:24:22</publishTime>
+    </File>
+    <File Include="runtimes/win-x86/native/sni.dll">
+      <publishTime>07/12/2017 16:24:22</publishTime>
+    </File>
+    <File Include="runtimes/win/lib/net6.0/Microsoft.Win32.SystemEvents.dll">
+      <publishTime>10/23/2021 04:40:18</publishTime>
+    </File>
+    <File Include="runtimes/win/lib/net6.0/System.Drawing.Common.dll">
+      <publishTime>10/23/2021 04:48:10</publishTime>
+    </File>
+    <File Include="runtimes/win/lib/net6.0/System.Security.Cryptography.ProtectedData.dll">
+      <publishTime>10/23/2021 04:51:04</publishTime>
+    </File>
+    <File Include="runtimes/win/lib/net6.0/System.Windows.Extensions.dll">
+      <publishTime>10/23/2021 04:49:58</publishTime>
+    </File>
+    <File Include="runtimes/win/lib/netcoreapp2.1/System.Data.SqlClient.dll">
+      <publishTime>10/18/2022 04:26:08</publishTime>
+    </File>
+    <File Include="Swashbuckle.AspNetCore.Swagger.dll">
+      <publishTime>10/16/2021 17:54:10</publishTime>
+    </File>
+    <File Include="Swashbuckle.AspNetCore.SwaggerGen.dll">
+      <publishTime>10/16/2021 17:54:36</publishTime>
+    </File>
+    <File Include="Swashbuckle.AspNetCore.SwaggerUI.dll">
+      <publishTime>10/16/2021 17:54:30</publishTime>
+    </File>
+    <File Include="System.Configuration.ConfigurationManager.dll">
+      <publishTime>08/20/2022 00:58:02</publishTime>
+    </File>
+    <File Include="System.Data.SqlClient.dll">
+      <publishTime>10/18/2022 04:16:04</publishTime>
+    </File>
+    <File Include="System.Drawing.Common.dll">
+      <publishTime>10/23/2021 04:49:12</publishTime>
+    </File>
+    <File Include="System.IdentityModel.Tokens.Jwt.dll">
+      <publishTime>03/31/2021 00:39:30</publishTime>
+    </File>
+    <File Include="System.Security.Cryptography.ProtectedData.dll">
+      <publishTime>10/23/2021 04:51:04</publishTime>
+    </File>
+    <File Include="System.Security.Permissions.dll">
+      <publishTime>10/23/2021 04:49:50</publishTime>
+    </File>
+    <File Include="System.Windows.Extensions.dll">
+      <publishTime>10/23/2021 04:49:44</publishTime>
+    </File>
+    <File Include="web.config">
+      <publishTime>04/02/2023 09:08:29</publishTime>
+    </File>
+    <File Include="wwwroot/_content/QuartzUI.Extension.AspNetCore/cronstrue/cronstrue-i18n.js">
+      <publishTime>04/16/2022 20:30:12</publishTime>
+    </File>
+    <File Include="wwwroot/_content/QuartzUI.Extension.AspNetCore/cronstrue/cronstrue.min.js">
+      <publishTime>04/16/2022 20:30:12</publishTime>
+    </File>
+    <File Include="wwwroot/_content/QuartzUI.Extension.AspNetCore/element-ui/fonts/element-icons.ttf">
+      <publishTime>07/08/2022 06:12:44</publishTime>
+    </File>
+    <File Include="wwwroot/_content/QuartzUI.Extension.AspNetCore/element-ui/fonts/element-icons.woff">
+      <publishTime>07/08/2022 06:12:44</publishTime>
+    </File>
+    <File Include="wwwroot/_content/QuartzUI.Extension.AspNetCore/element-ui/index.css">
+      <publishTime>07/08/2022 06:12:44</publishTime>
+    </File>
+    <File Include="wwwroot/_content/QuartzUI.Extension.AspNetCore/element-ui/index.js">
+      <publishTime>07/08/2022 06:12:44</publishTime>
+    </File>
+    <File Include="wwwroot/_content/QuartzUI.Extension.AspNetCore/favicon.ico">
+      <publishTime>07/08/2022 06:19:00</publishTime>
+    </File>
+    <File Include="wwwroot/_content/QuartzUI.Extension.AspNetCore/images/favicon.png">
+      <publishTime>07/10/2022 19:22:32</publishTime>
+    </File>
+    <File Include="wwwroot/_content/QuartzUI.Extension.AspNetCore/vue/axios.min.js">
+      <publishTime>07/08/2022 06:12:44</publishTime>
+    </File>
+    <File Include="wwwroot/_content/QuartzUI.Extension.AspNetCore/vue/vue.js">
+      <publishTime>07/08/2022 06:12:44</publishTime>
+    </File>
+  </ItemGroup>
+</Project>
