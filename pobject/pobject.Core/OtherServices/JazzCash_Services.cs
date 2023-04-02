@@ -101,7 +101,7 @@ namespace pobject.Core.OtherServices
                 DataTable requests = _database.SqlView($@"
 				SELECT pr.id_Pk,pr.UsernameOrEmail,pr.UserId,pr.Payload,pr.Approved,pr.[desc],pr.CreatedOn,
 				pr.cnic,pr.phoneNumber,pr.[withdrawal_amount],uad.Totalamount FROM tbl_PendingRequests pr LEFT JOIN 
-				tbl_useramountdetails uad ON pr.UserId = uad.UserId;");
+				tbl_useramountdetails uad ON pr.UserId = uad.UserId; order by id_pk desc");
                 response.Information = (DataTable)requests;
             }
             catch (Exception e)

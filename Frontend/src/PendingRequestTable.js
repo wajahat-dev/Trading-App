@@ -36,14 +36,9 @@ export default function PendingRequestTable() {
 
 
     const columns = [
-        { field: 'usernameOrEmail', headerName: 'User Name', width: 250, },
+        { field: 'usernameOrEmail', headerName: 'Email', width: 250, },
         { field: 'totalamount', headerName: 'Total Amount', width: 150, },
         { field: 'withdrawal_amount', headerName: 'WithDrawal Amount', width: 150, },
-
-        { field: 'desc', headerName: 'Desc', width: 150, },
-        { field: 'createdOn', headerName: 'Created At', width: 150, },
-        { field: 'cnics', headerName: 'CNIC', width: 150, },
-        { field: 'phoneNumber', headerName: 'Phone', width: 150, },
         {
             field: 'action',
             headerName: 'Action',
@@ -71,7 +66,12 @@ export default function PendingRequestTable() {
             renderCell: (params) => {
                 return params.row.approved ? 'Yes' : 'No'
             },
-        }]
+        },
+        // { field: 'desc', headerName: 'Desc', width: 150, },
+        { field: 'createdOn', headerName: 'Created At', width: 150, },
+        { field: 'cnic', headerName: 'CNIC', width: 150, },
+        { field: 'phoneNumber', headerName: 'Phone', width: 150, },
+        ]
 
     const getData = async (row) => {
         debugger

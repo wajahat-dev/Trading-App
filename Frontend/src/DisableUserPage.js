@@ -62,7 +62,7 @@ function DisableUserPage() {
 
   return (
     <div className={classes.root}>
-      {userData.isAdmin && <DataTable />}
+      {/* {userData.isAdmin && <DataTable />} */}
 
     </div>
   );

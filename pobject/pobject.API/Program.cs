@@ -45,25 +45,25 @@ builder.Services.AddTransient<IAdminAndUserServices, AdminAndUserServices>();
 
 // schedular 
 
-builder.Services.AddQuartz(q =>
-{
-    q.UseMicrosoftDependencyInjectionJobFactory();
+//builder.Services.AddQuartz(q =>
+//{
+//q.UseMicrosoftDependencyInjectionJobFactory();
 
-    var jobKey = new JobKey("my-job");
-    q.AddJob<MyJob>(j => j.WithIdentity(jobKey));
+//var jobKey = new JobKey("my-job");
+//q.AddJob<MyJob>(j => j.WithIdentity(jobKey));
 
-    q.AddTrigger(t => t
-        .WithIdentity("my-trigger")
-        .ForJob(jobKey)
-        //.WithCronSchedule("0/5 * * * * ?"));
-    .WithCronSchedule("5 0 0 * * ?"));   // 12:00:05 Am
+//q.AddTrigger(t => t
+//    .WithIdentity("my-trigger")
+//    .ForJob(jobKey)
+//   .WithCronSchedule("0/5 * * * * ?")); // every five second
+//    .WithCronSchedule("5 0 0 * * ?"));   // 12:00:05 Am
 
-});
+//});
 
 
 
-builder.Services.AddQuartzHostedService(
-    q => q.WaitForJobsToComplete = true);
+//builder.Services.AddQuartzHostedService(
+//    q => q.WaitForJobsToComplete = true);
 
 
 
@@ -160,8 +160,6 @@ builder.Services
 
 var app = builder.Build();
 
-// Quartz
-//app.UseQuartz();
 
 
 // Configure the HTTP request pipeline.

@@ -12,7 +12,8 @@ import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 import ModalDialog from '@mui/joy/ModalDialog';
 import StoreAmountModal from './Modal/StoreAmountModal';
 import CNotification from './globalcomponents/CNotification';
-
+import { setData } from './store/TradingReducer';
+import { useDispatch } from 'react-redux';
 
 
 
@@ -48,13 +49,9 @@ export default function DataTable() {
     open: false,
     suspendModal: false
   })
+  const dispatch = useDispatch();
   const columns = [
-    { field: 'emailOrUsername', headerName: 'User Name', width: 150, },
-    { field: 'cnic', headerName: 'CNIC', width: 150, },
-    { field: 'email', headerName: 'Email', width: 150, },
-    { field: 'phone', headerName: 'Phone', width: 150, },
-    { field: 'country', headerName: 'Country', width: 150, },
-    { field: 'dob', headerName: 'Date of Birth', width: 150, },
+    { field: 'emailOrUsername', headerName: 'Email', width: 150, },
     {
       field: 'action',
       headerName: 'Action',
@@ -62,16 +59,6 @@ export default function DataTable() {
       renderCell: (params) => {
         const onClick = (e) => {
           e.stopPropagation(); // don't select this row after clicking
-
-          // const api = params.api;
-          // const thisRow = {}
-
-          // api
-          //   .getAllColumns()
-          //   .filter((c) => c.field !== '__check__' && !!c)
-          //   .forEach(
-          //     (c) => (thisRow[c.field] = params.getValue(params.id, c.field)),
-          //   );
           setGlobalState(p => ({ ...p, selectedRow: params.row, modal: true, message: 'Do you want to suspend the User', header: 'User Suspension' }))
         };
 
@@ -107,10 +94,7 @@ export default function DataTable() {
         };
         return <Button
           variant="outlined"
-          // color="white"
-          // color="danger"
           endDecorator={<DeleteForever />}
-
           onClick={onClick}
           style={{backgroundColor: '#5dbfa6', color: 'white'}}
         >
@@ -120,8 +104,13 @@ export default function DataTable() {
 
     },
     { field: 'totalAmount', headerName: 'Amount', },
+    { field: 'cnic', headerName: 'CNIC', width: 150, },
+    { field: 'phone', headerName: 'Phone', width: 150, },
+    { field: 'country', headerName: 'Country', width: 150, },
+    { field: 'dob', headerName: 'Date of Birth', width: 150, },
+    
   ]
-  const [firstApi, setFirstApi] = useState(true)
+
 
   const getData = async () => {
     debugger
@@ -151,7 +140,6 @@ export default function DataTable() {
 
     }
   };
-
 
   React.useEffect(() => {
     debugger
@@ -224,6 +212,7 @@ export default function DataTable() {
       if (body.success) {
         getData()
         setGlobalState(p => ({ ...p, open: true, message: body.messageBox }))
+        dispatch(setData({key: "isRefreshUserDetails", value: true}))
       } else {
         setGlobalState(p => ({ ...p, open: true, message: body.messageBox }))
 
@@ -243,8 +232,6 @@ export default function DataTable() {
   const handleAmountChange = (event) => {
     setGlobalState(p => ({ ...p, amount: event.target.value }))
   };
-
-
 
   const handleCancelClick = () => {
     setGlobalState(p => ({ ...p, openmodal: false }))

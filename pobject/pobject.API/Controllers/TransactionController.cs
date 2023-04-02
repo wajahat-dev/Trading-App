@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using pobject.API.Helpers;
 using pobject.Core;
 using pobject.Core.AuthBase;
@@ -40,7 +41,8 @@ namespace pobject.API.Controllers
 
         public IActionResult depositAmount(Transaction_Deposit request)
         {
-            StoreCode response = _TransactionsService.deposit(request);
+            var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+            StoreCode response = _TransactionsService.deposit(request, _bearer_token);
             return Ok(response);
         }
 

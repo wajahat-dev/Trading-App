@@ -15,13 +15,15 @@ import DataTable from "./DataTable";
 import PendingRequestTable from './PendingRequestTable';
 import UserContext from './ContextApi.js/UserContext';
 import InvestTable from './InvestTable';
+import { setData } from './store/TradingReducer';
 
 
 const UserDetail = React.memo(({ getHistoricalData, ledger, positions, getPositions }) => {
   const [stockChartXValues, setstockChartXValues] = useState([]);
   const [stockChartYValues, setstockChartYValues] = useState([]);
-  const trades = useSelector(state => state.trades);
+  
   const userData = useContext(UserContext);
+  const dispatch = useDispatch();
 
 
 
@@ -36,6 +38,8 @@ const UserDetail = React.memo(({ getHistoricalData, ledger, positions, getPositi
       getHistoricalData();
   });
 
+
+  
 
   useEffect(() => {
     if (!ledger) {
@@ -149,8 +153,8 @@ const UserDetail = React.memo(({ getHistoricalData, ledger, positions, getPositi
 
     <div className="position-detail">
       {/* {true && <DataTable />}      */}
-      {/* {trades.userDetails.isAdmin && <DataTable />}      */}
       {userData.isAdmin && <PendingRequestTable />}     
+      {userData.isAdmin&& <DataTable />}     
 
 
       {/* <div

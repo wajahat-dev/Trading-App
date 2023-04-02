@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, ReferenceLine, AreaChart, Brush } from 'recharts';
 import CNotification from './globalcomponents/CNotification';
 import CLoader from './globalcomponents/CLoader';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setData } from './store/TradingReducer';
 import { Box } from '@material-ui/core';
 import { useMediaQuery, useTheme, Grid } from '@material-ui/core';
@@ -76,6 +76,7 @@ const Graph = () => {
   const dispatch = useDispatch();
 
   const theme = useTheme();
+  const initData = useSelector(state => state.Trading);
 
   const isSmallerScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const xs = useMediaQuery(theme.breakpoints.down('xs'));
@@ -102,6 +103,14 @@ const Graph = () => {
     getGridData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    if(initData.isRefreshUserDetails){
+      getGridData()
+      dispatch(setData({key: "isRefreshUserDetails", value: false}))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initData.isRefreshUserDetails])
 
   const getGridData = async () => {
     setLoader(true)

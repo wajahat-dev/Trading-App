@@ -11,9 +11,9 @@ namespace pobject.Core.Transactions
     {
         public StoreCode Withdrawl(Transaction_Withdrawl request);
 
-        public StoreCode deposit(Transaction_Deposit request);
+        public StoreCode deposit(Transaction_Deposit request,string _bearer_token);
 
-        public Boolean updateamount(string Referral_UserId, int amount);
+        public Boolean updateamount(string Referral_UserId, int amount, string email);
         public StoreCode sentamount(SetAmount request, string email);
     }
 }

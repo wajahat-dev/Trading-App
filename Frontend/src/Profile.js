@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
 const Profile = (props) => {
   const classes = useStyles();
   const [globalState, setGlobalState] = useState({
-    formData: { cnic: '', displayName: '', phone: '', country: '', dob: '', createdon: '', referral_Code: '' }
+    formData: { emailOrUsername: '', cnic: '', displayName: '', phone: '', country: '', dob: '', createdon: '', referral_Code: '' }
   })
   const [loader, setLoader] = React.useState(false)
   const userData = useContext(UserContext);
@@ -67,7 +67,7 @@ const Profile = (props) => {
         if (data.length > 0) {
           setGlobalState(p => ({
             ...p,
-            formData: { referral_Code: data[0].referral_code, createdon: data[0].createdon, cnic: data[0].cnic, displayName: data[0].displayname, phone: data[0].phone, country: data[0].country, dob: data[0].dob }
+            formData: { emailOrUsername: data[0].emailOrUsername, referral_Code: data[0].referral_code, createdon: data[0].createdon, cnic: data[0].cnic, displayName: data[0].displayname, phone: data[0].phone, country: data[0].country, dob: data[0].dob }
           }))
 
         }
@@ -101,7 +101,7 @@ const Profile = (props) => {
               className={classes.avatar}
             />
             <Typography variant="h5" gutterBottom>
-              Your Email: {globalState.formData.displayName}
+              Your Email: {globalState.formData.emailOrUsername}
             </Typography>
             <Typography variant="body1">Your DOB: {globalState.formData.dob}</Typography>
           </Grid>
@@ -111,6 +111,7 @@ const Profile = (props) => {
             <Card className={classes.card}>
               <CardContent>
                 <Typography variant="body1" gutterBottom>
+                  <Typography variant="body1">Name: {globalState.formData.displayName}</Typography>
                   <Typography variant="body1">CNIC: {globalState.formData.cnic}</Typography>
                   <Typography variant="body1">Phone: {globalState.formData.phone}</Typography>
                   <Typography variant="body1">Country: {globalState.formData.country}</Typography>

@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using pobject.Core.CommonHelper;
 using Microsoft.Net.Http.Headers;
+using System.Collections;
 
 
 namespace pobject.Core.Transactions
@@ -50,21 +51,39 @@ namespace pobject.Core.Transactions
             return response;
         }
 
-        public Boolean updateamount(string Referral_UserId,int amount)
+        public Boolean updateamount(string Referral_UserId,int amount, string adminEmail)
         {
             string existuserquery = $"select * from tbl_useramountdetails where UserId = '{Referral_UserId}'";
             DataTable userExist = _database.SqlView(existuserquery);
             if (userExist.Rows.Count > 0)
             {
+
+
+                float totatAmount = (float)Convert.ToDouble(userExist.Rows[0]["Totalamount"]); // 
+                float commissionvalue = ((float)10 / (float)100) * amount; // senior
+                float basevalue = totatAmount + (amount - commissionvalue); // current user
+
+
                 // give message if amount is less then zero
                 string useruserquery = $@"UPDATE tbl_useramountdetails SET 
-                        EmailOrUsername = '{userExist.Rows[0]["EmailOrUsername"]}', 
-                        UserId ='{userExist.Rows[0]["UserId"]}',TotalAmount= TotalAmount + '{amount}', 
+                        EmailOrUsername = '{userExist.Rows[0]["EmailOrUsername"]}',         
+                        UserId ='{userExist.Rows[0]["UserId"]}',TotalAmount= '{basevalue}', 
                         Date = '{DateTime.Now}',
                         Investment=Investment + '{amount}'
-                        
                         WHERE UserId = '{Referral_UserId}'";
                 _database.SqlView(useruserquery);
+               DataTable deductsender = _database.SqlView($@"UPDATE [dbo].[tbl_useramountdetails] SET [TotalAmount] = TotalAmount - '{amount}' WHERE [EmailOrUsername] = '{adminEmail}'");
+
+
+                DataTable getReferradEmail = _database.SqlView($@"select * from tbl_Referrals where ReferrerEmail='{userExist.Rows[0]["EmailOrUsername"]}'");
+                if (getReferradEmail.Rows.Count > 0)
+                {
+                    string referredUseruserquery = $@"UPDATE tbl_useramountdetails SET 
+TotalAmount= TotalAmount +  '{commissionvalue}'
+                        WHERE EmailOrUsername = '{getReferradEmail.Rows[0]["ReferredEmail"].ToString()}'";
+                    _database.SqlView(referredUseruserquery);
+                }
+
 
                 return true;
             }
@@ -72,12 +91,21 @@ namespace pobject.Core.Transactions
         }
 
 
-        public StoreCode deposit(Transaction_Deposit request)
+        public StoreCode deposit(Transaction_Deposit request, string _bearer_token)
         {
             StoreCode response = new StoreCode();
             try
             {
-                Boolean isAdded = updateamount(request.Referral_UserId, request.amount);
+
+                if (request.amount <= 0 )
+                {
+                    response.MessageBox = "Amount Can't less then or euqal to zero";
+                    response.Success = true;
+                    return response;
+                }
+
+                string email = globalfunctions.DecodeToken(_bearer_token);
+                Boolean isAdded = updateamount(request.Referral_UserId, request.amount, email);
                 if (isAdded)
                 {
                     response.MessageBox = "Updated User Data";

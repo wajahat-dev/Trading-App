@@ -8,8 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { createInstance } from "../store/actions/ledger";
 import { Button } from '@material-ui/core';
 import CLoader from '../globalcomponents/CLoader';
-
-
+import { setData } from '../store/TradingReducer';
 
 
 const useStyles = makeStyles({
@@ -25,8 +24,13 @@ export function Deposits({ getHistoricalData, ledger }) {
   const date = new Date().getDate()
   const dispatch = useDispatch();
   const [accumulation, setAccumulation] = useState(0)
-
-  const Trading = useSelector((state) => state.Trading);
+  const initData = useSelector((state) => state.Trading);
+  const [loader, setLoader] = React.useState(false)
+  const [globalState, setGlobalState] = useState({
+    header: '',
+    message: '',
+    modal: false,
+  })
 
 
   useEffect(() => {
@@ -48,62 +52,6 @@ export function Deposits({ getHistoricalData, ledger }) {
     }
   }, [ledger]);
 
-  const handleClick = async (e) => {
-    const deposit = 1000;
-
-    const payload = {
-      deposit
-    };
-    await dispatch(createInstance(payload));
-  }
-
-  const takeOut = async (e) => {
-    const deposit = -5;
-
-    const payload = {
-      deposit
-    };
-    await dispatch(createInstance(payload));
-  }
-  const [loader, setLoader] = React.useState(false)
-
-  const [globalState, setGlobalState] = useState({
-    header: '',
-    message: '',
-    modal: false,
-  })
-
-  const onClickModal = async (isSuspendAction) => {
-    setLoader(true)
-
-    try {
-      const response = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/suspend-user`, {
-        method: "post",
-
-        body: JSON.stringify({
-          "userId": globalState.selectedRow.userId,
-          "adminID": "string",
-          "isSuspendAction": isSuspendAction
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          "accept": '*/*',
-          Authorization: `Bearer ${localStorage.getItem('TOKEN_KEY')
-            ? localStorage.getItem('TOKEN_KEY')
-            : ''
-            }`,
-
-        },
-      });
-      
-      setGlobalState(p => ({ ...p, modal: false }))
-
-    } catch (error) {
-      console.log(error)
-    } finally {
-      setLoader(false)
-    }
-  }
 
 
   return (
@@ -113,8 +61,7 @@ export function Deposits({ getHistoricalData, ledger }) {
       <div className='userHeader'>
         <Title>Profit Value (Bitcoin)</Title>
         <Typography component="p" variant="h4">
-          {/* $<CountUp start={0} decimals={2} end={accumulation} duration={1.00} separator="," /> */}
-          ${(Trading.totalamount || 0 ).toFixed(2)}
+          ${(initData.totalamount || 0 ).toFixed(2)}
         </Typography>
         <Typography color="textSecondary" className={classes.depositContext}>
           on {month + '/' + date + '/' + year}

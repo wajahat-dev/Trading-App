@@ -56,7 +56,7 @@ WHERE a.EmailOrUsername = @UsernameOrEmail AND a.USERID = @UserId",param);
 SELECT COALESCE(c.TotalAmount, 0) AS TotalAmount,a.RoleCode, a.inActivedate, a.inActivedate, a.UserId, a.EmailOrUsername, a.USERID, b.CNIC, b.EMAIL, b.DISPLAYNAME, b.PHONE, b.COUNTRY, b.DOB, b.CREATEDON
                 FROM TBL_USERS a
                 INNER JOIN TBL_USERINFO b ON a.UserId = b.UserId AND a.UserNumber = b.UserNumber AND a.RoleCode = 'X'               
-                LEFT JOIN tbl_useramountdetails c ON a.UserId = c.UserId 
+                LEFT JOIN tbl_useramountdetails c ON a.UserId = c.UserId order by CreatedOn desc
 
                     ");
 
@@ -88,6 +88,47 @@ SELECT COALESCE(c.TotalAmount, 0) AS TotalAmount,a.RoleCode, a.inActivedate, a.i
             string email = globalfunctions.DecodeToken(_bearer_token);
             DataTable user = _database.SqlView($"select * from tbl_useramountdetails where EmailOrUsername =  '{email}'  ORDER BY date asc");
             DataTable historydata = _database.SqlView($"select * from tbl_useramountdetailshistory where EmailOrUsername =  '{email}'  ORDER BY date asc");
+
+            // put it on deposit amount api
+//            if (historydata.Rows.Count == 0 && (user.Rows.Count > 0)) // new created amount and have one transaction
+//            {
+//                //'{user.Rows[0]["TotalAmount"]}'
+//                string query = $@" INSERT INTO tbl_useramountdetailshistory (EmailOrUsername, UserId, TotalAmount, Date)
+//            values ('{user.Rows[0]["EmailOrUsername"]}','{user.Rows[0]["UserId"]}',CASE 
+//                    WHEN '{user.Rows[0]["TotalAmount"]}' >= 5 THEN '{user.Rows[0]["TotalAmount"]}' + ('{user.Rows[0]["TotalAmount"]}' * 0.03)
+//                    WHEN '{user.Rows[0]["TotalAmount"]}' >= 100 THEN '{user.Rows[0]["TotalAmount"]}' + ('{user.Rows[0]["TotalAmount"]}' * 0.03) 
+//                    WHEN '{user.Rows[0]["TotalAmount"]}' >= 200 THEN '{user.Rows[0]["TotalAmount"]}' + ('{user.Rows[0]["TotalAmount"]}' * 0.04)
+//                    WHEN '{user.Rows[0]["TotalAmount"]}' >= 1000 THEN '{user.Rows[0]["TotalAmount"]}' + ('{user.Rows[0]["TotalAmount"]}' * 0.055) 
+//                    WHEN '{user.Rows[0]["TotalAmount"]}' >= 2000 THEN '{user.Rows[0]["TotalAmount"]}' + ('{user.Rows[0]["TotalAmount"]}' *  0.06)
+//                    WHEN '{user.Rows[0]["TotalAmount"]}' >= 50000 THEN '{user.Rows[0]["TotalAmount"]}' + ('{user.Rows[0]["TotalAmount"]}' * 0.065) 
+//                    ELSE 0
+//                END,
+//                GETDATE() AS Date)";
+//                DataTable populateolddata = _database.SqlView($@" INSERT INTO tbl_useramountdetailshistory (EmailOrUsername, UserId, TotalAmount, Date)
+//            values ('{user.Rows[0]["EmailOrUsername"]}','{user.Rows[0]["UserId"]}',CASE 
+//                    WHEN '{user.Rows[0]["TotalAmount"]}' >= 5 THEN '{user.Rows[0]["TotalAmount"]}' + ('{user.Rows[0]["TotalAmount"]}' * 0.03)
+//                    WHEN '{user.Rows[0]["TotalAmount"]}' >= 100 THEN '{user.Rows[0]["TotalAmount"]}' + ('{user.Rows[0]["TotalAmount"]}' * 0.03) 
+//                    WHEN '{user.Rows[0]["TotalAmount"]}' >= 200 THEN '{user.Rows[0]["TotalAmount"]}' + ('{user.Rows[0]["TotalAmount"]}' * 0.04)
+//                    WHEN '{user.Rows[0]["TotalAmount"]}' >= 1000 THEN '{user.Rows[0]["TotalAmount"]}' + ('{user.Rows[0]["TotalAmount"]}' * 0.055) 
+//                    WHEN '{user.Rows[0]["TotalAmount"]}' >= 2000 THEN '{user.Rows[0]["TotalAmount"]}' + ('{user.Rows[0]["TotalAmount"]}' *  0.06)
+//                    WHEN '{user.Rows[0]["TotalAmount"]}' >= 50000 THEN '{user.Rows[0]["TotalAmount"]}' + ('{user.Rows[0]["TotalAmount"]}' * 0.065) 
+//                    ELSE 0
+//                END,
+//                GETDATE() AS Date)");
+//            }else if (historydata.Rows.Count > 0 && (user.Rows.Count > 0))
+//            {
+
+//                DataTable populateolddata = _database.SqlView($@" DECLARE @DateChecked datetime, @UserId varchar(50), @EmailOrUsername varchar(50), @TotalAmount int
+//SELECT TOP 1 @DateChecked = [Date], @UserId = UserId, @EmailOrUsername = EmailOrUsername,  @TotalAmount =TotalAmount
+// from tbl_useramountdetailshistory WHERE [EmailOrUsername] = '{user.Rows[0]["EmailOrUsername"]}' ORDER BY [Date] DESC
+//WHILE @DateChecked < GETDATE()
+//BEGIN
+//   SET @DateChecked = DATEADD(day, 1, CONVERT(datetime, CONVERT(varchar(10), @DateChecked, 101) + ' ' + CONVERT(varchar(8), GETDATE(), 108)))
+
+//   INSERT INTO tbl_useramountdetailshistory  (EmailOrUsername, UserId, TotalAmount, Date) VALUES  (@EmailOrUsername,@UserId , @TotalAmount , @DateChecked)
+//END");
+//            }
+            
             if (user.Rows.Count > 0)
             {
                 reponse.griddata = user;
@@ -100,7 +141,7 @@ SELECT COALESCE(c.TotalAmount, 0) AS TotalAmount,a.RoleCode, a.inActivedate, a.i
 
             if (historydata.Rows.Count > 0)
             {
-                reponse.historydata = historydata;
+                reponse.historydata = _database.SqlView($"select * from tbl_useramountdetailshistory where EmailOrUsername =  '{email}'  ORDER BY date asc"); ;
             }
             else
             {
