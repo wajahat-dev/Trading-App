@@ -9,6 +9,7 @@ import { createInstance } from "../store/actions/ledger";
 import { Button } from '@material-ui/core';
 import CLoader from '../globalcomponents/CLoader';
 import { setData } from '../store/TradingReducer';
+import { Box } from '@mui/material';
 
 
 const useStyles = makeStyles({
@@ -16,6 +17,29 @@ const useStyles = makeStyles({
     flex: 1,
   },
 });
+
+
+
+const RowWithBoxes = () => {
+  const initData = useSelector((state) => state.Trading);
+
+  return (
+    <Box display="flex">
+      <Box border={1} p={2} m={1}>
+        <Title>Total Amount Value (Bitcoin)</Title>
+        <Typography variant="subtitle1">${(initData.totalamount || 0).toFixed(2)}</Typography>
+      </Box>
+      <Box border={1} p={2} m={1}>
+        <Title>Profit Value (Bitcoin)</Title>
+        <Typography variant="subtitle1"> ${(initData.profit || 0).toFixed(2)}</Typography>
+      </Box>
+      <Box border={1} p={2} m={1}>
+        <Title>Investment Value (Bitcoin)</Title>
+        <Typography variant="subtitle1"> ${(initData.investment || 0).toFixed(2)}</Typography>
+      </Box>
+    </Box>
+  );
+};
 
 export function Deposits({ getHistoricalData, ledger }) {
   const classes = useStyles();
@@ -59,17 +83,23 @@ export function Deposits({ getHistoricalData, ledger }) {
       <CLoader enabled={loader} />
 
       <div className='userHeader'>
-        <Title>Total Amount Value (Bitcoin)</Title>
+        {/* <Title>Total Amount Value (Bitcoin)</Title>
         <Typography component="p" variant="h4">
-          ${(initData.totalamount || 0 ).toFixed(2)}
+          ${(initData.totalamount || 0).toFixed(2)}
         </Typography>
         <Title>Profit Value (Bitcoin)</Title>
         <Typography component="p" variant="h4">
-          ${(initData.profit || 0 ).toFixed(2)}
+          ${(initData.profit || 0).toFixed(2)}
         </Typography>
+        <Title>Investment Value (Bitcoin)</Title>
+        <Typography component="p" variant="h4">
+          ${(initData.profit || 0).toFixed(2)}
+        </Typography>
+       */}
+        <RowWithBoxes />
         <Typography color="textSecondary" className={classes.depositContext}>
           on {month + '/' + date + '/' + year}
-        </Typography>
+        </Typography> 
         <div>
           <Button variant="outlined" color="neutral"
           //  onClick={onClose}

@@ -134,7 +134,7 @@ SELECT COALESCE(c.TotalAmount, 0) AS TotalAmount,a.RoleCode, a.inActivedate, a.i
                 reponse.griddata = user;
                 reponse.totalamount = (float)Convert.ToDouble(user.Rows[0]["TotalAmount"]);
                 reponse.profit = Math.Abs((float)Convert.ToDouble(user.Rows[0]["TotalAmount"]) - (float)Convert.ToDouble(user.Rows[0]["Investment"]));
-
+                reponse.investment = (float)Convert.ToDouble(user.Rows[0]["Investment"]);
             }
             else
             {

@@ -38,4 +38,5 @@ public class UserFinanceData
     public float totalamount { get; set; }
     public DataTable historydata { get; set; }
     public float profit { get; set; }
+    public float investment { get; set; }
 }

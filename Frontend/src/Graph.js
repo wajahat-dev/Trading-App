@@ -1,5 +1,5 @@
 import { Button, Paper, styled } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, ReferenceLine, AreaChart, Brush } from 'recharts';
 import CNotification from './globalcomponents/CNotification';
 import CLoader from './globalcomponents/CLoader';
@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setData } from './store/TradingReducer';
 import { Box } from '@material-ui/core';
 import { useMediaQuery, useTheme, Grid } from '@material-ui/core';
+import UserContext from './ContextApi.js/UserContext';
 const data = [
   { day: '2022-03-01', profit: 200 },
   { day: '2022-03-02', profit: 300 },
@@ -92,6 +93,7 @@ const Graph = () => {
     final = 900
 
   }
+  const userData = useContext(UserContext);
 
 
 
@@ -134,6 +136,7 @@ const Graph = () => {
         setGlobalState(p => ({ ...p, griddata: data.historydata }))
         dispatch(setData({ key: 'totalamount', value: data.totalamount }))
         dispatch(setData({ key: 'profit', value: data.profit }))
+        dispatch(setData({ key: 'investment', value: data.investment }))
       }
 
     } catch (error) {
