@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { BrowserRouter, useRouteMatch, Switch } from "react-router-dom";
+import { BrowserRouter, useHistory, Switch } from "react-router-dom";
 
-import { TOKEN_KEY, loadToken } from "./store/actions/authentication";
+import { TOKEN_KEY, loadToken, setToken } from "./store/actions/authentication";
 import { ProtectedRoute, PrivateRoute } from "./util/route-util";
 import LoginPanel from "./loginpage/LoginPanel";
 import PositionSidebar from "./PositionSidebar";
@@ -29,7 +29,9 @@ const App = ({ loadToken }) => {
     open: false,
     varient: 'info'
   })
+  const dispatch = useDispatch();
 
+  let history = useHistory();
 
   const [loader, setLoader] = useState(false)
   // const needLogin = true;
@@ -39,19 +41,10 @@ const App = ({ loadToken }) => {
     loadToken();
 
   }, [loadToken]);
-  useEffect(() => {
-    localStorage.getItem('TOKEN_KEY') && maintainSession()
-
-
-
-  }, [])
+ 
 
   const maintainSession = async () => {
-
-
-
     setLoader(true)
-
     try {
       const response = await fetch(`${process.env.React_APP_BASEURLPARTIAL}/getLoginInfo`, {
         method: "get",
@@ -70,6 +63,9 @@ const App = ({ loadToken }) => {
         setUserData(data.user)
       } else {
         setGlobalState(p => ({ ...p, message: data.messageBox, open: true }))
+        window.localStorage.setItem(TOKEN_KEY, "");
+        dispatch(setToken(""));
+        history.push("/");
       }
     } catch (error) {
       console.log(error)
@@ -80,7 +76,10 @@ const App = ({ loadToken }) => {
 
   }
 
-
+  useEffect(() => {
+    localStorage.getItem('TOKEN_KEY') && maintainSession()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (!loaded) {
     return null;
@@ -119,7 +118,7 @@ const App = ({ loadToken }) => {
             component={PasswordResetPage}
           /> */}
           <Route
-             path="/resetpassword"
+            path="/resetpassword"
             // path="/resetpassword/:guid([0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})"
 
             // path="/resetpassword/:guid([0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})"

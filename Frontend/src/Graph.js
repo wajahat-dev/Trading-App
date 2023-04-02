@@ -133,7 +133,7 @@ const Graph = () => {
       if (data && data.griddata) {
         setGlobalState(p => ({ ...p, griddata: data.historydata }))
         dispatch(setData({ key: 'totalamount', value: data.totalamount }))
-        // dispatch(setData({ key: 'totalamount', }))
+        dispatch(setData({ key: 'profit', value: data.profit }))
       }
 
     } catch (error) {
@@ -204,41 +204,16 @@ const Graph = () => {
                   }}
                     allo />
                   <Tooltip />
-                  {/* <Line label={<CustomizedLabel />} type="monotone" name="Profit Trend" dataKey="totalAmount" stroke="#2196f3" activeDot={{ r: 8 }} strokeWidth={3} /> */}
                   <Line label={<CustomizedLabel />}
                   
                   type="monotone" name="" dataKey="totalAmount" stroke="#FF0000" activeDot={{ r: 8 }} strokeWidth={2} />
                   <Brush y={450}/>
-                  {/* <Legend /> */}
 
                 </LineChart>
               </ResponsiveContainer>
 
             </div>
-            {/* <AreaChart
-             width={final} height={400} data={filteredData}
-            syncId="anyId"
-            margin={{
-              top: 10,
-              right: 30,
-              left: 0,
-              bottom: 0,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" name="Date" />
-          <YAxis name="Profit" unit="$" label={{
-              value: `Profit`,
-              style: { textAnchor: 'middle' },
-              angle: -45,
-              position: 'left',
-              offset: 0,
-            }}
-            allo/>
-            <Tooltip />
-            <Area type="monotone" name="Profit Trend" dataKey="totalAmount" stroke="#2196f3" activeDot={{ r: 8 }} />
-          </AreaChart> */}
-
+   
 
           </Item>
         </Grid>

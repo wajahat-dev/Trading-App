@@ -65,7 +65,11 @@ namespace pobject.Core.OtherServices
                         return response;
                     }
                     Double investment = userAmount.Rows[0]["Investment"] != DBNull.Value ? Convert.ToDouble(userAmount.Rows[0]["Investment"]) : 0.0;
-                    if (investment < Convert.ToDouble(request.amount))
+
+                    double difference = Math.Abs(investment - Convert.ToDouble(userAmount.Rows[0]["TotalAmount"]));
+                    double roundedResult = Math.Round(difference, 1);
+
+                    if (roundedResult <= Convert.ToDouble(request.amount))
                     {
                         response.MessageBox = "Your Profit amount is less than you current amount";
                         response.Success = false;
@@ -73,12 +77,28 @@ namespace pobject.Core.OtherServices
                     }
                 }
 
-                string query = $@"insert into tbl_PendingRequests(UsernameOrEmail,UserId,[desc],cnic,phoneNumber,payload,withdrawal_amount) values(@UsernameOrEmail,@UserId,@desc,@cnic,@phoneNumber, '','{request.amount}')";
-                int affected = _database.ExecuteNonQuery(query,param);
-                if (affected > 0)
+                DataTable sumOfalreadyPending = _database.SqlView($@"select  COALESCE(sum(withdrawal_amount), 0) as totalSum from tbl_PendingRequests where UsernameOrEmail = 'forex023@gmail.com' AND Approved=0 ");
+                Double total = Convert.ToDouble(userAmount.Rows[0]["Investment"]) + Convert.ToDouble(sumOfalreadyPending.Rows[0]["totalSum"]) + Convert.ToDouble(request.amount);
+
+                if (Math.Round(total,1) <= Math.Round(Convert.ToDouble(userAmount.Rows[0]["TotalAmount"]),1))
                 {
-                    response.MessageBox = "Successfully Submitted Request";
+                    string query = $@"insert into tbl_PendingRequests(UsernameOrEmail,UserId,[desc],cnic,phoneNumber,payload,withdrawal_amount) values(@UsernameOrEmail,@UserId,@desc,@cnic,@phoneNumber, '','{request.amount}')";
+                    int affected = _database.ExecuteNonQuery(query, param);
+                    if (affected > 0)
+                    {
+                        response.MessageBox = "Successfully Submitted Request";
+                    }
                 }
+                else
+                {
+                    response.Success = false;
+                    response.MessageBox = "Your Profit has been Ended, Wait for the Admin to accept your transactions";
+                    return response;
+                }
+
+
+
+                
             }
             catch (Exception e)
             {
@@ -101,7 +121,7 @@ namespace pobject.Core.OtherServices
                 DataTable requests = _database.SqlView($@"
 				SELECT pr.id_Pk,pr.UsernameOrEmail,pr.UserId,pr.Payload,pr.Approved,pr.[desc],pr.CreatedOn,
 				pr.cnic,pr.phoneNumber,pr.[withdrawal_amount],uad.Totalamount FROM tbl_PendingRequests pr LEFT JOIN 
-				tbl_useramountdetails uad ON pr.UserId = uad.UserId; order by id_pk desc");
+				tbl_useramountdetails uad ON pr.UserId = uad.UserId order by id_pk desc");
                 response.Information = (DataTable)requests;
             }
             catch (Exception e)

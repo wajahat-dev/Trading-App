@@ -41,11 +41,13 @@ namespace pobject.API.Controllers
                 else
                 { 
                     result.MessageBox = "Your Account is Suspended , Please Contact from your Administrator";
+                    result.Success = false;
                     return Ok(result);
                 }
             }
             else
             {
+                result.Success = false;
                 return Ok(result);
             }
         }
@@ -68,11 +70,13 @@ namespace pobject.API.Controllers
                 else
                 {
                     result.MessageBox = "Your Account is Suspended , Please Contact from your Administrator";
+                    result.Success = false;
                     return Ok(result);
                 }
             }
             else
             {
+                result.Success = false;
                 return Ok(result);
             }
         }

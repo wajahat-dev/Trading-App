@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   totalamount: 0,
+  profit: 0,
   isRefreshUserDetails: false,
 };
 

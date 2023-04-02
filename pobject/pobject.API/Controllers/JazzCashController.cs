@@ -49,7 +49,6 @@ namespace pobject.API.Controllers
 
 
         [HttpPost]
-
         [Route("jc_wallet")]
 
         //public async ActionResult<JazzRespone> jc_wallet(JazzRequest request)
@@ -130,9 +129,14 @@ namespace pobject.API.Controllers
                                 }
 
                             }
+                            else
+                            {
+                                //since if senior is exist to whom comission is being sent
+                                basevalue = totatAmount - withdrawl;
+                            }
 
                             DataTable updateUserAmount = _database.SqlView($@"UPDATE tbl_useramountdetails SET TotalAmount = '{basevalue}' WHERE EmailOrUsername = '{request.emailOrUsername}'");
-                            DataTable setApprovedpayment = _database.SqlView($@"UPDATE tbl_PendingRequests SET  [withdrawal_amount] = 0, Approved = 1 WHERE UsernameOrEmail = '{request.emailOrUsername}'");
+                            DataTable setApprovedpayment = _database.SqlView($@"UPDATE tbl_PendingRequests SET  [withdrawal_amount] = 0, Approved = 1 WHERE UsernameOrEmail = '{request.emailOrUsername}' AND [id_pk]='{request.id_Pk}' ");
 
                         }
                         else

@@ -59,9 +59,13 @@ export function Deposits({ getHistoricalData, ledger }) {
       <CLoader enabled={loader} />
 
       <div className='userHeader'>
-        <Title>Profit Value (Bitcoin)</Title>
+        <Title>Total Amount Value (Bitcoin)</Title>
         <Typography component="p" variant="h4">
           ${(initData.totalamount || 0 ).toFixed(2)}
+        </Typography>
+        <Title>Profit Value (Bitcoin)</Title>
+        <Typography component="p" variant="h4">
+          ${(initData.profit || 0 ).toFixed(2)}
         </Typography>
         <Typography color="textSecondary" className={classes.depositContext}>
           on {month + '/' + date + '/' + year}

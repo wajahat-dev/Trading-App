@@ -37,4 +37,5 @@ public class UserFinanceData
     public DataTable griddata { get; set; }
     public float totalamount { get; set; }
     public DataTable historydata { get; set; }
+    public float profit { get; set; }
 }
