@@ -50,14 +50,11 @@ namespace pobject.API.Controllers
 
         [HttpPost]
         [Route("jc_wallet")]
-
-        //public async ActionResult<JazzRespone> jc_wallet(JazzRequest request)
         public async Task<JazzRespone> jc_wallet(JazzRequest request)
         {
+
             HttpResponseMessage result = new HttpResponseMessage();
             JazzRespone response = new JazzRespone();
-
-
             PaymentData paymentData = new PaymentData
             {
                 pp_Version = "1.1",
@@ -83,9 +80,38 @@ namespace pobject.API.Controllers
                 ppmpf_5 = "",
                 pp_SecureHash = "",
             };
-
             try
             {
+
+
+                if (String.IsNullOrEmpty(request.emailOrUsername) || String.IsNullOrEmpty(request.id_Pk))
+                {
+                    response.message = "Selected User Not Found";
+                    response.success = false;
+                    return response;
+                }
+
+                DataTable withdrawer = _database.SqlView($@"
+				        SELECT pr.id_Pk,pr.UsernameOrEmail,pr.UserId,pr.Payload,pr.Approved,pr.[desc],pr.CreatedOn,
+				        pr.cnic,pr.phoneNumber,pr.[withdrawal_amount],uad.Totalamount FROM tbl_PendingRequests pr LEFT JOIN 
+				        tbl_useramountdetails uad ON pr.UserId = uad.UserId where pr.[id_pk] = '{request.id_Pk}' AND pr.UsernameOrEmail='{request.emailOrUsername}' ;");
+
+
+                if (withdrawer.Rows.Count == 0)
+                {
+                    response.message = "Selected User Not Found";
+                    response.success = false;
+                    return response;
+                }
+
+                if ((Convert.ToInt32(withdrawer.Rows[0]["Approved"]) != 0))
+                {
+                    response.message = "Tranction Already Completed";
+                    response.success = false;
+                    return response;
+                }
+
+
                 #region A Way To Request Jazz Payment Gateway
                 string json = System.Text.Json.JsonSerializer.Serialize(paymentData);
                 Uri baseAddress = new Uri($"https://sandbox.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction");
@@ -95,60 +121,41 @@ namespace pobject.API.Controllers
                 dynamic responseResult = JsonConvert.DeserializeObject(await httpresponse.Content.ReadAsStringAsync());
                 string responseMsg = responseResult["pp_ResponseMessage"];
                 string responseStatusCode = responseResult["pp_ResponseCode"];
-
+                //if (responseStatusCode != "000")
+                //{
+                //    response.message = "Unable To Proceed Transaction";
+                //    response.success = false;
+                //    return response;
+                //}
                 #endregion
 
-                if (responseStatusCode == "000" || 1 == 1)
-                {
-                    // check againt id_pk not email
-                    DataTable currentuser = _database.SqlView($@"
-				        SELECT pr.id_Pk,pr.UsernameOrEmail,pr.UserId,pr.Payload,pr.Approved,pr.[desc],pr.CreatedOn,
-				        pr.cnic,pr.phoneNumber,pr.[withdrawal_amount],uad.Totalamount FROM tbl_PendingRequests pr LEFT JOIN 
-				        tbl_useramountdetails uad ON pr.UserId = uad.UserId where pr.[id_pk] = '{request.id_Pk}' AND pr.UsernameOrEmail='{request.emailOrUsername}' ;");
-                    if (currentuser.Rows.Count > 0)
-                    {
-                        if (Convert.ToInt32(currentuser.Rows[0]["Approved"]) == 0)
-                        {
 
-                            float withdrawl = (float)Convert.ToDouble(currentuser.Rows[0]["withdrawal_amount"]); // 10
-                            float totatAmount = (float)Convert.ToDouble(currentuser.Rows[0]["Totalamount"]); // 
-                            float commissionvalue = ((float)5 / (float)100) * withdrawl; // senior
-                            float basevalue = totatAmount - (withdrawl + commissionvalue); // current user
+             
+
+                    float withdrawl = (float)Convert.ToDouble(withdrawer.Rows[0]["withdrawal_amount"]); 
+                    float totatAmount = (float)Convert.ToDouble(withdrawer.Rows[0]["Totalamount"]); 
+                    float commissionvalue = ((float)5 / (float)100) * withdrawl; // withdrawer's senior
+                    float basevalue = totatAmount - (withdrawl + commissionvalue); // withdrawer
+
+                    DataTable updateUserAmount = _database.SqlView($@"UPDATE tbl_useramountdetails SET TotalAmount = '{basevalue}' WHERE EmailOrUsername = '{request.emailOrUsername}'");
+                    DataTable setApprovedpayment = _database.SqlView($@"UPDATE tbl_PendingRequests SET  Approved = 1 WHERE UsernameOrEmail = '{request.emailOrUsername}' AND [id_pk]='{request.id_Pk}' ");
 
 
-                            DataTable seniordata = _database.SqlView($@"
-                                SELECT * FROM tbl_useramountdetails usr  JOIN 
-				                tbl_Referrals ref ON usr.EmailOrUsername = ref.ReferredEmail where ref.ReferrerEmail = '{request.emailOrUsername}'");
+                //DataTable seniorTransaction = _database.SqlView($@"
+                //                SELECT * FROM tbl_useramountdetails usr  JOIN 
+				            //    tbl_Referrals ref ON usr.EmailOrUsername = ref.ReferredEmail where ref.ReferrerEmail = '{request.emailOrUsername}'");
 
-                            if (seniordata.Rows.Count > 0)
-                            {
-                                if ((float)Convert.ToDouble(seniordata.Rows[0]["TotalAmount"]) > 0)
-                                {
-                                    DataTable seniordatauser = _database.SqlView($@"UPDATE tbl_useramountdetails SET TotalAmount= TotalAmount + '{commissionvalue}'  WHERE EmailOrUsername = '{seniordata.Rows[0]["EmailOrUsername"]}'");
+                //if (seniorTransaction.Rows.Count > 0)
+                //{
+                //    if ((float)Convert.ToDouble(seniorTransaction.Rows[0]["TotalAmount"]) > 0)
+                //    {
+                //        DataTable seniordatauser = _database.SqlView($@"UPDATE tbl_useramountdetails SET TotalAmount= TotalAmount + '{commissionvalue}'  WHERE EmailOrUsername = '{seniorTransaction.Rows[0]["EmailOrUsername"]}'");
+                //    }
 
-                                }
+                //}
+                
 
-                            }
-                            else
-                            {
-                                //since if senior is exist to whom comission is being sent
-                                basevalue = totatAmount - withdrawl;
-                            }
 
-                            DataTable updateUserAmount = _database.SqlView($@"UPDATE tbl_useramountdetails SET TotalAmount = '{basevalue}' WHERE EmailOrUsername = '{request.emailOrUsername}'");
-                            DataTable setApprovedpayment = _database.SqlView($@"UPDATE tbl_PendingRequests SET  [withdrawal_amount] = 0, Approved = 1 WHERE UsernameOrEmail = '{request.emailOrUsername}' AND [id_pk]='{request.id_Pk}' ");
-
-                        }
-                        else
-                        {
-                            response.message = "Transaction Already Approved";
-                            response.success = false;
-                            return response;
-                        }
-                    }
-
-                }
-                //return responseResult;response
             }
             catch (Exception e)
             {
@@ -156,9 +163,8 @@ namespace pobject.API.Controllers
                 response.success = false;
                 return response;
             }
-
-            response.message = "Transaction Approved";
-            response.success = true;
+            response.message = "Transaction Successfully Completed";
+            response.success = false;
             return response;
         }
 

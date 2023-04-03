@@ -51,43 +51,63 @@ namespace pobject.Core.Transactions
             return response;
         }
 
-        public Boolean updateamount(string Referral_UserId,int amount, string adminEmail)
+        public int updateamount(string Referral_UserId,int amount, string adminEmail)
         {
-            string existuserquery = $"select * from tbl_useramountdetails where UserId = '{Referral_UserId}'";
-            DataTable userExist = _database.SqlView(existuserquery);
-            if (userExist.Rows.Count > 0)
+           
+            DataTable senderTransaction_Admin = _database.SqlView($"select * from tbl_useramountdetails where EmailOrUsername = '{adminEmail}'");
+            DataTable receiverTransaction = _database.SqlView($"select * from tbl_useramountdetails where UserId = '{Referral_UserId}'");
+
+            if (receiverTransaction.Rows.Count == 0 || senderTransaction_Admin.Rows.Count == 0)
             {
+                return 0;
+            }
 
+          
 
-                float totatAmount = (float)Convert.ToDouble(userExist.Rows[0]["Totalamount"]); // 
-                float commissionvalue = ((float)10 / (float)100) * amount; // senior
-                float basevalue = totatAmount + (amount - commissionvalue); // current user
-
-
-                // give message if amount is less then zero
-                string useruserquery = $@"UPDATE tbl_useramountdetails SET 
-                        EmailOrUsername = '{userExist.Rows[0]["EmailOrUsername"]}',         
-                        UserId ='{userExist.Rows[0]["UserId"]}',TotalAmount= '{basevalue}', 
-                        Date = '{DateTime.Now}',
-                        Investment=Investment + '{amount}'
-                        WHERE UserId = '{Referral_UserId}'";
-                _database.SqlView(useruserquery);
-               DataTable deductsender = _database.SqlView($@"UPDATE [dbo].[tbl_useramountdetails] SET [TotalAmount] = TotalAmount - '{amount}' WHERE [EmailOrUsername] = '{adminEmail}'");
-
-
-                DataTable getReferradEmail = _database.SqlView($@"select * from tbl_Referrals where ReferrerEmail='{userExist.Rows[0]["EmailOrUsername"]}'");
-                if (getReferradEmail.Rows.Count > 0)
+                
+                if (amount > Convert.ToDouble(senderTransaction_Admin.Rows[0]["Totalamount"]))
                 {
-                    string referredUseruserquery = $@"UPDATE tbl_useramountdetails SET 
-TotalAmount= TotalAmount +  '{commissionvalue}'
-                        WHERE EmailOrUsername = '{getReferradEmail.Rows[0]["ReferredEmail"].ToString()}'";
-                    _database.SqlView(referredUseruserquery);
+                    return 2;
                 }
 
+            DataTable receiverSenior = _database.SqlView($@"select * from tbl_Referrals where ReferrerEmail='{receiverTransaction.Rows[0]["EmailOrUsername"]}'");
+            
+            
 
-                return true;
+
+            float totatAmount = (float)Convert.ToDouble(receiverTransaction.Rows[0]["Totalamount"]); 
+                float commissionvalue = ((float)10 / (float)100) * amount; // receiver's senior
+                float basevalue = totatAmount + amount; // current user
+
+
+ 
+                DataTable addReceiver = _database.SqlView($@"UPDATE tbl_useramountdetails SET 
+                        TotalAmount= '{basevalue}', 
+                        Date = '{DateTime.Now}',
+                        Investment= '{basevalue}'
+                        WHERE UserId = '{Referral_UserId}'");
+
+
+            Boolean isReceiverSeniorExist = receiverSenior.Rows.Count > 0 ? true : false;
+            if (!isReceiverSeniorExist)
+            {
+                commissionvalue = 0;
             }
-            return false;
+
+            DataTable deductSender = _database.SqlView($@"UPDATE [dbo].[tbl_useramountdetails] SET [TotalAmount]
+                    = TotalAmount - '{amount + commissionvalue}', Investment = Investment - '{amount + commissionvalue}' WHERE [EmailOrUsername] = '{adminEmail}'");
+
+            if (isReceiverSeniorExist)
+            {
+                // only give commision to totalamount , since investment is for withdraw and deposit
+                string referredUseruserquery = $@"UPDATE tbl_useramountdetails SET 
+                    TotalAmount = TotalAmount +  '{commissionvalue}'
+                        WHERE EmailOrUsername = '{receiverSenior.Rows[0]["ReferredEmail"].ToString()}'";
+                _database.SqlView(referredUseruserquery);
+            }
+
+            return 1;
+
         }
 
 
@@ -105,11 +125,18 @@ TotalAmount= TotalAmount +  '{commissionvalue}'
                 }
 
                 string email = globalfunctions.DecodeToken(_bearer_token);
-                Boolean isAdded = updateamount(request.Referral_UserId, request.amount, email);
-                if (isAdded)
+                int isAdded = updateamount(request.Referral_UserId, request.amount, email);
+ 
+                 if (isAdded == 1)
                 {
-                    response.MessageBox = "Updated User Data";
+                    response.MessageBox = "Updated User Amount";
                     response.Success = true;
+                    return response;
+                }
+                else if (isAdded == 2)
+                {
+                    response.MessageBox = "Your Balance Amount can'not be less than your entered amount";
+                    response.Success = false;
                     return response;
                 }
             }
@@ -119,9 +146,10 @@ TotalAmount= TotalAmount +  '{commissionvalue}'
                 response.MessageBox = "Exception due to " + e;
                 return response;
             }
-            response.MessageBox = "No User Found";
-            response.Success = false;
+            response.MessageBox = "Either Sender or Receiver Doesn't Exists";
+            response.Success = true;
             return response;
+
         }
 
         public StoreCode sentamount(SetAmount request, string useremail)
@@ -129,36 +157,69 @@ TotalAmount= TotalAmount +  '{commissionvalue}'
             StoreCode response = new StoreCode();
             try
             {
-                
-                
-                DataTable receiver = _database.SqlView($@"select * from tbl_useramountdetails where EmailOrUsername='{request.UserEmail}'"); // receiver
-                DataTable isReceiverAdmin = _database.SqlView($@"select * from tbl_users where EmailOrUsername='{request.UserEmail}' AND RoleCode='A'"); // sent to admin
-                DataTable isSenderAdmin = _database.SqlView($@"select * from tbl_users where EmailOrUsername='{useremail}' AND RoleCode='A'"); // sent to admin
-                Boolean isAdmin = isSenderAdmin.Rows.Count > 0 ? true : false;
-                if (receiver.Rows.Count == 0 || request.UserEmail == useremail || isReceiverAdmin.Rows.Count > 0)
+
+
+                DataTable sender = _database.SqlView($@"select * from tbl_users where EmailOrUsername='{useremail}'");  // sender
+                DataTable receiver = _database.SqlView($@"select * from tbl_users where EmailOrUsername='{request.UserEmail}'"); // receiver
+
+
+                if (sender.Rows.Count == 0 || receiver.Rows.Count == 0)
                 {
-                    response.MessageBox = "This user don\'t exists";
+                    response.MessageBox = "Either User don\'t exists";
                     response.Success = false;
                     return response;
                 }
 
-                DataTable userdata = _database.SqlView($@"select * from tbl_useramountdetails where EmailOrUsername='{useremail}'");  // sender
-                if (userdata.Rows.Count > 0)
+                if (useremail == request.UserEmail)
                 {
-                    if ( request.Amount > (float)Convert.ToDouble(userdata.Rows[0]["TotalAmount"]))
+                    response.MessageBox = "Sender or Receiver can't be same";
+                    response.Success = false;
+                    return response;
+                }
+
+
+                Boolean isSenderAdmin = sender.Rows[0]["RoleCode"].ToString() == "A" ? true : false;
+                Boolean isReceiverAdmin = receiver.Rows[0]["RoleCode"].ToString() == "A" ? true : false;
+
+                DataTable senderTransaction = _database.SqlView($@"select * from tbl_useramountdetails where EmailOrUsername='{useremail}'");  // sender
+                DataTable receiverTransaction = _database.SqlView($@"select * from tbl_useramountdetails where EmailOrUsername='{request.UserEmail}'"); // receiver
+
+                if (isSenderAdmin)
+                {
+                    // sender (Admin) can sent all money
+                    if (Math.Round(request.Amount) > Math.Round((float)Convert.ToDouble(senderTransaction.Rows[0]["TotalAmount"])))
                     {
-                        response.MessageBox = "You Don\'t have much balance";
-                        response.Success = false;
-                        return response;
-                    }
-                    if (!isAdmin && request.Amount > (float)Convert.ToDouble(userdata.Rows[0]["Investment"]))
-                    {
-                        response.MessageBox = "Your Profit amount is less than you current amount";
+                        response.MessageBox = "Your Balance amount is less than you current amount";
                         response.Success = false;
                         return response;
                     }
                 }
-                DataTable deductsender = _database.SqlView($@"UPDATE [dbo].[tbl_useramountdetails] SET [TotalAmount] = TotalAmount - {request.Amount} WHERE [EmailOrUsername] = '{useremail}'");
+                else
+                {
+                    if (Convert.ToDouble(senderTransaction.Rows[0]["Totalamount"]) >= (Convert.ToDouble(senderTransaction.Rows[0]["Investment"]) * 2.00))
+                    {
+                        // sender can sent all money
+                        if (Math.Round(request.Amount) > Math.Round((float)Convert.ToDouble(senderTransaction.Rows[0]["TotalAmount"])))
+                        {
+                            response.MessageBox = "Your Balance amount is less than you current amount";
+                            response.Success = false;
+                            return response;
+                        }
+                    }
+                    else
+                    {
+                        // sender only sent profit money
+                        if (Math.Round(request.Amount) > Math.Round(Math.Abs((float)Convert.ToDouble(senderTransaction.Rows[0]["TotalAmount"]) - (float)Convert.ToDouble(senderTransaction.Rows[0]["Investment"]))))
+                        {
+                            response.MessageBox = "Your Profit amount is less than you current amount";
+                            response.Success = false;
+                            return response;
+                        }
+                    }
+                }
+                
+
+                DataTable deductsender = _database.SqlView($@"UPDATE [dbo].[tbl_useramountdetails] SET [TotalAmount] = TotalAmount - {request.Amount}, Investment = Investment - '{request.Amount}'  WHERE [EmailOrUsername] = '{useremail}'");
                 DataTable addreceiver = _database.SqlView($@"UPDATE [dbo].[tbl_useramountdetails] SET [TotalAmount] = TotalAmount + {request.Amount}, Investment = Investment + '{request.Amount}' WHERE [EmailOrUsername] = '{request.UserEmail}'");
 
 
@@ -169,7 +230,7 @@ TotalAmount= TotalAmount +  '{commissionvalue}'
                 response.MessageBox = "Exception due to " + e;
                 return response;
             }
-            response.MessageBox = $@"Send {request.Amount} to {request.UserEmail}";
+            response.MessageBox = $@"Amount {request.Amount} Send to {request.UserEmail}";
             response.Success = true;
             return response;
         }

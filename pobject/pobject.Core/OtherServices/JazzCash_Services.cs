@@ -39,87 +39,106 @@ namespace pobject.Core.OtherServices
             StoreCode response = new StoreCode();
             try
             {
-                string  payloadContent = request.Payload.ToString();
-                List<SqlParameter> param = new List<SqlParameter>();
-                param.Add(new SqlParameter("@UsernameOrEmail", request.EmailOrUsername));
-                param.Add(new SqlParameter("@UserId", request.UserID));
-                param.Add(new SqlParameter("@Payload", payloadContent));
-                param.Add(new SqlParameter("@desc", request.Description));
-                param.Add(new SqlParameter("@cnic", request.cnic));
-                param.Add(new SqlParameter("@phoneNumber", request.phoneNumber));
 
-                Boolean flag = true; // false: can withdrawal all amount, true: can't withdrawal all amount
-               
-                DataTable userAmount = _database.SqlView($@"select * from tbl_useramountdetails WHERE EmailOrUsername = '{request.EmailOrUsername}'");
-                if (userAmount.Rows.Count > 0)
+                if (String.IsNullOrEmpty(request.EmailOrUsername))
                 {
-                    Double TotalAmount = Convert.ToDouble(userAmount.Rows[0]["TotalAmount"]);
-                    if ( (Convert.ToDouble(userAmount.Rows[0]["Investment"]) * 2) <= TotalAmount)
+                    response.MessageBox = "Email Not Found";
+                    response.Success = false;
+                    return response;
+                }
+                if (String.IsNullOrEmpty(request.UserID))
+                {
+                    response.MessageBox = "UserID Not Found";
+                    response.Success = false;
+                    return response;
+                }
+                if (String.IsNullOrEmpty(request.cnic))
+                {
+                    response.MessageBox = "Cnic Not Found";
+                    response.Success = false;
+                    return response;
+                }
+
+                DataTable withdrawerTransaction = _database.SqlView($@"select * from tbl_useramountdetails WHERE EmailOrUsername = '{request.EmailOrUsername}'");
+
+                if (withdrawerTransaction.Rows.Count == 0)
+                {
+                    response.MessageBox = "User Not Found";
+                    response.Success = false;
+                    return response;
+                }
+                withdrawerTransaction.Rows[0]["TotalAmount"] = withdrawerTransaction.Rows[0]["TotalAmount"] != DBNull.Value ? Convert.ToDouble(withdrawerTransaction.Rows[0]["TotalAmount"]) : 0.0;
+                withdrawerTransaction.Rows[0]["Investment"] = withdrawerTransaction.Rows[0]["Investment"] != DBNull.Value ? Convert.ToDouble(withdrawerTransaction.Rows[0]["Investment"]) : 0.0;
+
+
+                DataTable wihdrawerInfo = _database.SqlView($@"select * from tbl_users where EmailOrUsername='{request.EmailOrUsername}'"); // withdrawer 
+                Boolean isWihdrawerAdmin = wihdrawerInfo.Rows[0]["RoleCode"].ToString() == "A" ? true : false;
+
+                if (isWihdrawerAdmin)
+                {
+                    // sender (Admin) can sent all money
+                    if (Math.Round(Convert.ToDouble(request.amount)) > Math.Round((float)Convert.ToDouble(withdrawerTransaction.Rows[0]["TotalAmount"])))
                     {
-                        flag = false;
-                    }
-                    if (TotalAmount < Convert.ToDouble(request.amount))
-                    {
-                        response.MessageBox = "Your Amuont is greater than balance";
+                        response.MessageBox = "Your Balance amount is less than you current amount";
                         response.Success = false;
                         return response;
                     }
-                    if (flag)
+
+                    response.MessageBox = "Admin Can't Withdraw at this moment";
+                    response.Success = false;
+                    return response;
+                }
+                else
+                {
+
+
+                    if (Convert.ToDouble(withdrawerTransaction.Rows[0]["Totalamount"]) >= (Convert.ToDouble(withdrawerTransaction.Rows[0]["Investment"]) * 2.00))
                     {
-                        
-                        Double investment = userAmount.Rows[0]["Investment"] != DBNull.Value ? Convert.ToDouble(userAmount.Rows[0]["Investment"]) : 0.0;
+                        // sender can sent all money
 
-                        double difference = Math.Abs(investment - TotalAmount);
-                        double roundedResult = Math.Round(difference, 1);
+                        DataTable sumOfPendingWithdraws = _database.SqlView($@"select  COALESCE(sum(withdrawal_amount), 0) as withdrawal_amount from tbl_PendingRequests where UsernameOrEmail = '{request.EmailOrUsername}' AND Approved=0 ");
+                        Double differceAmount = Math.Round(Math.Abs((float)Convert.ToDouble(withdrawerTransaction.Rows[0]["TotalAmount"]) - Convert.ToDouble(sumOfPendingWithdraws.Rows[0]["withdrawal_amount"])));
 
-                        if (roundedResult < Convert.ToDouble(request.amount))
+                        if (Math.Round(Convert.ToDouble(request.amount)) > differceAmount)
                         {
                             response.MessageBox = "Your Profit amount is less than you current amount";
                             response.Success = false;
                             return response;
                         }
-                        flag = true;
-                    }
 
-                    DataTable sumOfalreadyPending = _database.SqlView($@"select  COALESCE(sum(withdrawal_amount), 0) as totalSum from tbl_PendingRequests where UsernameOrEmail = '{request.EmailOrUsername}' AND Approved=0 ");
-                    //Double total = Convert.ToDouble(userAmount.Rows[0]["Investment"]) + Convert.ToDouble(sumOfalreadyPending.Rows[0]["totalSum"]) + Convert.ToDouble(request.amount);
 
-                    Double total = 0;
-                    Boolean conditionmaker = false;
-                    if (flag)
-                    {
-                        total = Convert.ToDouble(userAmount.Rows[0]["Investment"]) + Convert.ToDouble(sumOfalreadyPending.Rows[0]["totalSum"]) + Convert.ToDouble(request.amount);
-                        conditionmaker = Math.Round(total, 1) <= Math.Round(Convert.ToDouble(userAmount.Rows[0]["TotalAmount"]), 1);
                     }
                     else
                     {
-                        
-                        total = Convert.ToDouble(sumOfalreadyPending.Rows[0]["totalSum"]) + Convert.ToDouble(request.amount);
-                        conditionmaker = Math.Round(total, 1) > Math.Round(TotalAmount, 1) ? false : true;
-                    }
+                        // sender only sent profit money
 
+                        Double differceAmount = Math.Round(Math.Abs((float)Convert.ToDouble(withdrawerTransaction.Rows[0]["TotalAmount"]) - (float)Convert.ToDouble(withdrawerTransaction.Rows[0]["Investment"])));
+                        DataTable sumOfPendingWithdraws = _database.SqlView($@"select  COALESCE(sum(withdrawal_amount), 0) as withdrawal_amount from tbl_PendingRequests where UsernameOrEmail = '{request.EmailOrUsername}' AND Approved=0 ");
 
-                    if (conditionmaker)
-                    {
-                        string query = $@"insert into tbl_PendingRequests(UsernameOrEmail,UserId,[desc],cnic,phoneNumber,payload,withdrawal_amount) values(@UsernameOrEmail,@UserId,@desc,@cnic,@phoneNumber, '','{request.amount}')";
-                        int affected = _database.ExecuteNonQuery(query, param);
-                        if (affected > 0)
+                        if ( Math.Round(Convert.ToDouble(request.amount)) > Math.Abs((differceAmount - Convert.ToDouble(sumOfPendingWithdraws.Rows[0]["withdrawal_amount"]))))
                         {
-                            response.MessageBox = "Successfully Submitted Request";
+                            response.MessageBox = "Your Profit amount is less than you current amount";
+                            response.Success = false;
+                            return response;
                         }
+
                     }
-                    else
+
+
+                    List<SqlParameter> param = new List<SqlParameter>();
+                    param.Add(new SqlParameter("@UsernameOrEmail", request.EmailOrUsername));
+                    param.Add(new SqlParameter("@UserId", request.UserID));
+                    param.Add(new SqlParameter("@Payload", request.Payload.ToString()));
+                    param.Add(new SqlParameter("@desc", request.Description));
+                    param.Add(new SqlParameter("@cnic", request.cnic));
+                    param.Add(new SqlParameter("@phoneNumber", request.phoneNumber));
+                    string insertPendingWirthdrawQuery = $@"insert into tbl_PendingRequests(UsernameOrEmail,UserId,[desc],cnic,phoneNumber,payload,withdrawal_amount) values(@UsernameOrEmail,@UserId,@desc,@cnic,@phoneNumber, '','{request.amount}')";
+                    int affected = _database.ExecuteNonQuery(insertPendingWirthdrawQuery, param);
+                    if (affected > 0)
                     {
-                        response.Success = false;
-                        response.MessageBox = "Your Profit has been Ended, Wait for the Admin to accept your transactions";
-                        return response;
+                        response.MessageBox = "Successfully Submitted Request to Admin";
                     }
-                }
-                else
-                {
-                    response.Success = false;
-                    response.MessageBox = "Can't WithDraw At this moment";
-                    return response;
+
                 }
 
                 
@@ -131,6 +150,7 @@ namespace pobject.Core.OtherServices
                 response.MessageBox = "exception due to "+e;
                 return response;
             }
+            response.MessageBox = "Successfully Submitted Request to Admin";
             response.Success= true;
             return response;
         }

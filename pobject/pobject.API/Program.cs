@@ -81,6 +81,7 @@ builder.Services.AddControllersWithViews().AddJsonOptions(options =>
 builder.Services.AddCors(
     options => {
         options.AddPolicy("AllowSpecificOrigin",
+        //options.AddPolicy("AllowAll",
         builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
     });
 
@@ -175,6 +176,9 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("AllowSpecificOrigin");
+//app.UseCors("AllowAll");
+
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

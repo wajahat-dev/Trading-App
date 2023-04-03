@@ -31,11 +31,15 @@ const RowWithBoxes = () => {
       </Box>
       <Box border={1} p={2} m={1}>
         <Title>Profit Value (Bitcoin)</Title>
-        <Typography variant="subtitle1"> ${(initData.profit || 0).toFixed(2)}</Typography>
+        <Typography variant="subtitle1"> ${(initData.totalamount - initData.investment  || 0).toFixed(2)}</Typography>
       </Box>
       <Box border={1} p={2} m={1}>
         <Title>Investment Value (Bitcoin)</Title>
-        <Typography variant="subtitle1"> ${(initData.investment || 0).toFixed(2)}</Typography>
+        <Typography variant="subtitle1"> ${(initData.investment * 2 || 0).toFixed(2)}</Typography>
+      </Box>
+      <Box border={1} p={2} m={1}>
+        <Title>Daily Commision (Bitcoin)</Title>
+        <Typography variant="subtitle1"> ${}</Typography>
       </Box>
     </Box>
   );
