@@ -34,6 +34,12 @@ public class Internal_JWT_Request
 }
 public class UserFinanceData
 {
+    public UserFinanceData()
+    {
+        griddata = new DataTable();
+        historydata = new DataTable();
+    }
+
     public DataTable griddata { get; set; }
     public float totalamount { get; set; }
     public DataTable historydata { get; set; }

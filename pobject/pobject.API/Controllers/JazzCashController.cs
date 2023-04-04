@@ -49,6 +49,7 @@ namespace pobject.API.Controllers
 
 
         [HttpPost]
+
         [Route("jc_wallet")]
         public async Task<JazzRespone> jc_wallet(JazzRequest request)
         {
@@ -129,15 +130,19 @@ namespace pobject.API.Controllers
                 //}
                 #endregion
 
+                DataTable withdrawerTransactionInfo = _database.SqlView($@"select * from tbl_useramountdetails where EmailOrUsername = '{request.emailOrUsername}'");
 
-             
 
-                    float withdrawl = (float)Convert.ToDouble(withdrawer.Rows[0]["withdrawal_amount"]); 
+                float investment = (float)Convert.ToDouble(withdrawerTransactionInfo.Rows[0]["Investment"]);
+                float withdrawl = (float)Convert.ToDouble(withdrawer.Rows[0]["withdrawal_amount"]); 
                     float totatAmount = (float)Convert.ToDouble(withdrawer.Rows[0]["Totalamount"]); 
                     float commissionvalue = ((float)5 / (float)100) * withdrawl; // withdrawer's senior
-                    float basevalue = totatAmount - (withdrawl + commissionvalue); // withdrawer
+                    //float basevalue = totatAmount - (withdrawl + commissionvalue); // withdrawer
+                float basevalue =  (totatAmount - withdrawl) < 0 ? 0 : totatAmount - withdrawl; // withdrawer
+                float baseinvestment = (investment - withdrawl) < 0 ? 0 : investment - withdrawl;
 
-                    DataTable updateUserAmount = _database.SqlView($@"UPDATE tbl_useramountdetails SET TotalAmount = '{basevalue}' WHERE EmailOrUsername = '{request.emailOrUsername}'");
+
+                    DataTable updateUserAmount = _database.SqlView($@"UPDATE tbl_useramountdetails SET TotalAmount = '{basevalue}', Investment = '{baseinvestment}' WHERE EmailOrUsername = '{request.emailOrUsername}'");
                     DataTable setApprovedpayment = _database.SqlView($@"UPDATE tbl_PendingRequests SET  Approved = 1 WHERE UsernameOrEmail = '{request.emailOrUsername}' AND [id_pk]='{request.id_Pk}' ");
 
 
