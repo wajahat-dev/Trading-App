@@ -94,32 +94,7 @@ SELECT COALESCE(c.TotalAmount, 0) AS TotalAmount,a.RoleCode, a.inActivedate, a.i
             {
                 if (user.Rows.Count > 0)
                 {
-                    //if (userInfo.Rows[0]["RoleCode"].ToString() == "X")
-                    //{
-                    //put it on deposit amount api
-
-
-                    //CASE
-                    //            WHEN { user.Rows[0]["TotalAmount"]} >= 5 THEN { user.Rows[0]["TotalAmount"]}
-                    //+({ user.Rows[0]["TotalAmount"]}
-                    //*0.03)
-                    //            WHEN { user.Rows[0]["TotalAmount"]} >= 100 THEN { user.Rows[0]["TotalAmount"]}
-                    //+({ user.Rows[0]["TotalAmount"]}
-                    //*0.03) 
-                    //            WHEN { user.Rows[0]["TotalAmount"]} >= 200 THEN { user.Rows[0]["TotalAmount"]}
-                    //+({ user.Rows[0]["TotalAmount"]}
-                    //*0.04)
-                    //            WHEN { user.Rows[0]["TotalAmount"]} >= 1000 THEN { user.Rows[0]["TotalAmount"]}
-                    //+({ user.Rows[0]["TotalAmount"]}
-                    //*0.055) 
-                    //            WHEN { user.Rows[0]["TotalAmount"]} >= 2000 THEN { user.Rows[0]["TotalAmount"]}
-                    //+({ user.Rows[0]["TotalAmount"]}
-                    //*0.06)
-                    //            WHEN { user.Rows[0]["TotalAmount"]} >= 50000 THEN { user.Rows[0]["TotalAmount"]}
-                    //+({ user.Rows[0]["TotalAmount"]}
-                    //*0.065) 
-                    //            ELSE 0
-                    //END
+                   
 
                         if (historydata.Rows.Count == 0) // new created amount and have one transaction
                         {
