@@ -94,8 +94,10 @@ SELECT COALESCE(c.TotalAmount, 0) AS TotalAmount,a.RoleCode, a.inActivedate, a.i
             {
                 if (user.Rows.Count > 0)
                 {
-                   
 
+
+                    if (user.Rows[0]["RoleCode"] == "X")
+                    {
                         if (historydata.Rows.Count == 0) // new created amount and have one transaction
                         {
 
@@ -143,21 +145,23 @@ END
                             _database.SqlView(query);
 
 
-                        DataTable latestRecord = _database.SqlView($@"select top 1* from tbl_useramountdetailshistory where EmailOrUsername = '{user.Rows[0]["EmailOrUsername"]}' order by Date DESC");
+                            DataTable latestRecord = _database.SqlView($@"select top 1* from tbl_useramountdetailshistory where EmailOrUsername = '{user.Rows[0]["EmailOrUsername"]}' order by Date DESC");
 
-                        if (latestRecord.Rows.Count > 0)
-                        {
-                            DataTable updateRecord = _database.SqlView($@"UPDATE tbl_useramountdetails SET [TotalAmount] = '{latestRecord.Rows[0]["TotalAmount"]}'  WHERE [EmailOrUsername] = '{user.Rows[0]["EmailOrUsername"]}'");
+                            if (latestRecord.Rows.Count > 0)
+                            {
+                                DataTable updateRecord = _database.SqlView($@"UPDATE tbl_useramountdetails SET [TotalAmount] = '{latestRecord.Rows[0]["TotalAmount"]}'  WHERE [EmailOrUsername] = '{user.Rows[0]["EmailOrUsername"]}'");
 
+                            }
                         }
                     }
-                    }
-                user = _database.SqlView($"select * from tbl_useramountdetails where EmailOrUsername =  '{email}'  ORDER BY date asc");
-                reponse.griddata = user;
+                    user = _database.SqlView($"select * from tbl_useramountdetails where EmailOrUsername =  '{email}'  ORDER BY date asc");
+                    reponse.griddata = user;
                     reponse.totalamount = (float)Convert.ToDouble(user.Rows[0]["TotalAmount"]);
                     reponse.profit = Math.Abs((float)Convert.ToDouble(user.Rows[0]["TotalAmount"]) - (float)Convert.ToDouble(user.Rows[0]["Investment"]));
                     reponse.investment = (float)Convert.ToDouble(user.Rows[0]["Investment"]);
-                //}
+                    //}
+                }
+
 
 
 
