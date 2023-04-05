@@ -64,7 +64,7 @@ export default function PendingRequestTable() {
             headerName: 'Is Approved',
             sortable: false,
             renderCell: (params) => {
-                return params.row.approved ? 'Yes' : 'No'
+                return +params.row.approved == 1 ? 'Yes' : 'No'
             },
         },
         // { field: 'desc', headerName: 'Desc', width: 150, },

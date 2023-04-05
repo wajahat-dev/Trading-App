@@ -138,27 +138,44 @@ namespace pobject.API.Controllers
                     float totatAmount = (float)Convert.ToDouble(withdrawer.Rows[0]["Totalamount"]); 
                     float commissionvalue = ((float)5 / (float)100) * withdrawl; // withdrawer's senior
                     //float basevalue = totatAmount - (withdrawl + commissionvalue); // withdrawer
-                float basevalue =  (totatAmount - withdrawl) < 0 ? 0 : totatAmount - withdrawl; // withdrawer
-                float baseinvestment = (investment - withdrawl) < 0 ? 0 : investment - withdrawl;
+                float basevalue =    0 ; // withdrawer
+                if ((totatAmount - withdrawl) < 0)
+                {
+                    basevalue = 0;
+                }
+                else
+                {
+                    basevalue = totatAmount - withdrawl;
+                }
 
+
+                float baseinvestment =  0 ;
+                if ((investment - withdrawl) < 0)
+                {
+                    baseinvestment = 0;
+                }
+                else
+                {
+                    baseinvestment = investment - withdrawl;
+                }
 
                     DataTable updateUserAmount = _database.SqlView($@"UPDATE tbl_useramountdetails SET TotalAmount = '{basevalue}', Investment = '{baseinvestment}' WHERE EmailOrUsername = '{request.emailOrUsername}'");
                     DataTable setApprovedpayment = _database.SqlView($@"UPDATE tbl_PendingRequests SET  Approved = 1 WHERE UsernameOrEmail = '{request.emailOrUsername}' AND [id_pk]='{request.id_Pk}' ");
 
-
+                // no need to give commision to senior as per user requirement
                 //DataTable seniorTransaction = _database.SqlView($@"
                 //                SELECT * FROM tbl_useramountdetails usr  JOIN 
 				            //    tbl_Referrals ref ON usr.EmailOrUsername = ref.ReferredEmail where ref.ReferrerEmail = '{request.emailOrUsername}'");
 
                 //if (seniorTransaction.Rows.Count > 0)
                 //{
-                //    if ((float)Convert.ToDouble(seniorTransaction.Rows[0]["TotalAmount"]) > 0)
-                //    {
-                //        DataTable seniordatauser = _database.SqlView($@"UPDATE tbl_useramountdetails SET TotalAmount= TotalAmount + '{commissionvalue}'  WHERE EmailOrUsername = '{seniorTransaction.Rows[0]["EmailOrUsername"]}'");
-                //    }
+                    //if ((float)Convert.ToDouble(seniorTransaction.Rows[0]["TotalAmount"]) > 0)
+                    //{
+                    //    DataTable seniordatauser = _database.SqlView($@"UPDATE tbl_useramountdetails SET TotalAmount= TotalAmount + '{commissionvalue}'  WHERE EmailOrUsername = '{seniorTransaction.Rows[0]["EmailOrUsername"]}'");
+                    //}
 
                 //}
-                
+
 
 
             }

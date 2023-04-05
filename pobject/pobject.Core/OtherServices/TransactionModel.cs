@@ -22,7 +22,7 @@ namespace pobject.Core.OtherServices
     {
         public string Referral_UserId { get; set; }
         
-        public int amount { get; set; }
+        public float amount { get; set; }
     }
 
 }

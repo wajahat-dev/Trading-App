@@ -40,6 +40,15 @@ namespace pobject.Core.OtherServices
             try
             {
 
+
+                if ( Convert.ToDouble(request.amount) <= 0.0)
+                {
+                    response.MessageBox = "Your Amount Can't be less than or equal to zero";
+                    response.Success = false;
+                    return response;
+                }
+
+
                 if (String.IsNullOrEmpty(request.EmailOrUsername))
                 {
                     response.MessageBox = "Email Not Found";

@@ -51,7 +51,7 @@ namespace pobject.Core.Transactions
             return response;
         }
 
-        public int updateamount(string Referral_UserId,int amount, string adminEmail)
+        public int updateamount(string Referral_UserId,float amount, string adminEmail)
         {
            
             DataTable senderTransaction_Admin = _database.SqlView($"select * from tbl_useramountdetails where EmailOrUsername = '{adminEmail}'");
@@ -163,6 +163,13 @@ namespace pobject.Core.Transactions
                 DataTable receiver = _database.SqlView($@"select * from tbl_users where EmailOrUsername='{request.UserEmail}'"); // receiver
 
 
+                if (request.Amount <= 0)
+                {
+                    response.MessageBox = "Your Amount Can't be less than or equal to zero";
+                    response.Success = false;
+                    return response;
+                }
+
                 if (sender.Rows.Count == 0 || receiver.Rows.Count == 0)
                 {
                     response.MessageBox = "Either User don\'t exists";
@@ -209,7 +216,7 @@ namespace pobject.Core.Transactions
                     else
                     {
                         // sender only sent profit money
-                        if (Math.Round(request.Amount) > Math.Round(Math.Abs((float)Convert.ToDouble(senderTransaction.Rows[0]["TotalAmount"]) - (float)Convert.ToDouble(senderTransaction.Rows[0]["Investment"]))))
+                        if (request.Amount > Math.Round(Math.Abs((float)Convert.ToDouble(senderTransaction.Rows[0]["TotalAmount"]) - (float)Convert.ToDouble(senderTransaction.Rows[0]["Investment"]))))
                         {
                             response.MessageBox = "Your Profit amount is less than you current amount";
                             response.Success = false;

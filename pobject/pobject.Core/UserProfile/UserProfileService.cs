@@ -96,7 +96,7 @@ SELECT COALESCE(c.TotalAmount, 0) AS TotalAmount,a.RoleCode, a.inActivedate, a.i
                 {
 
 
-                    if (user.Rows[0]["RoleCode"] == "X")
+                    if (userInfo.Rows[0]["RoleCode"].ToString() == "X")
                     {
                         if (historydata.Rows.Count == 0) // new created amount and have one transaction
                         {
@@ -107,6 +107,7 @@ SELECT COALESCE(c.TotalAmount, 0) AS TotalAmount,a.RoleCode, a.inActivedate, a.i
                         }
                         else
                         {
+                            //SELECT @TotalAmount = Max(TotalAmount) from tbl_useramountdetailshistory WHERE [EmailOrUsername] = '{user.Rows[0]["EmailOrUsername"]}'
                             string query = $@"
 
 DECLARE @DateChecked datetime 
@@ -118,7 +119,7 @@ SELECT  @DateChecked = COALESCE(Max(Date), GETDATE())  from tbl_useramountdetail
 WHILE CONVERT(DATE, @DateChecked) < CONVERT(DATE, GETDATE())
 BEGIN
 	SET @DateChecked = DATEADD(day, 1, @DateChecked)
-	SELECT @TotalAmount = Max(TotalAmount) from tbl_useramountdetailshistory WHERE [EmailOrUsername] = '{user.Rows[0]["EmailOrUsername"]}'
+	SELECT @TotalAmount = '{user.Rows[0]["TotalAmount"]}'
     DECLARE @Profit int = 
         CASE 
             WHEN @TotalAmount >= 5 THEN @TotalAmount * 0.03
@@ -144,14 +145,14 @@ END
 ";
                             _database.SqlView(query);
 
+                            // this condition will run when while loop run
+                            //DataTable latestRecord = _database.SqlView($@"select top 1* from tbl_useramountdetailshistory where EmailOrUsername = '{user.Rows[0]["EmailOrUsername"]}' order by Date DESC");
 
-                            DataTable latestRecord = _database.SqlView($@"select top 1* from tbl_useramountdetailshistory where EmailOrUsername = '{user.Rows[0]["EmailOrUsername"]}' order by Date DESC");
+                            //if (latestRecord.Rows.Count > 0)
+                            //{
+                            //    DataTable updateRecord = _database.SqlView($@"UPDATE tbl_useramountdetails SET [TotalAmount] = '{latestRecord.Rows[0]["TotalAmount"]}'  WHERE [EmailOrUsername] = '{user.Rows[0]["EmailOrUsername"]}'");
 
-                            if (latestRecord.Rows.Count > 0)
-                            {
-                                DataTable updateRecord = _database.SqlView($@"UPDATE tbl_useramountdetails SET [TotalAmount] = '{latestRecord.Rows[0]["TotalAmount"]}'  WHERE [EmailOrUsername] = '{user.Rows[0]["EmailOrUsername"]}'");
-
-                            }
+                            //}
                         }
                     }
                     user = _database.SqlView($"select * from tbl_useramountdetails where EmailOrUsername =  '{email}'  ORDER BY date asc");
