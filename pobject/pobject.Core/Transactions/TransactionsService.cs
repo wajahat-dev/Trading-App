@@ -183,16 +183,33 @@ Commission = Commission +  '{commissionvalue}'
                     return response;
                 }
 
-                if (useremail == request.UserEmail)
-                {
-                    response.MessageBox = "Sender or Receiver can't be same";
-                    response.Success = false;
-                    return response;
-                }
+               
 
 
                 Boolean isSenderAdmin = sender.Rows[0]["RoleCode"].ToString() == "A" ? true : false;
                 Boolean isReceiverAdmin = receiver.Rows[0]["RoleCode"].ToString() == "A" ? true : false;
+
+
+
+
+                if (useremail == request.UserEmail)
+                {
+
+
+                    if (isSenderAdmin)
+                    {
+                         _database.SqlView($@"UPDATE [dbo].[tbl_useramountdetails] SET [TotalAmount] = TotalAmount +  '{request.Amount}', Investment = Investment + '{request.Amount}'  WHERE [EmailOrUsername] = '{useremail}'");
+                    }
+                    else
+                    {
+                        response.MessageBox = "Sender or Receiver can't be same";
+                        response.Success = false;
+                        return response;
+                    }
+
+                }
+
+
 
                 DataTable senderTransaction = _database.SqlView($@"select * from tbl_useramountdetails where EmailOrUsername='{useremail}'");  // sender
                 DataTable receiverTransaction = _database.SqlView($@"select * from tbl_useramountdetails where EmailOrUsername='{request.UserEmail}'"); // receiver

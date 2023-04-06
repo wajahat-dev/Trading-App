@@ -107,50 +107,101 @@ SELECT COALESCE(c.TotalAmount, 0) AS TotalAmount,a.RoleCode, a.inActivedate, a.i
                         }
                         else
                         {
-                            //SELECT @TotalAmount = Max(TotalAmount) from tbl_useramountdetailshistory WHERE [EmailOrUsername] = '{user.Rows[0]["EmailOrUsername"]}'
-                            string query = $@"
-
-DECLARE @DateChecked datetime 
-DECLARE @TotalAmount int 
-SELECT  @DateChecked = COALESCE(Max(Date), GETDATE())  from tbl_useramountdetailshistory WHERE [EmailOrUsername] =  '{user.Rows[0]["EmailOrUsername"]}'
 
 
-
-WHILE CONVERT(DATE, @DateChecked) < CONVERT(DATE, GETDATE())
-BEGIN
-	SET @DateChecked = DATEADD(day, 1, @DateChecked)
-	SELECT @TotalAmount = '{user.Rows[0]["TotalAmount"]}'
-    DECLARE @Profit int = 
-        CASE 
-            WHEN @TotalAmount >= 5 THEN @TotalAmount * 0.03
-            WHEN @TotalAmount >= 100 THEN @TotalAmount * 0.03 
-            WHEN @TotalAmount >= 200 THEN @TotalAmount * 0.04
-            WHEN @TotalAmount >= 1000 THEN @TotalAmount * 0.055 
-            WHEN @TotalAmount >= 2000 THEN @TotalAmount * 0.06
-            WHEN @TotalAmount >= 50000 THEN @TotalAmount * 0.065 
-            ELSE 0
-        END
+                            Double totalAmount  = Convert.ToDouble(user.Rows[0]["TotalAmount"]); // Initial value of total amount;
+                            Double profit = 0.00;
+                            DataTable maxdate = _database.SqlView($@"SELECT COALESCE(MAX(Date), GETDATE()) as Date FROM tbl_useramountdetailshistory WHERE [EmailOrUsername] = '{user.Rows[0]["EmailOrUsername"]}'");
+                            DateTime dateChecked = DateTime.Parse(maxdate.Rows[0]["Date"].ToString());
 
 
-	     SET @TotalAmount = @TotalAmount + @Profit
+                            if (dateChecked < DateTime.Now.Date)
+                            {
+                                while (dateChecked < DateTime.Now.Date)
+                                {
+                                    dateChecked = dateChecked.AddDays(1);
+                                    if (totalAmount >= 5 && totalAmount < 100)
+                                        profit = (Double)(totalAmount * 0.03);
+                                    else if (totalAmount >= 100 && totalAmount < 200)
+                                        profit = (Double)(totalAmount * 0.03);
+                                    else if (totalAmount >= 200 && totalAmount < 1000)
+                                        profit = (Double)(totalAmount * 0.04);
+                                    else if (totalAmount >= 1000 && totalAmount < 2000)
+                                        profit = (Double)(totalAmount * 0.055);
+                                    else if (totalAmount >= 2000 && totalAmount < 50000)
+                                        profit = (Double)(totalAmount * 0.06);
+                                    else if (totalAmount >= 50000 && totalAmount < 50001)
+                                        profit = (Double)(totalAmount * 0.065);
+                                    else
+                                        profit = 0;
+                                    totalAmount += profit;
+                                    _database.SqlView($@"INSERT INTO tbl_useramountdetailshistory (EmailOrUsername, UserId, TotalAmount, Date) 
+VALUES ('{user.Rows[0]["EmailOrUsername"]}','{user.Rows[0]["UserId"]}', {totalAmount}, '{dateChecked}')");
+
+                                }
+                            }
 
 
-    INSERT INTO tbl_useramountdetailshistory  
-        (EmailOrUsername, UserId, TotalAmount, Date) 
-    VALUES  
-        ('{user.Rows[0]["EmailOrUsername"]}','{user.Rows[0]["UserId"]}',  @TotalAmount, @DateChecked)
 
-   
-END
-";
-                            _database.SqlView(query);
+                            DataTable latestRecord = _database.SqlView($@"select top 1* from tbl_useramountdetailshistory where EmailOrUsername = '{user.Rows[0]["EmailOrUsername"]}' order by Date DESC");
 
+                            if (latestRecord.Rows.Count > 0)
+                            {
+                                //DataTable updateRecord = _database.SqlView($@"UPDATE tbl_useramountdetails SET [TotalAmount] = '{latestRecord.Rows[0]["TotalAmount"]}', [Profit] = Profit +  '{latestRecord.Rows[0]["Profit"]}'  WHERE [EmailOrUsername] = '{user.Rows[0]["EmailOrUsername"]}'");
+                                DataTable updateRecord = _database.SqlView($@"UPDATE tbl_useramountdetails SET [TotalAmount] = '{latestRecord.Rows[0]["TotalAmount"]}', 
+Profit = '{ Convert.ToDouble( latestRecord.Rows[0]["TotalAmount"].ToString() )     - Convert.ToDouble(user.Rows[0]["Investment"].ToString()) }'
+WHERE [EmailOrUsername] = '{user.Rows[0]["EmailOrUsername"]}'");
+
+                            }
+
+
+
+
+
+
+                            //                            string query = $@"
+
+                            //DECLARE @DateChecked datetime 
+                            //DECLARE @TotalAmount int 
+                            //SELECT  @DateChecked = COALESCE(Max(Date), GETDATE())  from tbl_useramountdetailshistory WHERE [EmailOrUsername] =  '{user.Rows[0]["EmailOrUsername"]}'
+
+
+
+                            //WHILE CONVERT(DATE, @DateChecked) < CONVERT(DATE, GETDATE())
+                            //BEGIN
+                            //	SET @DateChecked = DATEADD(day, 1, @DateChecked)
+                            //	SELECT @TotalAmount = {Convert.ToDouble(user.Rows[0]["TotalAmount"])}
+                            //    DECLARE @Profit int = 
+                            //        CASE 
+                            //            WHEN @TotalAmount >= 5 THEN @TotalAmount * 0.03
+                            //            WHEN @TotalAmount >= 100 THEN @TotalAmount * 0.03 
+                            //            WHEN @TotalAmount >= 200 THEN @TotalAmount * 0.04
+                            //            WHEN @TotalAmount >= 1000 THEN @TotalAmount * 0.055 
+                            //            WHEN @TotalAmount >= 2000 THEN @TotalAmount * 0.06
+                            //            WHEN @TotalAmount >= 50000 THEN @TotalAmount * 0.065 
+                            //            ELSE 0
+                            //        END
+
+
+                            //	     SET @TotalAmount = @TotalAmount + @Profit
+
+
+                            //    INSERT INTO tbl_useramountdetailshistory  
+                            //        (EmailOrUsername, UserId, TotalAmount, Date) 
+                            //    VALUES  
+                            //        ('{user.Rows[0]["EmailOrUsername"]}','{user.Rows[0]["UserId"]}',  @TotalAmount, @DateChecked)
+
+
+                            //END
+                            //";
+                            //                            _database.SqlView(query);
+                            float test = 0;
                             // this condition will run when while loop run
                             //DataTable latestRecord = _database.SqlView($@"select top 1* from tbl_useramountdetailshistory where EmailOrUsername = '{user.Rows[0]["EmailOrUsername"]}' order by Date DESC");
 
                             //if (latestRecord.Rows.Count > 0)
                             //{
-                            //    DataTable updateRecord = _database.SqlView($@"UPDATE tbl_useramountdetails SET [TotalAmount] = '{latestRecord.Rows[0]["TotalAmount"]}'  WHERE [EmailOrUsername] = '{user.Rows[0]["EmailOrUsername"]}'");
+                            //    DataTable updateRecord = _database.SqlView($@"UPDATE tbl_useramountdetails SET [TotalAmount] = '{latestRecord.Rows[0]["TotalAmount"]}', [Profit] = Profit +  '{latestRecord.Rows[0]["Profit"]}'  WHERE [EmailOrUsername] = '{user.Rows[0]["EmailOrUsername"]}'");
 
                             //}
                         }
