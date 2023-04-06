@@ -98,7 +98,7 @@ namespace pobject.Core.Transactions
             }
 
             DataTable deductSender = _database.SqlView($@"UPDATE [dbo].[tbl_useramountdetails] SET [TotalAmount]
-                    = TotalAmount - '{amount + commissionvalue}', Investment = Investment - '{amount}' WHERE [EmailOrUsername] = '{adminEmail}'");
+                    = TotalAmount - '{amount + commissionvalue}', Investment = Investment - '{amount + commissionvalue}' WHERE [EmailOrUsername] = '{adminEmail}'");
 
             if (isReceiverSeniorExist)
             {
@@ -204,15 +204,12 @@ Commission = Commission +  '{commissionvalue}'
                 float profit = (float)Convert.ToDouble(senderTransaction.Rows[0]["Profit"]);
                 float commission = (float)Convert.ToDouble(senderTransaction.Rows[0]["Commission"]);
 
-                if (request.Amount > totatAmount)
-                {
-                    response.MessageBox = "Can't Transaction since user's balance is less than his withdrawal amount";
-                    response.Success = false;
-                    return response;
-                }
 
 
+
+                //float totalTmp = 0;
                 float totalTmp = investment - request.Amount;
+                
                 float profitTmp = profit;
                 float commissionTmp = commission;
 
@@ -220,15 +217,26 @@ Commission = Commission +  '{commissionvalue}'
                 if (isSenderAdmin)
                 {
                     // sender (Admin) can sent all money
-                    if (Math.Round(request.Amount) > Math.Round((float)Convert.ToDouble(senderTransaction.Rows[0]["TotalAmount"])))
+                    if (Math.Round(request.Amount) > Math.Round((float)Convert.ToDouble(senderTransaction.Rows[0]["Investment"])))
                     {
                         response.MessageBox = "Your Balance amount is less than you current amount";
                         response.Success = false;
                         return response;
                     }
+                    //totalTmp = investment - request.Amount;
+                    profitTmp = 0;
+                    commissionTmp = 0;
                 }
                 else
                 {
+
+                    if (request.Amount > totatAmount)
+                    {
+                        response.MessageBox = "Can't Transaction since user's balance is less than his withdrawal amount";
+                        response.Success = false;
+                        return response;
+                    }
+
                     if (Convert.ToDouble(senderTransaction.Rows[0]["Totalamount"]) >= (Convert.ToDouble(senderTransaction.Rows[0]["Investment"]) * 2.00))
                     {
                         // sender can sent all money
@@ -239,6 +247,18 @@ Commission = Commission +  '{commissionvalue}'
                             response.Success = false;
                             return response;
                         }
+
+                        //totalTmp = investment - request.Amount;
+                        //if (totalTmp < 0)
+                        //{
+                        //    profitTmp = profitTmp + totalTmp;
+                        //    totalTmp = 0;
+                        //    if (profitTmp < 0)
+                        //    {
+                        //        commissionTmp = commissionTmp + profitTmp;
+                        //        profitTmp = 0;
+                        //    }
+                        //}
                     }
                     else
                     {
@@ -253,24 +273,37 @@ Commission = Commission +  '{commissionvalue}'
                             return response;
                         }
                     }
-             
 
-                }
-
-                if (totalTmp < 0)
-                {
-                    profitTmp = profitTmp + totalTmp;
-                    totalTmp = 0;
-                    if (profitTmp < 0)
+                    //if (totalTmp < 0)
+                    //{
+                    //    profitTmp = profitTmp + totalTmp;
+                    //    totalTmp = 0;
+                    //    if (profitTmp < 0)
+                    //    {
+                    //        commissionTmp = commissionTmp + profitTmp;
+                    //        profitTmp = 0;
+                    //    }
+                    //}
+                    //profitTmp =
+                    if (totalTmp < 0)
                     {
-                        commissionTmp = commissionTmp + profitTmp;
-                        profitTmp = 0;
+                        profitTmp = profitTmp + totalTmp;
+                        totalTmp = 0;
+                        if (profitTmp < 0)
+                        {
+                            commissionTmp = commissionTmp + profitTmp;
+                            profitTmp = 0;
+                        }
                     }
+
+
                 }
+
+                
 
 
                 DataTable deductsender = _database.SqlView($@"UPDATE [dbo].[tbl_useramountdetails] SET [TotalAmount] =  '{totalTmp + profitTmp + commissionTmp}', Investment = '{totalTmp}',
-Commission= '{commissionTmp}', Profit= '{profitTmp}',  WHERE [EmailOrUsername] = '{useremail}'");
+Commission= '{commissionTmp}', Profit= '{profitTmp}' WHERE [EmailOrUsername] = '{useremail}'");
                 DataTable addreceiver = _database.SqlView($@"UPDATE [dbo].[tbl_useramountdetails] SET [TotalAmount] = TotalAmount + {request.Amount}, Investment = Investment + '{request.Amount}' WHERE [EmailOrUsername] = '{request.UserEmail}'");
 
 

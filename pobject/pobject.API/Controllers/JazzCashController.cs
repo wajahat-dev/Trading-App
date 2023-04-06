@@ -167,10 +167,12 @@ namespace pobject.API.Controllers
 
 
                 DataTable updateUserAmount = _database.SqlView($@"UPDATE tbl_useramountdetails SET TotalAmount = '{totalTmp + profitTmp + commissionTmp}', Investment = '{totalTmp}',
-Commission= '{commissionTmp}', Profit= '{profitTmp}',
+Commission= '{commissionTmp}', Profit= '{profitTmp}'
 
 WHERE EmailOrUsername = '{request.emailOrUsername}'");
                 DataTable setApprovedpayment = _database.SqlView($@"UPDATE tbl_PendingRequests SET  Approved = 1 WHERE UsernameOrEmail = '{request.emailOrUsername}' AND [id_pk]='{request.id_Pk}' ");
+
+               
 
                 //float basevalue =    0 ; // withdrawer
                 //float profitvalue = (float)Convert.ToDouble(withdrawerTransactionInfo.Rows[0]["Investment"]);
@@ -256,7 +258,7 @@ WHERE EmailOrUsername = '{request.emailOrUsername}'");
                 return response;
             }
             response.message = "Transaction Successfully Completed";
-            response.success = false;
+            response.success = true;
             return response;
         }
 
