@@ -158,7 +158,8 @@ END
                     user = _database.SqlView($"select * from tbl_useramountdetails where EmailOrUsername =  '{email}'  ORDER BY date asc");
                     reponse.griddata = user;
                     reponse.totalamount = (float)Convert.ToDouble(user.Rows[0]["TotalAmount"]);
-                    reponse.profit = Math.Abs((float)Convert.ToDouble(user.Rows[0]["TotalAmount"]) - (float)Convert.ToDouble(user.Rows[0]["Investment"]));
+                    reponse.profit = (float)Convert.ToDouble(user.Rows[0]["Profit"]);
+                    reponse.commission = (float)Convert.ToDouble(user.Rows[0]["commission"]);
                     reponse.investment = (float)Convert.ToDouble(user.Rows[0]["Investment"]);
                     //}
                 }

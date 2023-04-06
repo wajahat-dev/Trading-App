@@ -45,4 +45,5 @@ public class UserFinanceData
     public DataTable historydata { get; set; }
     public float profit { get; set; }
     public float investment { get; set; }
+    public float commission { get; set; }
 }

@@ -137,6 +137,7 @@ const Graph = () => {
         dispatch(setData({ key: 'totalamount', value: data.totalamount }))
         dispatch(setData({ key: 'profit', value: data.profit }))
         dispatch(setData({ key: 'investment', value: data.investment }))
+        dispatch(setData({ key: 'commission', value: data.commission }))
       }
 
     } catch (error) {

@@ -4,6 +4,7 @@ const initialState = {
   totalamount: 0,
   profit: 0,
   investment: 0,
+  commission: 0,
   isRefreshUserDetails: false,
 };
 
