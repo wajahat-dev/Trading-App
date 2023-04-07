@@ -6,19 +6,19 @@ import { Box, Grid, Card, CardActionArea, CardMedia, Typography,makeStyles } fro
 const images = [
     {
         slug: 'jazzcash',
-        url: 'https://pixabay.com/illustrations/smartphone-phone-call-mobile-4103051/',
+        url: process.env.PUBLIC_URL +'/easypaisa.jpeg',
         title: 'EasyPaisa',
         width: '33.33%',
     },
     {
         slug: 'binancepay',
-        url: 'https://cdn.freebiesupply.com/logos/large/2x/binance-1-logo-png-transparent.png',
+        url: process.env.PUBLIC_URL +'/binancepay.jpeg',
         title: 'Binance Pay',
         width: '33.33%',
     },
     {
         slug: 'visamaster',
-        url: 'https://cdn.freebiesupply.com/logos/large/2x/binance-1-logo-png-transparent.png',
+        url: process.env.PUBLIC_URL +'/visamaster.jpeg',
         title: 'Visa, MasterCard',
         width: '33.33%',
     },
