@@ -83,6 +83,9 @@ namespace pobject.Core.OtherServices
                 DataTable wihdrawerInfo = _database.SqlView($@"select * from tbl_users where EmailOrUsername='{request.EmailOrUsername}'"); // withdrawer 
                 Boolean isWihdrawerAdmin = wihdrawerInfo.Rows[0]["RoleCode"].ToString() == "A" ? true : false;
 
+
+
+
                 if (isWihdrawerAdmin)
                 {
                     // sender (Admin) can sent all money
@@ -106,7 +109,6 @@ namespace pobject.Core.OtherServices
                         // sender can sent all money
 
                         DataTable sumOfPendingWithdraws = _database.SqlView($@"select  COALESCE(sum(withdrawal_amount), 0) as withdrawal_amount from tbl_PendingRequests where UsernameOrEmail = '{request.EmailOrUsername}' AND Approved=0 ");
-                        //Double differceAmount = Math.Round(Math.Abs((float)Convert.ToDouble(withdrawerTransaction.Rows[0]["TotalAmount"]) - Convert.ToDouble(sumOfPendingWithdraws.Rows[0]["withdrawal_amount"])));
 
                         Double total = (Convert.ToDouble(withdrawerTransaction.Rows[0]["Investment"]) + Convert.ToDouble(withdrawerTransaction.Rows[0]["Commission"]) + Convert.ToDouble(withdrawerTransaction.Rows[0]["Profit"]))
                             - Convert.ToDouble(sumOfPendingWithdraws.Rows[0]["withdrawal_amount"]);
@@ -123,19 +125,42 @@ namespace pobject.Core.OtherServices
                     {
                         // sender only sent profit money
 
-                        //Double differceAmount = Math.Round(Math.Abs((float)Convert.ToDouble(withdrawerTransaction.Rows[0]["TotalAmount"]) - (float)Convert.ToDouble(withdrawerTransaction.Rows[0]["Investment"])));
+
                         DataTable sumOfPendingWithdraws = _database.SqlView($@"select  COALESCE(sum(withdrawal_amount), 0) as withdrawal_amount from tbl_PendingRequests where UsernameOrEmail = '{request.EmailOrUsername}' AND Approved=0 ");
+                        Double amountTotal = Math.Abs(Convert.ToDouble(sumOfPendingWithdraws.Rows[0]["withdrawal_amount"]) - (Convert.ToDouble(withdrawerTransaction.Rows[0]["Commission"]) + Convert.ToDouble(withdrawerTransaction.Rows[0]["Profit"])));
 
-                        Double total = ( Convert.ToDouble(withdrawerTransaction.Rows[0]["Commission"]) + Convert.ToDouble(withdrawerTransaction.Rows[0]["Profit"]))
-                            - Convert.ToDouble(sumOfPendingWithdraws.Rows[0]["withdrawal_amount"]);
+                        if (Convert.ToDouble(sumOfPendingWithdraws.Rows[0]["withdrawal_amount"]) > 0 && Math.Round(Convert.ToDouble(request.amount)) > amountTotal)
 
-                        if ( Math.Round(Convert.ToDouble(request.amount)) > total)
-                            //if ( Math.Round(Convert.ToDouble(request.amount)) > Math.Abs((differceAmount - Convert.ToDouble(sumOfPendingWithdraws.Rows[0]["withdrawal_amount"]))))
+                        {
+                            response.MessageBox = "You don't have much profit since your previous transactions are still in pending list.";
+                            response.Success = false;
+                            return response;
+                        }
+
+                        // sender only sent profit money
+                        Double total = (Convert.ToDouble(withdrawerTransaction.Rows[0]["Commission"]) + Convert.ToDouble(withdrawerTransaction.Rows[0]["Profit"]));
+
+                        if (Math.Round(Convert.ToDouble(request.amount)) > total)
+
                         {
                             response.MessageBox = "Your Profit amount is less than you current amount";
                             response.Success = false;
                             return response;
                         }
+
+
+
+                        //DataTable sumOfPendingWithdraws = _database.SqlView($@"select  COALESCE(sum(withdrawal_amount), 0) as withdrawal_amount from tbl_PendingRequests where UsernameOrEmail = '{request.EmailOrUsername}' AND Approved=0 ");
+
+                        //Double total = ( Convert.ToDouble(withdrawerTransaction.Rows[0]["Commission"]) + Convert.ToDouble(withdrawerTransaction.Rows[0]["Profit"]))
+                        //    - Convert.ToDouble(sumOfPendingWithdraws.Rows[0]["withdrawal_amount"]);
+
+                        //if ( Math.Round(Convert.ToDouble(request.amount)) > total)
+                        //{
+                        //    response.MessageBox = "Your Profit amount is less than you current amount";
+                        //    response.Success = false;
+                        //    return response;
+                        //}
 
                     }
 

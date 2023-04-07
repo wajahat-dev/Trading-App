@@ -6,7 +6,7 @@ import React from 'react';
 const CenterDivTemplate = ({ children, header }) => {
     return (
         <Grid  container justifyContent="center" alignItems="center" height="100vh">
-            <Grid item md={5} spacing={2}>
+            <Grid item xs={12} sm={12} md={5} spacing={2}>
                 <Typography variant="h6" gutterBottom>
                     {header}
                 </Typography>

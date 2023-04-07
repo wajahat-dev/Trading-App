@@ -6,8 +6,8 @@ import { Box, Grid, Card, CardActionArea, CardMedia, Typography,makeStyles } fro
 const images = [
     {
         slug: 'jazzcash',
-        url: process.env.PUBLIC_URL +'/easypaisa.jpeg',
-        title: 'EasyPaisa',
+        url: process.env.PUBLIC_URL +'/jazzcash.jpeg',
+        title: 'Jazzcash',
         width: '33.33%',
     },
     {

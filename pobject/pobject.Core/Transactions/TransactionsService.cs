@@ -211,7 +211,7 @@ Commission = Commission +  '{commissionvalue}'
 
                 }
 
-
+               
 
                 DataTable senderTransaction = _database.SqlView($@"select * from tbl_useramountdetails where EmailOrUsername='{useremail}'");  // sender
                 DataTable receiverTransaction = _database.SqlView($@"select * from tbl_useramountdetails where EmailOrUsername='{request.UserEmail}'"); // receiver
@@ -253,6 +253,8 @@ Commission = Commission +  '{commissionvalue}'
                         return response;
                     }
 
+                    
+
                     if (Convert.ToDouble(senderTransaction.Rows[0]["Totalamount"]) >= (Convert.ToDouble(senderTransaction.Rows[0]["Investment"]) * 2.00))
                     {
                         // sender can sent all money
@@ -267,13 +269,26 @@ Commission = Commission +  '{commissionvalue}'
                     }
                     else
                     {
+
+
+                        DataTable sumOfPendingWithdraws = _database.SqlView($@"select  COALESCE(sum(withdrawal_amount), 0) as withdrawal_amount from tbl_PendingRequests where UsernameOrEmail = '{useremail}' AND Approved=0 ");
+                        Double amountTotal = Math.Abs(Convert.ToDouble(sumOfPendingWithdraws.Rows[0]["withdrawal_amount"]) - (Convert.ToDouble(senderTransaction.Rows[0]["Commission"]) + Convert.ToDouble(senderTransaction.Rows[0]["Profit"])));
+
+                        if (Convert.ToDouble(sumOfPendingWithdraws.Rows[0]["withdrawal_amount"]) > 0 && Math.Round(Convert.ToDouble(request.Amount)) > amountTotal)
+
+                        {
+                            response.MessageBox = "You don't have much profit since your previous transactions are still in pending list.";
+                            response.Success = false;
+                            return response;
+                        }
+
                         // sender only sent profit money
                         Double total = (Convert.ToDouble(senderTransaction.Rows[0]["Commission"]) + Convert.ToDouble(senderTransaction.Rows[0]["Profit"]));
 
                         if (Math.Round(Convert.ToDouble(request.Amount)) > total)
   
                         {
-                            response.MessageBox = "Your Profit amount is less than you current amount";
+                            response.MessageBox =  "Your Profit amount is less than you current amount";
                             response.Success = false;
                             return response;
                         }

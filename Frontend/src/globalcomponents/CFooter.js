@@ -21,7 +21,7 @@ const CFooter = () => {
                     }}
                 >
                     <div>
-                        <img priority src="/Logo.svg" width={75} height={30} alt="Logo" />
+                        <img priority src={process.env.PUBLIC_URL +'/images/apple-touch-icon.png'} width={75} height={30} alt="Logo" />
                     </div>
                 </Box>
 
