@@ -6,6 +6,10 @@
   from = "/resetpassword/:guid"
   to = "/resetpassword?token=:guid"
   status = 200
+  force = true
+
+[[redirects]]
   from = "/*"
   to = "/"
   status = 200
+  force = true
