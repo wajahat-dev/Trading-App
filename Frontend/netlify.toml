@@ -3,6 +3,9 @@
   command = 'CI= npm run build'
 
 [[redirects]]
+  from = "/resetpassword/:guid"
+  to = "/resetpassword?token=:guid"
+  status = 200
   from = "/*"
   to = "/"
   status = 200

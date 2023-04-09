@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using System.Net.Mail;
 using System.Net;
 using System.Data.SqlTypes;
+using Microsoft.Extensions.Hosting;
 
 namespace pobject.Core.Login
 {
@@ -182,25 +183,33 @@ namespace pobject.Core.Login
             string baseurl = _configuration["ApplicationSettings:React_APP_BASEURLPARTIAL"] + $@"?token={token}";
 
 
-            var smtpClient = new SmtpClient("smtp.gmail.com")
-            {
-                Port = 587,
-                Credentials = new NetworkCredential(smtpuser, smptpassword),
-                EnableSsl = true,
-            };
-
-            var mailMessage = new MailMessage
-            {
-                From = new MailAddress(smtpuser),
-                To = { request.Email },
-                Subject = "Password Reset",
-                Body = $"Dear User,<br><br>Please click on the following link to reset your password: {baseurl}"
-            };
-            mailMessage.IsBodyHtml = true;
 
             try
             {
-                smtpClient.Send(mailMessage);
+             
+
+                MailMessage message = new MailMessage();
+                message.From = new MailAddress(smtpuser);
+
+                message.To.Add(new MailAddress(request.Email));
+
+                // message.From = new MailAddress("aliwajahat021@gmail.com");
+
+                // message.To.Add(new MailAddress("contact@getlive.club"));
+
+
+                message.IsBodyHtml = true;
+                message.Subject = "Password Reset";
+                message.Body = $"Dear User,<br><br>Please click on the following link to reset your password: {baseurl}";
+
+                SmtpClient client = new SmtpClient();;
+                client.Host = "relay-hosting.secureserver.net";
+                client.Port = 25;
+                client.EnableSsl = false;
+                client.Credentials = new NetworkCredential(smtpuser, smptpassword); // replace with your GoDaddy email password
+                client.Send(message);
+
+
                 response.Success = true;
                 response.MessageBox = "Password was reset";
                 
@@ -215,9 +224,6 @@ namespace pobject.Core.Login
                 response.MessageBox = "Can't Reset your password" + ex;
                 return response;
             }
-            response.Success = false;
-            response.MessageBox = "Can't Reset your password";
-            return response;
         }
 
         public Login_Response verifyResetLink(string token, ResetPasswordVerfiyRequest request)
