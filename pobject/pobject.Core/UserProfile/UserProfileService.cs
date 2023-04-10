@@ -109,7 +109,7 @@ SELECT COALESCE(c.TotalAmount, 0) AS TotalAmount,a.RoleCode, a.inActivedate, a.i
                         {
 
 
-                            Double totalAmount  = Convert.ToDouble(user.Rows[0]["TotalAmount"]); // Initial value of total amount;
+                           Double totalAmount  = Convert.ToDouble(user.Rows[0]["Totalamount"]); // As per, Profit should be percent of investment amount
                             Double profit = 0.00;
                             DataTable maxdate = _database.SqlView($@"SELECT COALESCE(MAX(Date), GETDATE()) as Date FROM tbl_useramountdetailshistory WHERE [EmailOrUsername] = '{user.Rows[0]["EmailOrUsername"]}'");
                             DateTime dateChecked = DateTime.Parse(maxdate.Rows[0]["Date"].ToString());
@@ -127,18 +127,18 @@ SELECT COALESCE(c.TotalAmount, 0) AS TotalAmount,a.RoleCode, a.inActivedate, a.i
                                 while (dateChecked < DateTime.Now.Date)
                                 {
                                     dateChecked = dateChecked.AddDays(1);
-                                    if (totalAmount >= 5 && totalAmount < 100)
-                                        profit = (Double)(totalAmount * 0.03);
-                                    else if (totalAmount >= 100 && totalAmount < 200)
-                                        profit = (Double)(totalAmount * 0.03);
-                                    else if (totalAmount >= 200 && totalAmount < 1000)
-                                        profit = (Double)(totalAmount * 0.04);
-                                    else if (totalAmount >= 1000 && totalAmount < 2000)
-                                        profit = (Double)(totalAmount * 0.055);
-                                    else if (totalAmount >= 2000 && totalAmount < 50000)
-                                        profit = (Double)(totalAmount * 0.06);
-                                    else if (totalAmount >= 50000 && totalAmount < 50001)
-                                        profit = (Double)(totalAmount * 0.065);
+                                    if (investment >= 5 && investment < 100)
+                                        profit = (Double)(investment * 0.03);
+                                    else if (investment >= 100 && investment < 200)
+                                        profit = (Double)(investment * 0.03);
+                                    else if (investment >= 200 && investment < 1000)
+                                        profit = (Double)(investment * 0.04);
+                                    else if (investment >= 1000 && investment < 2000)
+                                        profit = (Double)(investment * 0.055);
+                                    else if (investment >= 2000 && investment < 50000)
+                                        profit = (Double)(investment * 0.06);
+                                    else if (investment >= 50000 && investment < 50001)
+                                        profit = (Double)(investment * 0.065);
                                     else
                                         profit = 0;
                                     totalAmount += profit;
