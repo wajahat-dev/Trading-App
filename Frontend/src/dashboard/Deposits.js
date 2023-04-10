@@ -39,7 +39,7 @@ const RowWithBoxes = () => {
         <Typography variant="subtitle1"> ${(initData.profit  || 0).toFixed(2)}</Typography>
       </Box>
       <Box border={1} p={2} m={1}>
-        <Title>Daily Commision (Bitcoin)</Title>
+        <Title>Direct Commision (Bitcoin)</Title>
         <Typography variant="subtitle1"> ${(initData.commission || 0).toFixed(2)}</Typography>
       </Box>
       <Box border={1} p={2} m={1}>

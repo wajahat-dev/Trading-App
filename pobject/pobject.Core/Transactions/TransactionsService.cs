@@ -75,19 +75,22 @@ namespace pobject.Core.Transactions
             
 
 
-            float totatAmount = (float)Convert.ToDouble(receiverTransaction.Rows[0]["Totalamount"]); 
-                float commissionvalue = ((float)10 / (float)100) * amount; // receiver's senior
-                float basevalue = totatAmount + amount; // current user
-
-
  
-                DataTable addReceiver = _database.SqlView($@"UPDATE tbl_useramountdetails SET 
-                        TotalAmount= '{basevalue}', 
+
+
+            float deposit = (float)Convert.ToDouble(amount);
+            float totatAmount = (float)Convert.ToDouble(receiverTransaction.Rows[0]["Totalamount"]);
+            float investment = (float)Convert.ToDouble(receiverTransaction.Rows[0]["Investment"]);
+            float profit = (float)Convert.ToDouble(receiverTransaction.Rows[0]["Profit"]);
+            float commission = (float)Convert.ToDouble(receiverTransaction.Rows[0]["Commission"]);
+
+            float commissionvalue = ((float)10 / (float)100) * amount; // receiver's senior
+
+
+            DataTable addReceiver = _database.SqlView($@"UPDATE tbl_useramountdetails SET 
+                        TotalAmount= '{investment + profit + commission + amount}', 
                         Date = '{DateTime.Now}',
-                        Investment= Investment + '{amount}'                      
-
-
-
+                        Investment=  '{investment + amount}'                      
                         WHERE UserId = '{Referral_UserId}'");
 
 
@@ -106,7 +109,6 @@ namespace pobject.Core.Transactions
                 string referredUseruserquery = $@"UPDATE tbl_useramountdetails SET 
                     TotalAmount = TotalAmount +  '{commissionvalue}'       ,
 Commission = Commission +  '{commissionvalue}'
-
 
                         WHERE EmailOrUsername = '{receiverSenior.Rows[0]["ReferredEmail"].ToString()}'";
                 _database.SqlView(referredUseruserquery);
@@ -223,10 +225,7 @@ Commission = Commission +  '{commissionvalue}'
 
 
 
-
-                //float totalTmp = 0;
-                float totalTmp = investment - request.Amount;
-                
+                float investmentTmp = investment;
                 float profitTmp = profit;
                 float commissionTmp = commission;
 
@@ -240,7 +239,7 @@ Commission = Commission +  '{commissionvalue}'
                         response.Success = false;
                         return response;
                     }
-                    //totalTmp = investment - request.Amount;
+                    investmentTmp = investment - request.Amount;
                     profitTmp = 0;
                     commissionTmp = 0;
                 }
@@ -265,17 +264,6 @@ Commission = Commission +  '{commissionvalue}'
                             return response;
                         }
 
-                        //totalTmp = investment - request.Amount;
-                        //if (totalTmp < 0)
-                        //{
-                        //    profitTmp = profitTmp + totalTmp;
-                        //    totalTmp = 0;
-                        //    if (profitTmp < 0)
-                        //    {
-                        //        commissionTmp = commissionTmp + profitTmp;
-                        //        profitTmp = 0;
-                        //    }
-                        //}
                     }
                     else
                     {
@@ -283,7 +271,7 @@ Commission = Commission +  '{commissionvalue}'
                         Double total = (Convert.ToDouble(senderTransaction.Rows[0]["Commission"]) + Convert.ToDouble(senderTransaction.Rows[0]["Profit"]));
 
                         if (Math.Round(Convert.ToDouble(request.Amount)) > total)
-                        //if ( Math.Round(Convert.ToDouble(request.amount)) > Math.Abs((differceAmount - Convert.ToDouble(sumOfPendingWithdraws.Rows[0]["withdrawal_amount"]))))
+  
                         {
                             response.MessageBox = "Your Profit amount is less than you current amount";
                             response.Success = false;
@@ -291,25 +279,17 @@ Commission = Commission +  '{commissionvalue}'
                         }
                     }
 
-                    //if (totalTmp < 0)
-                    //{
-                    //    profitTmp = profitTmp + totalTmp;
-                    //    totalTmp = 0;
-                    //    if (profitTmp < 0)
-                    //    {
-                    //        commissionTmp = commissionTmp + profitTmp;
-                    //        profitTmp = 0;
-                    //    }
-                    //}
-                    //profitTmp =
-                    if (totalTmp < 0)
+             
+                    profitTmp = profit - request.Amount;
+
+                    if (profitTmp < 0)
                     {
-                        profitTmp = profitTmp + totalTmp;
-                        totalTmp = 0;
-                        if (profitTmp < 0)
+                        commissionTmp = commissionTmp + profitTmp;
+                        profitTmp = 0;
+                        if (commissionTmp < 0)
                         {
-                            commissionTmp = commissionTmp + profitTmp;
-                            profitTmp = 0;
+                            investmentTmp = investmentTmp + commissionTmp;
+                            commissionTmp = 0;
                         }
                     }
 
@@ -319,7 +299,7 @@ Commission = Commission +  '{commissionvalue}'
                 
 
 
-                DataTable deductsender = _database.SqlView($@"UPDATE [dbo].[tbl_useramountdetails] SET [TotalAmount] =  '{totalTmp + profitTmp + commissionTmp}', Investment = '{totalTmp}',
+                DataTable deductsender = _database.SqlView($@"UPDATE [dbo].[tbl_useramountdetails] SET [TotalAmount] =  '{investmentTmp + profitTmp + commissionTmp}', Investment = '{investmentTmp}',
 Commission= '{commissionTmp}', Profit= '{profitTmp}' WHERE [EmailOrUsername] = '{useremail}'");
                 DataTable addreceiver = _database.SqlView($@"UPDATE [dbo].[tbl_useramountdetails] SET [TotalAmount] = TotalAmount + {request.Amount}, Investment = Investment + '{request.Amount}' WHERE [EmailOrUsername] = '{request.UserEmail}'");
 

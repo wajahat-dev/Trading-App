@@ -150,23 +150,25 @@ namespace pobject.API.Controllers
                     return response;
                 }
 
-                float totalTmp = investment - withdrawl;
-                float profitTmp = profit;
+                float investmentTmp = investment;
+                float profitTmp = profit - withdrawl;
                 float commissionTmp = commission;
 
-                if (totalTmp < 0)
+                if (profitTmp < 0)
                 {
-                    profitTmp = profitTmp + totalTmp;
-                    totalTmp = 0;
-                    if (profitTmp < 0 ) {
-                        commissionTmp = commissionTmp + profitTmp;
-                        profitTmp = 0;
+                    commissionTmp = commissionTmp + profitTmp;
+                    profitTmp = 0;
+                    if (commissionTmp < 0 ) {
+                        investmentTmp = investmentTmp + commissionTmp;
+                        commissionTmp = 0;
                     }
                 }
 
 
 
-                DataTable updateUserAmount = _database.SqlView($@"UPDATE tbl_useramountdetails SET TotalAmount = '{totalTmp + profitTmp + commissionTmp}', Investment = '{totalTmp}',
+
+
+                DataTable updateUserAmount = _database.SqlView($@"UPDATE tbl_useramountdetails SET TotalAmount = '{investmentTmp + profitTmp + commissionTmp}', Investment = '{investmentTmp}',
 Commission= '{commissionTmp}', Profit= '{profitTmp}'
 
 WHERE EmailOrUsername = '{request.emailOrUsername}'");
@@ -174,64 +176,6 @@ WHERE EmailOrUsername = '{request.emailOrUsername}'");
 
                
 
-                //float basevalue =    0 ; // withdrawer
-                //float profitvalue = (float)Convert.ToDouble(withdrawerTransactionInfo.Rows[0]["Investment"]);
-
-
-
-                //if (withdrawl >= (investment * 2.0))
-                //{
-                //    // withdraw all 
-
-
-                //    float finalprofit =  profitvalue - withdrawl;
-                //    if (finalprofit <= 0)
-                //    {
-
-                //        //if ((totatAmount - withdrawl) < 0)
-                //        //{
-                //        //    basevalue = 0;
-                //        //}
-                //        //else
-                //        //{
-                //        //    basevalue = totatAmount - withdrawl;
-                //        //}
-
-                //        basevalue = totatAmount + profitvalue;
-                //        profitvalue = 0;
-
-                //    }
-                //    else
-                //    {
-                //        profitvalue = finalprofit;
-                //    }
-
-
-
-                //}
-                //else
-                //{
-                //    // withdraw diff 
-
-                //    if ((profitvalue - withdrawl) < 0)
-                //    {
-                //        profitvalue = 0;
-                //    }
-                //    else
-                //    {
-                //        profitvalue = profitvalue - withdrawl;
-                //    }
-                //}
-
-                //float baseinvestment =  0 ;
-                //if ((investment - withdrawl) < 0)
-                //{
-                //    baseinvestment = 0;
-                //}
-                //else
-                //{
-                //    baseinvestment = investment - withdrawl;
-                //}
 
 
                 // no need to give commision to senior as per user requirement
