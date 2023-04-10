@@ -49,7 +49,7 @@ export default function InvestTable() {
               <TableCell component="th" scope="row" align="center">
                 {row.invest}
               </TableCell>
-              <TableCell align="center">{row.profit}</TableCell>
+              <TableCell align="center" style={{backgroundColor: "#2196f3", color: "white"}}> {row.profit}</TableCell>
             </TableRow>
           ))}
         </TableBody>
