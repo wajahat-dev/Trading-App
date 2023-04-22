@@ -119,7 +119,8 @@ SELECT COALESCE(c.TotalAmount, 0) AS TotalAmount,a.RoleCode, a.inActivedate, a.i
                             float investment = (float)Convert.ToDouble(user.Rows[0]["Investment"]);
                             float profitTmp = (float)Convert.ToDouble(user.Rows[0]["Profit"]);
                             float commission = (float)Convert.ToDouble(user.Rows[0]["Commission"]);
-
+                            //DataTable crurrentdate = _database.SqlView($@"select GETDATE() as Date");
+                            // dateChecked1 = DateTime.Parse(maxdate.Rows[0]["Date"].ToString());
 
                             if (dateChecked < DateTime.Now.Date)
                             {
@@ -148,8 +149,13 @@ VALUES ('{user.Rows[0]["EmailOrUsername"]}','{user.Rows[0]["UserId"]}', {totalAm
                                 latestRecord = _database.SqlView($@"select top 1* from tbl_useramountdetailshistory where EmailOrUsername = '{user.Rows[0]["EmailOrUsername"]}' order by Date DESC");
                                 if (latestRecord.Rows.Count > 0)
                                 {
+                                    Double _profit = Convert.ToDouble(latestRecord.Rows[0]["TotalAmount"].ToString()) - (Convert.ToDouble(user.Rows[0]["Investment"].ToString()) + Convert.ToDouble(user.Rows[0]["Commission"].ToString()));
+                                    if (_profit < 0)
+                                    {
+                                        _profit = 0.0;
+                                    }
                                     DataTable updateRecord = _database.SqlView($@"UPDATE tbl_useramountdetails SET [TotalAmount] = '{latestRecord.Rows[0]["TotalAmount"]}', 
-Profit = '{Convert.ToDouble(latestRecord.Rows[0]["TotalAmount"].ToString()) - Convert.ToDouble(user.Rows[0]["Investment"].ToString())}'
+Profit = '{_profit}'
 WHERE [EmailOrUsername] = '{user.Rows[0]["EmailOrUsername"]}'");
 
                                 }

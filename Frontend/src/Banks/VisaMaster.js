@@ -51,7 +51,6 @@ function PaymentModal(props) {
 
         axios.post('/api/addFunds', data)
             .then((response) => {
-                console.log(response.data);
             })
             .catch((error) => {
                 console.log(error);

@@ -135,7 +135,6 @@ const PositionDetail = ({ positions, getOnePosition, createPosition, createInsta
             }
             setstockChartXValues(stockChartXValuesFunction)
             setstockChartYValues(stockChartYValuesFunction)
-            console.log(stockChartYValuesFunction)
             setSoldPrice(positions.currentPrice)
             setIsLoading(false);
           }

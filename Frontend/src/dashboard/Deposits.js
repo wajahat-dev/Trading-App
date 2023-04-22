@@ -109,7 +109,7 @@ export function Deposits({ getHistoricalData, ledger }) {
         <Typography color="textSecondary" className={classes.depositContext}>
           on {month + '/' + date + '/' + year}
         </Typography> 
-        <div>
+        {/* <div>
           <Button variant="outlined" color="neutral"
           //  onClick={onClose}
           >
@@ -122,7 +122,7 @@ export function Deposits({ getHistoricalData, ledger }) {
             Maximum Withdrawal $5
           </Button>
 
-        </div>
+        </div> */}
       </div >
     </React.Fragment >
   );

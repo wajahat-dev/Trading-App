@@ -182,9 +182,6 @@ namespace pobject.Core.Login
             string baseurl = _configuration["ApplicationSettings:React_APP_BASEURLPARTIAL"] + $@"?token={token}";
 
 
-
-            DataTable savetoken = _database.SqlView($@"INSERT INTO tbl_ResetPassword ([UsernameOrEmail] ,[UserId] ,[Token] ,[ExpirationDate]) VALUES ('{request.Email}','','{token}', DATEADD(day, 2, GETDATE())) ");
-
             var smtpClient = new SmtpClient("smtp.gmail.com")
             {
                 Port = 587,
@@ -206,11 +203,17 @@ namespace pobject.Core.Login
                 smtpClient.Send(mailMessage);
                 response.Success = true;
                 response.MessageBox = "Password was reset";
+                
+                DataTable savetoken = _database.SqlView($@"INSERT INTO tbl_ResetPassword ([UsernameOrEmail] ,[UserId] ,[Token] ,[ExpirationDate]) VALUES ('{request.Email}','','{token}', DATEADD(day, 2, GETDATE())) ");
+
                 return response;
             }
             catch (Exception ex)
             {
                 // handle exception
+                response.Success = false;
+                response.MessageBox = ex;
+                return response;
             }
             response.Success = false;
             response.MessageBox = "Can't Reset your password";

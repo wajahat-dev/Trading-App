@@ -64,7 +64,6 @@ const CNavbar = ({ page }) => {
 
     const classes = useStyles();
 
-    console.log('Navbar', userData)
     const list = (anchor) => (
         <Box
             sx={{ width: 250 }}
