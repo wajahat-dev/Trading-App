@@ -212,7 +212,7 @@ namespace pobject.Core.Login
             {
                 // handle exception
                 response.Success = false;
-                response.MessageBox = ex;
+                response.MessageBox = "Can't Reset your password" + ex;
                 return response;
             }
             response.Success = false;
