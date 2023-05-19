@@ -114,6 +114,15 @@ Commission = Commission +  '{commissionvalue}'
                 _database.SqlView(referredUseruserquery);
             }
 
+            DataTable userGraph = _database.SqlView($@"select * from tbl_useramountdetailshistory where EmailOrUsername='{receiverTransaction.Rows[0]["EmailOrUsername"]}'");
+            if (userGraph.Rows.Count == 0)
+            {
+                string query = $@" INSERT INTO tbl_useramountdetailshistory (EmailOrUsername, UserId, TotalAmount, Date)
+                        values ('{receiverTransaction.Rows[0]["EmailOrUsername"]}','{receiverTransaction.Rows[0]["UserId"]}','{investment + profit + commission + amount}' ,GETDATE() )";
+                _database.SqlView(query);
+            }
+            
+
             return 1;
 
         }
@@ -317,7 +326,14 @@ Commission = Commission +  '{commissionvalue}'
                 DataTable deductsender = _database.SqlView($@"UPDATE [dbo].[tbl_useramountdetails] SET [TotalAmount] =  '{investmentTmp + profitTmp + commissionTmp}', Investment = '{investmentTmp}',
 Commission= '{commissionTmp}', Profit= '{profitTmp}' WHERE [EmailOrUsername] = '{useremail}'");
                 DataTable addreceiver = _database.SqlView($@"UPDATE [dbo].[tbl_useramountdetails] SET [TotalAmount] = TotalAmount + {request.Amount}, Investment = Investment + '{request.Amount}' WHERE [EmailOrUsername] = '{request.UserEmail}'");
-
+               
+                DataTable userGraph = _database.SqlView($@"select * from tbl_useramountdetailshistory where EmailOrUsername='{request.UserEmail}'");
+                if (userGraph.Rows.Count == 0)
+                {
+                    string query = $@" INSERT INTO tbl_useramountdetailshistory (EmailOrUsername, UserId, TotalAmount, Date)
+                        values ('{receiverTransaction.Rows[0]["EmailOrUsername"]}','{receiverTransaction.Rows[0]["UserId"]}',{request.Amount} ,GETDATE() )";
+                    _database.SqlView(query);
+                }
 
             }
             catch (Exception e)

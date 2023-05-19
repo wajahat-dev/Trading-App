@@ -101,9 +101,9 @@ SELECT COALESCE(c.TotalAmount, 0) AS TotalAmount,a.RoleCode, a.inActivedate, a.i
                         if (historydata.Rows.Count == 0) // new created amount and have one transaction
                         {
 
-                            string query = $@" INSERT INTO tbl_useramountdetailshistory (EmailOrUsername, UserId, TotalAmount, Date)
-                        values ('{user.Rows[0]["EmailOrUsername"]}','{user.Rows[0]["UserId"]}',{user.Rows[0]["TotalAmount"]} ,GETDATE() )";
-                            _database.SqlView(query);
+                        //    string query = $@" INSERT INTO tbl_useramountdetailshistory (EmailOrUsername, UserId, TotalAmount, Date)
+                        //values ('{user.Rows[0]["EmailOrUsername"]}','{user.Rows[0]["UserId"]}',{user.Rows[0]["TotalAmount"]} ,GETDATE() )";
+                        //    _database.SqlView(query);
                         }
                         else
                         {
